@@ -1,15 +1,19 @@
 {
   "version": 2,
-  "framework": "vite",
-  "routes": [
+  "builds": [
     {
-      "src": "/(.*)",
-      "dest": "/index.html",
-      "status": 200
+      "src": "vite.config.*",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "dist" }
     }
   ],
-  "env": {
-    "VITE_API_BASE_URL": "https://vercel-mr-clement-pos-backend.vercel.app"
-  },
-  "outputDirectory": "dist"
+  "routes": [
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/.*",
+      "dest": "/index.html"
+    }
+  ]
 }
