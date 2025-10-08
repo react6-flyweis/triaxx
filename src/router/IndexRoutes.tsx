@@ -1,12 +1,15 @@
-import { useEffect } from "react";
-import { ProtectedRoutes } from "./ProtectedRoutes";
-import { PublicRoutes } from "./PublicRoutes";
-import { useAuthStore } from "@/store/zustandStores";
+import React, { useEffect } from 'react';
+import { ProtectedRoutes } from './ProtectedRoutes';
+import { PublicRoutes } from './PublicRoutes';
+import { useSelector } from 'react-redux';
+import type { RootState } from '@/redux/store';
+import { useAuthStore } from '@/store/zustandStores';
 
-export const IndexRoutes = () => {
-    const { isAuthenticated, checkAuth, fetchUserProfile } = useAuthStore();
+export const IndexRoutes: React.FC = () => {
+  const { isAuthenticated } = useSelector((state: RootState) => state.auth);    
+  const {  checkAuth, fetchUserProfile } = useAuthStore();
 
-    useEffect(() => {
+  useEffect(() => {
         checkAuth();
     }, [checkAuth]);
 
@@ -15,6 +18,6 @@ export const IndexRoutes = () => {
             fetchUserProfile();
         }
     }, [isAuthenticated, fetchUserProfile]);
-    
-    return isAuthenticated ? <ProtectedRoutes /> : <PublicRoutes />;
-}
+
+  return isAuthenticated ? <ProtectedRoutes /> : <PublicRoutes />;
+};
