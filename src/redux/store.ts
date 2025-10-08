@@ -5,6 +5,7 @@ import sessionStorage from 'redux-persist/lib/storage/session';
 import { combineReducers } from 'redux';
 import { apiSlice } from './api/apiSlice';
 import authReducer from './slice/authSlice';
+import { orderHistoryApi } from './api/orderHistoryApi';
 
 const persistConfig = {
   key: 'root',
@@ -14,6 +15,7 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   [apiSlice.reducerPath]: apiSlice.reducer,
+  [orderHistoryApi.reducerPath]: orderHistoryApi.reducer,
   auth: authReducer,
 });
 
@@ -26,7 +28,7 @@ export const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }).concat(apiSlice.middleware),
+    }).concat(apiSlice.middleware, orderHistoryApi.middleware),
 });
 
 setupListeners(store.dispatch);
