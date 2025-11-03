@@ -108,9 +108,9 @@ const NotificationList: React.FC = () => {
 
   return (
     <div
-      className={
-        `${isMobile ? "bg-white min-h-screen" : "p-8 min-h-screen bg-white"} notifications-highlight`
-      }
+      className={`${
+        isMobile ? "min-h-screen" : "p-8 min-h-screen "
+      } notifications-highlight  w-full bg-white`}
     >
       {isMobile ? (
         <div
