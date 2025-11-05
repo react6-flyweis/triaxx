@@ -5,8 +5,8 @@ import LogoutModal from "@/components/common/LogoutModal";
 import SignOutSuccessModal from "@/components/common/SignOutSuccessModal";
 import eyeIcon from "@/assets/eye_icon.svg";
 import { useNavigate, useLocation } from "react-router-dom";
-import chefImg from '@/assets/chef.svg';
-import { useWalkthroughStore } from '@/store/walkthroughStore';
+import chefImg from "@/assets/chef.svg";
+import { useWalkthroughStore } from "@/store/walkthroughStore";
 import { useAuthStore } from "@/store/zustandStores";
 
 interface User {
@@ -38,15 +38,20 @@ const fieldGradient =
   "linear-gradient(180deg, rgba(106, 27, 154, 0.1) 0%, rgba(211, 47, 47, 0.1) 100%)";
 const tabGradient = "linear-gradient(180deg, #6A1B9A 0%, #D32F2F 100%)";
 
-const ProfileDesktop: React.FC<ProfileDesktopProps> = ({ forceSecurityTab, forceWorkTab, user }) => {
+const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
+  forceSecurityTab,
+  forceWorkTab,
+  user,
+}) => {
   const logout = useAuthStore((state) => state.logout);
   const navigate = useNavigate();
   const location = useLocation();
-  const { isActive, activeTraining, steps, currentStep, complete } = useWalkthroughStore();
+  const { isActive, activeTraining, steps, currentStep, complete } =
+    useWalkthroughStore();
 
   const [selectedTab, setSelectedTab] = useState<
     null | "work" | "personal" | "security" | "sign-out"
-  >(null);
+  >("personal");
   const [isLogoutModalOpen, setLogoutModalOpen] = useState(false);
   const [isSuccessModalOpen, setSuccessModalOpen] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
@@ -63,38 +68,58 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({ forceSecurityTab, force
   }, [location.state]);
 
   useEffect(() => {
-    if (activeTraining !== 'profile') {
-      if (forceSecurityTab && selectedTab !== 'security') {
-        setSelectedTab('security');
-      } else if (forceWorkTab && selectedTab !== 'work') {
-        setSelectedTab('work');
+    if (activeTraining !== "profile") {
+      if (forceSecurityTab && selectedTab !== "security") {
+        setSelectedTab("security");
+      } else if (forceWorkTab && selectedTab !== "work") {
+        setSelectedTab("work");
       }
     }
   }, [forceSecurityTab, forceWorkTab, selectedTab, activeTraining]);
 
   useEffect(() => {
-    if (isActive && activeTraining === 'profile') {
-      if (steps[currentStep]?.selector === '.profile-work-tab' && selectedTab !== 'work') {
-        setSelectedTab('work');
-      } else if (steps[currentStep]?.selector === '.profile-personal-tab' && selectedTab !== 'personal') {
-        setSelectedTab('personal');
-      } else if (steps[currentStep]?.selector === '.profile-security-tab' && selectedTab !== 'security') {
-        setSelectedTab('security');
-      } else if (steps[currentStep]?.selector === '.profile-sign-out-tab' && selectedTab !== 'sign-out') {
-        setSelectedTab('sign-out');
+    if (isActive && activeTraining === "profile") {
+      if (
+        steps[currentStep]?.selector === ".profile-work-tab" &&
+        selectedTab !== "work"
+      ) {
+        setSelectedTab("work");
+      } else if (
+        steps[currentStep]?.selector === ".profile-personal-tab" &&
+        selectedTab !== "personal"
+      ) {
+        setSelectedTab("personal");
+      } else if (
+        steps[currentStep]?.selector === ".profile-security-tab" &&
+        selectedTab !== "security"
+      ) {
+        setSelectedTab("security");
+      } else if (
+        steps[currentStep]?.selector === ".profile-sign-out-tab" &&
+        selectedTab !== "sign-out"
+      ) {
+        setSelectedTab("sign-out");
       }
     }
     if (
       isActive &&
-      activeTraining === 'profile' &&
-      steps[currentStep]?.selector === '.profile-sign-out-tab'
+      activeTraining === "profile" &&
+      steps[currentStep]?.selector === ".profile-sign-out-tab"
     ) {
       setTimeout(() => {
         complete();
-        navigate('/training');
+        navigate("/training");
       }, 2000);
     }
-  }, [isActive, activeTraining, steps, currentStep, complete, navigate, selectedTab]);
+  }, [
+    isActive,
+    activeTraining,
+    steps,
+    currentStep,
+    complete,
+    navigate,
+    selectedTab,
+  ]);
 
   const handleSignOutClick = () => {
     setLogoutModalOpen(true);
@@ -125,7 +150,9 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({ forceSecurityTab, force
             <span className="text-lg font-semibold ml-2">&gt; Personal</span>
           )}
           {selectedTab === "work" && (
-            <span className="text-lg font-semibold ml-2">&gt; Work Summary</span>
+            <span className="text-lg font-semibold ml-2">
+              &gt; Work Summary
+            </span>
           )}
           {selectedTab === "security" && (
             <span className="text-lg font-semibold ml-2">&gt; Security</span>
@@ -153,7 +180,9 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({ forceSecurityTab, force
             Personal
           </button>
           <button
-            className={`px-4 py-2 rounded-lg font-medium text-white profile-security-tab ${selectedTab === 'security' ? 'selected' : ''}`}
+            className={`px-4 py-2 rounded-lg font-medium text-white profile-security-tab ${
+              selectedTab === "security" ? "selected" : ""
+            }`}
             style={{
               background: tabGradient,
               opacity: selectedTab === "security" ? 1 : 0.4,
@@ -255,7 +284,11 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({ forceSecurityTab, force
           </div>
         </>
       )}
-      {selectedTab === "work" && <div className="profile-work-tab"><WorkSummary layout="desktop" /></div>}
+      {selectedTab === "work" && (
+        <div className="profile-work-tab">
+          <WorkSummary layout="desktop" />
+        </div>
+      )}
       {selectedTab === "personal" && (
         <>
           <div className="font-semibold text-lg mb-4 text-[#888]">
@@ -380,7 +413,7 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({ forceSecurityTab, force
               <button
                 className="px-6 py-2 rounded-lg font-semibold text-white bg-gradient-to-r from-[#6A1B9A] to-[#D32F2F] shadow"
                 style={{ minWidth: "170px" }}
-                onClick={() => navigate('/forgot-password')}
+                onClick={() => navigate("/forgot-password")}
               >
                 Forget Password
               </button>
@@ -434,20 +467,22 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({ forceSecurityTab, force
           </button>
         </div>
       )}
-      {isActive && activeTraining === 'profile' && steps[currentStep]?.selector === '.profile-training-tooltip' && (
-        <img
-          src={chefImg}
-          alt="Chef Illustration"
-          className="profile-training-tooltip"
-          style={{
-            position: 'absolute',
-            right: 40,
-            bottom: 0,
-            height: 180,
-            zIndex: 20,
-          }}
-        />
-      )}
+      {isActive &&
+        activeTraining === "profile" &&
+        steps[currentStep]?.selector === ".profile-training-tooltip" && (
+          <img
+            src={chefImg}
+            alt="Chef Illustration"
+            className="profile-training-tooltip"
+            style={{
+              position: "absolute",
+              right: 40,
+              bottom: 0,
+              height: 180,
+              zIndex: 20,
+            }}
+          />
+        )}
       <LogoutModal
         isOpen={isLogoutModalOpen}
         onClose={handleCloseLogoutModal}

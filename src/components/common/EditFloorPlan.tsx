@@ -34,7 +34,9 @@ function DraggableTableType({ capacity, img, small }: DraggableTableTypeProps) {
     <div
       ref={drag as unknown as React.Ref<HTMLDivElement>}
       className={`flex flex-col items-center border rounded cursor-pointer px-2 py-1 sm:px-4 sm:py-2 mx-1 sm:mx-2 border-gray-400 transition-all duration-200 ${
-        isDragging ? "opacity-70 scale-110 shadow-lg z-20" : "opacity-100 scale-100"
+        isDragging
+          ? "opacity-70 scale-110 shadow-lg z-20"
+          : "opacity-100 scale-100"
       }`}
       style={{ minWidth: small ? 60 : 100 }}
     >
@@ -102,9 +104,15 @@ function AutoScrollContainer({ children }: { children: React.ReactNode }) {
       const scrollAmount = 20;
       const threshold = 40;
       if (e.clientY - top < threshold) {
-        containerRef.current.scrollBy({ top: -scrollAmount, behavior: "smooth" });
+        containerRef.current.scrollBy({
+          top: -scrollAmount,
+          behavior: "smooth",
+        });
       } else if (bottom - e.clientY < threshold) {
-        containerRef.current.scrollBy({ top: scrollAmount, behavior: "smooth" });
+        containerRef.current.scrollBy({
+          top: scrollAmount,
+          behavior: "smooth",
+        });
       }
     }
     const node = containerRef.current;
@@ -114,7 +122,10 @@ function AutoScrollContainer({ children }: { children: React.ReactNode }) {
     };
   }, []);
   return (
-    <div ref={containerRef} className="w-full max-w-full px-2 sm:px-6 md:px-10 py-2 md:py-4 min-h-screen overflow-y-auto">
+    <div
+      ref={containerRef}
+      className="w-full max-w-full px-2 sm:px-6 md:px-10 py-2 md:py-4 min-h-screen overflow-y-auto"
+    >
       {children}
     </div>
   );
@@ -141,14 +152,17 @@ function AutoScrollRow({ children }: { children: React.ReactNode }) {
     };
   }, []);
   return (
-    <div ref={rowRef} className="flex flex-row gap-6 mb-6 overflow-x-auto flex-nowrap min-w-0 w-full pb-2 snap-x snap-mandatory">
+    <div
+      ref={rowRef}
+      className="flex flex-row gap-6 mb-6 overflow-x-auto flex-nowrap min-w-0 w-full pb-2 snap-x snap-mandatory"
+    >
       {children}
     </div>
   );
 }
 
 const EditFloorPlan: React.FC<{
-  floor: string;
+  floor: string | number;
   onSave?: (tables: Table[]) => void;
 }> = ({ floor, onSave }) => {
   const [tables, setTables] = useState<Table[]>([]);
@@ -169,7 +183,7 @@ const EditFloorPlan: React.FC<{
   // Save changes
   const handleSave = async () => {
     setSaving(true);
-    await updateFloorPlan(floor, tables);
+    await updateFloorPlan(Number(floor), tables);
     setSaving(false);
     if (onSave) onSave(tables);
   };
@@ -200,9 +214,7 @@ const EditFloorPlan: React.FC<{
         );
       }
     }
-    grid.push(
-      <AutoScrollRow key={r}>{row}</AutoScrollRow>
-    );
+    grid.push(<AutoScrollRow key={r}>{row}</AutoScrollRow>);
   }
 
   return (
@@ -246,4 +258,3 @@ const EditFloorPlan: React.FC<{
 };
 
 export default EditFloorPlan;
- 

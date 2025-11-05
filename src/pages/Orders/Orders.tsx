@@ -9,20 +9,30 @@ import floorIcon from "@/assets/floor_icon.svg";
 import tableIcon from "@/assets/table_filled_icon.svg";
 import TrashIcon from "@/assets/Trash.svg";
 import { SuccessModal } from "@/components/common/SuccessModal";
-import successIcon from '@/assets/order/success_icon_large.svg';
-import { createOrder, updateOrder } from '@/api/orderApi';
-import type { OrderStatus, OrderType, PaymentMethod, PaymentStatus } from '@/types/order';
-import OrderSummaryModal from '@/components/common/OrderSummaryModal';
-import PaymentModal from '@/components/common/PaymentModal';
-import { useWalkthroughStore } from '@/store/walkthroughStore';
-import { useWalkthroughUIStore } from '@/store/zustandStores';
-import ReadyToScanModal from '@/components/common/ReadyToScanModal';
-import ReadyToPayModal from '@/components/common/ReadyToPayModal';
-import PaymentDoneModal from '@/components/common/PaymentDoneModal';
-import { tableTrainingSteps } from '@/walkthrough/steps';
-import { useGetAllItemsQuery, useGetAllItemTypesQuery, useGetItemTypeByIdQuery } from "@/redux/api/quickOrderSlice";
+import successIcon from "@/assets/order/success_icon_large.svg";
+import { createOrder, updateOrder } from "@/api/orderApi";
+import type {
+  OrderStatus,
+  OrderType,
+  PaymentMethod,
+  PaymentStatus,
+} from "@/types/order";
+import OrderSummaryModal from "@/components/common/OrderSummaryModal";
+import PaymentModal from "@/components/common/PaymentModal";
+import { useWalkthroughStore } from "@/store/walkthroughStore";
+import { useWalkthroughUIStore } from "@/store/zustandStores";
+import ReadyToScanModal from "@/components/common/ReadyToScanModal";
+import ReadyToPayModal from "@/components/common/ReadyToPayModal";
+import PaymentDoneModal from "@/components/common/PaymentDoneModal";
+import { tableTrainingSteps } from "@/walkthrough/steps";
+import {
+  useGetAllItemsQuery,
+  useGetAllItemTypesQuery,
+  useGetItemTypeByIdQuery,
+} from "@/redux/api/quickOrderSlice";
+import FloorSelector from "@/components/common/FloorSelector";
 
-const floors = ["F-01", "F-02", "F-03", "F-04", "F-05", "F-06"];
+// NOTE: floor list is now fetched from the API via FloorSelector component
 
 const Orders: React.FC = () => {
   const {
@@ -65,46 +75,77 @@ const Orders: React.FC = () => {
   const [showReadyToPay, setShowReadyToPay] = useState(false);
 
   const selectedCategory = useWalkthroughUIStore((s) => s.selectedCategory);
-  const setSelectedCategory = useWalkthroughUIStore((s) => s.setSelectedCategory);
+  const setSelectedCategory = useWalkthroughUIStore(
+    (s) => s.setSelectedCategory
+  );
 
   const { steps, currentStep, isActive, next } = useWalkthroughStore();
   const [orderSummaryClickable, setOrderSummaryClickable] = useState(true);
 
   // Fetch item types and items using RTK Query
-  const { data: itemTypesData, isLoading: itemTypesLoading, error: itemTypesError } = useGetAllItemTypesQuery('');
-  const { data: itemsData, isLoading: itemsLoading, error: itemsError } = useGetAllItemsQuery('');
-  const [selectedItemTypeId, setSelectedItemTypeId] = useState<string | null>(null);
-  const { data: selectedItemType, isLoading: selectedItemTypeLoading, error: selectedItemTypeError } = useGetItemTypeByIdQuery(selectedItemTypeId, { skip: !selectedItemTypeId });
+  const {
+    data: itemTypesData,
+    isLoading: itemTypesLoading,
+    error: itemTypesError,
+  } = useGetAllItemTypesQuery("");
+  const {
+    data: itemsData,
+    isLoading: itemsLoading,
+    error: itemsError,
+  } = useGetAllItemsQuery("");
+  const [selectedItemTypeId, setSelectedItemTypeId] = useState<string | null>(
+    null
+  );
+  const {
+    data: selectedItemType,
+    isLoading: selectedItemTypeLoading,
+    error: selectedItemTypeError,
+  } = useGetItemTypeByIdQuery(selectedItemTypeId, {
+    skip: !selectedItemTypeId,
+  });
 
   // Map categories dynamically from itemTypesData
-  const categories = useMemo(() => [
-    { label: "All Items", value: "all", icon: null },
-    ...(itemTypesData?.data?.map((type: any) => ({
-      label: type.Name,
-      value: type.Items_types_id.toString(),
-      icon: type.emozi,
-    })) || []),
-  ], [itemTypesData]);
+  const categories = useMemo(
+    () => [
+      { label: "All Items", value: "all", icon: null },
+      ...(itemTypesData?.data?.map((type: any) => ({
+        label: type.Name,
+        value: type.Items_types_id.toString(),
+        icon: type.emozi,
+      })) || []),
+    ],
+    [itemTypesData]
+  );
 
   // Map menu items for display (from getAllItemsQuery)
-  const menuItems = useMemo(() => itemsData?.data?.map((item: any) => ({
-    itemId: item.Items_id.toString(),
-    name: item['item-name'],
-    price: item['item-price'],
-    image: item.image,
-    itemType: item.Items_types_id.Items_types_id.toString(),
-    preparationStation: item.Items_types_id.Name === "Beverages" ? "Counter" : "Kitchen",
-  })) || [], [itemsData]);
+  const menuItems = useMemo(
+    () =>
+      itemsData?.data?.map((item: any) => ({
+        itemId: item.Items_id.toString(),
+        name: item["item-name"],
+        price: item["item-price"],
+        image: item.image,
+        itemType: item.Items_types_id.Items_types_id.toString(),
+        preparationStation:
+          item.Items_types_id.Name === "Beverages" ? "Counter" : "Kitchen",
+      })) || [],
+    [itemsData]
+  );
 
   // Map items from selectedItemType (getItemTypeByIdQuery)
-  const categoryItems = useMemo(() => selectedItemType?.data?.map((item: any) => ({
-    itemId: item.Items_id.toString(),
-    name: item['item-name'],
-    price: item['item-price'],
-    image: item.image,
-    itemType: item.Items_types_id.Items_types_id.toString(),
-    preparationStation: item.Items_types_id.Name === "Beverages" ? "Counter" : "Kitchen",
-  })) || [], [selectedItemType]);
+  const categoryItems = useMemo(
+    () =>
+      selectedItemType?.data?.map((item: any) => ({
+        itemId: item.Items_id.toString(),
+        name: item["item-name"],
+        price: item["item-price"],
+        image: item.image,
+        itemType: item.Items_types_id.Items_types_id.toString(),
+        preparationStation:
+          item.Items_types_id.Name === "Beverages" ? "Counter" : "Kitchen",
+      })) || [],
+    [selectedItemType]
+  );
 
   // Memoized filtered items based on selected category
   const filteredItems = useMemo(() => {
@@ -171,15 +212,25 @@ const Orders: React.FC = () => {
         selectedTable,
         currentOrder,
       });
-      startOrder({ tableId: selectedTable, floor: selectedFloor, persons });
+      startOrder({
+        tableId: selectedTable,
+        floor: Number(selectedFloor),
+        persons,
+      });
     }
-  }, [pendingCustomizedItem, selectedTable, currentOrder, selectedFloor, persons]);
+  }, [
+    pendingCustomizedItem,
+    selectedTable,
+    currentOrder,
+    selectedFloor,
+    persons,
+  ]);
 
   // Sync local state with currentOrder
   useEffect(() => {
     if (currentOrder && currentOrder.tableId) {
       setSelectedTable(currentOrder.tableId);
-      setSelectedFloor(currentOrder.floor);
+      setSelectedFloor(currentOrder.floor.toString());
       setPersons(currentOrder.persons);
     }
   }, [currentOrder]);
@@ -200,7 +251,10 @@ const Orders: React.FC = () => {
     setShowFloorPersonsPanel(true);
     const walkthrough = useWalkthroughStore.getState();
     const step = walkthrough.steps[walkthrough.currentStep];
-    if (step?.selector === ".select-table-prompt" && (!step.advanceOn || step.advanceOn === "both" || step.advanceOn === "ui")) {
+    if (
+      step?.selector === ".select-table-prompt" &&
+      (!step.advanceOn || step.advanceOn === "both" || step.advanceOn === "ui")
+    ) {
       walkthrough.next();
     }
   };
@@ -228,7 +282,13 @@ const Orders: React.FC = () => {
   };
 
   // Handle AddonsModal save
-  const handleAddonsSave = ({ addons, note }: { addons: string[]; note: string }) => {
+  const handleAddonsSave = ({
+    addons,
+    note,
+  }: {
+    addons: string[];
+    note: string;
+  }) => {
     if (!modalItem) return;
     const dummyAddons = [
       { label: "No Ice", price: 0 },
@@ -242,7 +302,7 @@ const Orders: React.FC = () => {
       ...modalItem,
       size: modalSize,
       addOns: addons.map((label, idx) => {
-        const found = dummyAddons.find(a => a.label === label);
+        const found = dummyAddons.find((a) => a.label === label);
         return {
           id: String(idx),
           name: label,
@@ -269,13 +329,21 @@ const Orders: React.FC = () => {
   // Order summary helpers
   const orderItems = currentOrder?.items || [];
   const subtotal = orderItems.reduce((sum: number, item: any) => {
-    const addOnsTotal = (item.addOns?.reduce((a: number, addon: any) => a + (addon.price || 0), 0) || 0) * (item.quantity || 1);
+    const addOnsTotal =
+      (item.addOns?.reduce(
+        (a: number, addon: any) => a + (addon.price || 0),
+        0
+      ) || 0) * (item.quantity || 1);
     return sum + item.price * (item.quantity || 1) + addOnsTotal;
   }, 0);
   const tax = Math.round(subtotal * 0.06);
   const total = subtotal + tax;
-  const hasKitchenItem = orderItems.some((item: any) => item.preparationStation === "Kitchen");
-  const allCounter = orderItems.length > 0 && orderItems.every((item: any) => item.preparationStation === "Counter");
+  const hasKitchenItem = orderItems.some(
+    (item: any) => item.preparationStation === "Kitchen"
+  );
+  const allCounter =
+    orderItems.length > 0 &&
+    orderItems.every((item: any) => item.preparationStation === "Counter");
 
   // Handle order action
   const handleOrderAction = async () => {
@@ -294,10 +362,14 @@ const Orders: React.FC = () => {
       const now = new Date().toISOString();
       const orderPayload = {
         orderId: Date.now().toString(),
-        status: 'Pending' as OrderStatus,
-        orderType: 'Dine-In' as OrderType,
-        tableInfo: { tableId: currentOrder.tableId, floor: currentOrder.floor, status: 'Occupied' },
-        waiterName: 'John Doe',
+        status: "Pending" as OrderStatus,
+        orderType: "Dine-In" as OrderType,
+        tableInfo: {
+          tableId: currentOrder.tableId,
+          floor: currentOrder.floor.toString(),
+          status: "Occupied",
+        },
+        waiterName: "John Doe",
         pricingSummary: {
           subtotal,
           tax,
@@ -306,13 +378,13 @@ const Orders: React.FC = () => {
           totalAmount: total,
         },
         paymentDetails: {
-          method: 'Cash' as PaymentMethod,
-          status: 'Unpaid' as PaymentStatus,
+          method: "Cash" as PaymentMethod,
+          status: "Unpaid" as PaymentStatus,
         },
         items: currentOrder.items,
         createdAt: now,
         updatedAt: now,
-        statusHistory: [{ status: 'Pending' as OrderStatus, at: now }],
+        statusHistory: [{ status: "Pending" as OrderStatus, at: now }],
       };
       const result = await createOrder(orderPayload);
       if (result && result.order && result.order.orderId) {
@@ -321,7 +393,7 @@ const Orders: React.FC = () => {
       setShowConfirmationModal(false);
       setShowOrderSentPanel(true);
     } catch {
-      console.error('Failed to send order');
+      console.error("Failed to send order");
     } finally {
       setOrderSending(false);
     }
@@ -345,7 +417,10 @@ const Orders: React.FC = () => {
     navigate("/table", { state: { persons, floor: selectedFloor } });
     const walkthrough = useWalkthroughStore.getState();
     const step = walkthrough.steps[walkthrough.currentStep];
-    if (step?.selector === ".select-table" && (!step.advanceOn || step.advanceOn === "both" || step.advanceOn === "ui")) {
+    if (
+      step?.selector === ".select-table" &&
+      (!step.advanceOn || step.advanceOn === "both" || step.advanceOn === "ui")
+    ) {
       walkthrough.next();
     }
   };
@@ -391,7 +466,7 @@ const Orders: React.FC = () => {
   // Order summary clickability
   useEffect(() => {
     const step = steps[currentStep];
-    if (isActive && step && step.selector === '.order-summary-panel') {
+    if (isActive && step && step.selector === ".order-summary-panel") {
       setOrderSummaryClickable(false);
     } else {
       setOrderSummaryClickable(true);
@@ -425,11 +500,12 @@ const Orders: React.FC = () => {
     setShowPaymentOptions(false);
     setShowOrderSentPanel(true);
     next();
-    navigate('/orders');
+    navigate("/orders");
   };
 
   // Walkthrough completion
-  const { completed, activeTraining, startTraining, reset } = useWalkthroughStore();
+  const { completed, activeTraining, startTraining, reset } =
+    useWalkthroughStore();
   useEffect(() => {
     if (completed && activeTraining === "order") {
       reset();
@@ -449,11 +525,11 @@ const Orders: React.FC = () => {
         {/* Left: Menu Items Grid */}
         <div className="flex-1 bg-white rounded-3xl shadow-lg p-3 sm:p-6 overflow-y-auto relative">
           {/* Category Filter Bar */}
-          <div className="flex gap-2 mb-4 sm:mb-6 overflow-x-scroll bg-[#F1F1F1] rounded-full p-1">
+          <div className="flex gap-2 mb-4 sm:mb-6 overflow-x-auto flex-nowrap whitespace-nowrap thin-scrollbar bg-[#F1F1F1] rounded-full p-1">
             {categories.map((cat) => (
               <button
                 key={cat.value}
-                className={`flex items-center gap-2 px-3 sm:px-4 py-1 rounded-full font-medium transition-all ${
+                className={`flex items-center gap-2 px-3 sm:px-4 py-1 rounded-full font-medium transition-all whitespace-nowrap ${
                   selectedCategory === cat.value
                     ? "bg-white shadow text-black"
                     : "bg-transparent text-gray-500 hover:bg-gray-100"
@@ -463,7 +539,11 @@ const Orders: React.FC = () => {
                   setSelectedItemTypeId(cat.value !== "all" ? cat.value : null);
                   const walkthrough = useWalkthroughStore.getState();
                   const step = walkthrough.steps[walkthrough.currentStep];
-                  if (!step?.advanceOn || step.advanceOn === 'both' || step.advanceOn === 'ui') {
+                  if (
+                    !step?.advanceOn ||
+                    step.advanceOn === "both" ||
+                    step.advanceOn === "ui"
+                  ) {
                     setTimeout(() => {
                       walkthrough.next();
                     }, 100);
@@ -485,17 +565,23 @@ const Orders: React.FC = () => {
               No items found.
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-2 sm:gap-4">
               {filteredItems.map((item: any, idx: number) => (
                 <div
                   key={item.itemId + idx}
-                  className={`w-[125px] min-h-[140px] bg-white rounded-xl shadow-[0_0_10px_2px_rgba(0,0,0,0.1)] flex flex-col items-center justify-between p-2 cursor-pointer border border-gray-100 group min-w-[125px] mx-auto${idx === 0 ? ' order-item-first' : ''}${idx === 1 ? ' order-item-second' : ''}${idx === 2 ? ' order-item-third' : ''}`}
+                  className={`w-[125px] min-h-[140px] bg-white rounded-xl shadow-[0_0_10px_2px_rgba(0,0,0,0.1)] flex flex-col items-center justify-between p-2 cursor-pointer border border-gray-100 group min-w-[125px] mx-auto${
+                    idx === 0 ? " order-item-first" : ""
+                  }${idx === 1 ? " order-item-second" : ""}${
+                    idx === 2 ? " order-item-third" : ""
+                  }`}
                   onClick={() => {
                     const walkthrough = useWalkthroughStore.getState();
                     const step = walkthrough.steps[walkthrough.currentStep];
                     if (
                       walkthrough.isActive &&
-                      (step?.selector === ".order-item-first" || step?.selector === ".order-item-second" || step?.selector === ".order-item-third")
+                      (step?.selector === ".order-item-first" ||
+                        step?.selector === ".order-item-second" ||
+                        step?.selector === ".order-item-third")
                     ) {
                       addItemToOrder({ ...item, quantity: 1 });
                       walkthrough.next();
@@ -505,7 +591,10 @@ const Orders: React.FC = () => {
                   }}
                 >
                   <img
-                    src={item.image || "https://via.placeholder.com/81x67?text=Item"}
+                    src={
+                      item.image ||
+                      "https://via.placeholder.com/81x67?text=Item"
+                    }
                     alt={item.name}
                     className="w-[81px] h-[67px] object-contain mt-2"
                   />
@@ -527,9 +616,8 @@ const Orders: React.FC = () => {
           {showOrderSentPanel && (
             <div
               className="absolute inset-0 z-30 flex items-center justify-center bg-[rgba(0,0,0,0)] bg-opacity-30"
-              style={{ pointerEvents: 'auto' }}
-            >
-            </div>
+              style={{ pointerEvents: "auto" }}
+            ></div>
           )}
         </div>
         {/* Right: Table/Order Panel */}
@@ -551,7 +639,13 @@ const Orders: React.FC = () => {
           {showOrderSentPanel && (
             <div className="w-full h-full flex flex-col justify-between overflow-scroll order-sent-panel">
               <div className="bg-[#EDEDED] rounded-t-2xl p-4 w-full text-left">
-                <div className="text-lg font-bold">#{currentOrder ? (currentOrder as any).orderId || (Math.random()*1000).toFixed(0) : (Math.random()*1000).toFixed(0)}</div>
+                <div className="text-lg font-bold">
+                  #
+                  {currentOrder
+                    ? (currentOrder as any).orderId ||
+                      (Math.random() * 1000).toFixed(0)
+                    : (Math.random() * 1000).toFixed(0)}
+                </div>
                 <div className="flex justify-between">
                   <div className="text-xs font-semibold">Order Created</div>
                   <div className="text-xs font-semibold text-right">
@@ -601,7 +695,9 @@ const Orders: React.FC = () => {
                 </div>
                 <div className="">
                   <div className="p-6">
-                    <div className="font-semibold mb-6 text-start">Select Persons:</div>
+                    <div className="font-semibold mb-6 text-start">
+                      Select Persons:
+                    </div>
                     <div className="flex items-center justify-center gap-2">
                       <button
                         className="w-10 h-10 rounded-l-lg bg-gradient-to-b from-[#6A1B9A] to-[#D32F2F] text-white text-2xl flex items-center justify-center"
@@ -633,24 +729,17 @@ const Orders: React.FC = () => {
                     </div>
                   </div>
                   <div className="mb-6 p-6">
-                    <div className="font-semibold mb-6 text-start">Select Floor:</div>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
-                      {floors.map((floor) => (
-                        <button
-                          key={floor}
-                          className={`py-2 sm:py-3 rounded-lg text-base font-medium shadow-sm transition-all ${
-                            selectedFloor === floor
-                              ? "bg-gradient-to-b from-[#6A1B9A] to-[#D32F2F] text-white"
-                              : "bg-[#f7f2fa]"
-                          }`}
-                          onClick={() => {
-                            setSelectedFloor(floor);
-                            setFloor(floor);
-                          }}
-                        >
-                          {floor}
-                        </button>
-                      ))}
+                    <div className="font-semibold mb-6 text-start">
+                      Select Floor:
+                    </div>
+                    <div>
+                      <FloorSelector
+                        selectedFloor={selectedFloor}
+                        onSelect={(floorId) => {
+                          setSelectedFloor(floorId);
+                          setFloor(Number(floorId));
+                        }}
+                      />
                     </div>
                   </div>
                   <button
@@ -658,7 +747,12 @@ const Orders: React.FC = () => {
                     onClick={() => {
                       const walkthrough = useWalkthroughStore.getState();
                       const step = walkthrough.steps[walkthrough.currentStep];
-                      if (step?.selector === ".person-floor-panel" && (!step.advanceOn || step.advanceOn === "both" || step.advanceOn === "ui")) {
+                      if (
+                        step?.selector === ".person-floor-panel" &&
+                        (!step.advanceOn ||
+                          step.advanceOn === "both" ||
+                          step.advanceOn === "ui")
+                      ) {
                         walkthrough.next();
                       }
                       handleSelectTable();
@@ -675,7 +769,10 @@ const Orders: React.FC = () => {
             !showOrderSentPanel &&
             !showConfirmationModal &&
             !showFloorPersonsPanel && (
-              <div className="flex flex-col items-center justify-center h-full w-full select-table-prompt" onClick={handleRightPanelClick}>
+              <div
+                className="flex flex-col items-center justify-center h-full w-full select-table-prompt"
+                onClick={handleRightPanelClick}
+              >
                 <div className="text-2xl font-bold text-[#00000099] mb-2">
                   Tap to Select Table
                 </div>
@@ -708,15 +805,21 @@ const Orders: React.FC = () => {
                 <div className="flex flex-col items-center justify-between gap-4 py-8 px-4">
                   <div className="flex w-1/2 gap-2 text-lg">
                     <img src={personIcon} alt="person icon" />
-                    Persons: <span className="font-bold">{persons.toString().padStart(2, "0")}</span>
+                    Persons:{" "}
+                    <span className="font-bold">
+                      {persons.toString().padStart(2, "0")}
+                    </span>
                   </div>
                   <div className="flex w-1/2 gap-2 text-lg">
                     <img src={floorIcon} alt="floor icon" />
-                    Floor: <span className="font-bold">{(selectedFloor ?? "F-01").replace("F-", "")}</span>
+                    Floor: <span className="font-bold">{selectedFloor}</span>
                   </div>
                   <div className="flex w-1/2 gap-2 text-lg">
                     <img src={tableIcon} alt="table icon" />
-                    Table: <span className="font-bold">{(selectedTable ?? "").replace("t-", "")}</span>
+                    Table:{" "}
+                    <span className="font-bold">
+                      {(selectedTable ?? "").replace("t-", "")}
+                    </span>
                   </div>
                 </div>
                 <button
@@ -729,7 +832,7 @@ const Orders: React.FC = () => {
                     });
                     startOrder({
                       tableId: selectedTable,
-                      floor: selectedFloor,
+                      floor: Number(selectedFloor),
                       persons,
                     });
                   }}
@@ -739,171 +842,218 @@ const Orders: React.FC = () => {
               </div>
             )}
           {/* Order Summary Panel */}
-          {(currentOrder && ((currentOrder.items && currentOrder.items.length > 0) || showSummaryPanel) && !showOrderSentPanel && !showConfirmationModal) && (
-            <div className="order-summary-panel w-full h-full flex flex-col justify-between overflow-scroll" style={{ pointerEvents: orderSummaryClickable ? 'auto' : 'none', opacity: orderSummaryClickable ? 1 : 0.6 }}>
+          {currentOrder &&
+            ((currentOrder.items && currentOrder.items.length > 0) ||
+              showSummaryPanel) &&
+            !showOrderSentPanel &&
+            !showConfirmationModal && (
               <div
-                className="rounded-t-2xl py-4 px-7 text-black text-left"
+                className="order-summary-panel w-full h-full flex flex-col justify-between overflow-scroll"
                 style={{
-                  background:
-                    "linear-gradient(180deg, rgba(106, 27, 154, 0.5) 0%, rgba(211, 47, 47, 0.5) 100%)",
+                  pointerEvents: orderSummaryClickable ? "auto" : "none",
+                  opacity: orderSummaryClickable ? 1 : 0.6,
                 }}
               >
-                <div className="text-2xl font-bold">Order Summary</div>
-                <div className="text-base font-medium">
-                  Table - {currentOrder.tableId.replace("t-", "")}
-                </div>
-              </div>
-              <div className="flex flex-col gap-2 py-4 px-4 flex-1 overflow-y-auto">
-                <div className="flex font-medium text-base border-b border-black pb-2">
-                  <div className="w-12">Qty</div>
-                  <div className="flex-1">Item</div>
-                  <div className="w-20">Size</div>
-                  <div className="w-20 text-right">Total</div>
-                </div>
-                {orderItems.map((item: any, idx: number) => (
-                  <div
-                    key={item.itemId + idx}
-                    className="flex justify-between text-base border-b border-gray-100 group"
-                  >
-                    <div className="w-12">
-                      {item.quantity || 1} x{item.size || "L"}
-                    </div>
-                    <div className="flex-1 flex flex-col items-start">
-                      <span className="font-semibold text-sm">{item.name}</span>
-                      {item.addOns && item.addOns.length > 0 && (
-                        <>
-                          <div className="text-[10px] text-[#00000099] text-wrap text-start">
-                            {item.addOns.map((a: any) => a.name).join(", ")}
-                          </div>
-                          {(() => {
-                            const addOnTotal = item.addOns.reduce((sum: number, a: any) => sum + (a.price || 0), 0) * (item.quantity || 1);
-                            return addOnTotal > 0 ? (
-                              <div className="text-[10px] text-[#D32F2F] font-semibold mt-0.5">+{addOnTotal} XOF</div>
-                            ) : null;
-                          })()}
-                        </>
-                      )}
-                      {item.notes && (
-                        <div className="text-[10px] text-[#00000099] text-wrap text-start">
-                          {item.notes}
-                        </div>
-                      )}
-                    </div>
-                    <div className="w-20 text-right font-bold">
-                      <button
-                        className={`px-3 py-1 rounded-md text-xs font-bold transition-all mb-1 ${
-                          item.allergy
-                            ? "bg-gradient-to-r from-[#6A1B9A] to-[#D32F2F] text-white shadow"
-                            : "bg-[#F6E6F8] text-[#303030] border border-[#E0E0E0]"
-                        }`}
-                        onClick={() => handleToggleAllergy(item.itemId)}
-                      >
-                        Allergy
-                      </button>
-                    </div>
-                    <div className="flex flex-col justify-between items-end h-full ml-auto" style={{ minHeight: 60 }}>
-                      <div className="w-20 text-right text-[10px] font-semibold mb-auto">
-                        {item.price} XOF
-                      </div>
-                      <button
-                        className="w-8 h-8 flex items-baseline justify-end mt-auto opacity-80 hover:opacity-100"
-                        onClick={() => handleDeleteItem(item.itemId)}
-                        aria-label="Delete item"
-                      >
-                        <img src={TrashIcon} alt="Delete" className="w-5 h-5" />
-                      </button>
-                    </div>
+                <div
+                  className="rounded-t-2xl py-4 px-7 text-black text-left"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, rgba(106, 27, 154, 0.5) 0%, rgba(211, 47, 47, 0.5) 100%)",
+                  }}
+                >
+                  <div className="text-2xl font-bold">Order Summary</div>
+                  <div className="text-base font-medium">
+                    Table - {currentOrder.tableId.replace("t-", "")}
                   </div>
-                ))}
-              </div>
-              <div className="border-t border-dashed border-gray-300"></div>
-              <div
-                className="p-4"
-                style={{
-                  background:
-                    "linear-gradient(180deg, rgba(106, 27, 154, 0.1) 0%, rgba(211, 47, 47, 0.1) 100%)",
-                }}
-              >
-                <div className="flex text-xs justify-between text-[#5A5A5A] mb-1">
-                  <span>Tax 6%</span>
-                  <span>{tax.toLocaleString()} XOF</span>
                 </div>
-                <div className="flex justify-between font-bold text-xl text-[#303030]">
-                  <span>
-                    Subtotal <span className="font-normal text-sm">(Incl. tax)</span>
-                  </span>
-                  <span className="text-[#303030] font-medium">
-                    {total.toLocaleString()} XOF
-                  </span>
+                <div className="flex flex-col gap-2 py-4 px-4 flex-1 overflow-y-auto">
+                  <div className="flex font-medium text-base border-b border-black pb-2">
+                    <div className="w-12">Qty</div>
+                    <div className="flex-1">Item</div>
+                    <div className="w-20">Size</div>
+                    <div className="w-20 text-right">Total</div>
+                  </div>
+                  {orderItems.map((item: any, idx: number) => (
+                    <div
+                      key={item.itemId + idx}
+                      className="flex justify-between text-base border-b border-gray-100 group"
+                    >
+                      <div className="w-12">
+                        {item.quantity || 1} x{item.size || "L"}
+                      </div>
+                      <div className="flex-1 flex flex-col items-start">
+                        <span className="font-semibold text-sm">
+                          {item.name}
+                        </span>
+                        {item.addOns && item.addOns.length > 0 && (
+                          <>
+                            <div className="text-[10px] text-[#00000099] text-wrap text-start">
+                              {item.addOns.map((a: any) => a.name).join(", ")}
+                            </div>
+                            {(() => {
+                              const addOnTotal =
+                                item.addOns.reduce(
+                                  (sum: number, a: any) => sum + (a.price || 0),
+                                  0
+                                ) * (item.quantity || 1);
+                              return addOnTotal > 0 ? (
+                                <div className="text-[10px] text-[#D32F2F] font-semibold mt-0.5">
+                                  +{addOnTotal} XOF
+                                </div>
+                              ) : null;
+                            })()}
+                          </>
+                        )}
+                        {item.notes && (
+                          <div className="text-[10px] text-[#00000099] text-wrap text-start">
+                            {item.notes}
+                          </div>
+                        )}
+                      </div>
+                      <div className="w-20 text-right font-bold">
+                        <button
+                          className={`px-3 py-1 rounded-md text-xs font-bold transition-all mb-1 ${
+                            item.allergy
+                              ? "bg-gradient-to-r from-[#6A1B9A] to-[#D32F2F] text-white shadow"
+                              : "bg-[#F6E6F8] text-[#303030] border border-[#E0E0E0]"
+                          }`}
+                          onClick={() => handleToggleAllergy(item.itemId)}
+                        >
+                          Allergy
+                        </button>
+                      </div>
+                      <div
+                        className="flex flex-col justify-between items-end h-full ml-auto"
+                        style={{ minHeight: 60 }}
+                      >
+                        <div className="w-20 text-right text-[10px] font-semibold mb-auto">
+                          {item.price} XOF
+                        </div>
+                        <button
+                          className="w-8 h-8 flex items-baseline justify-end mt-auto opacity-80 hover:opacity-100"
+                          onClick={() => handleDeleteItem(item.itemId)}
+                          aria-label="Delete item"
+                        >
+                          <img
+                            src={TrashIcon}
+                            alt="Delete"
+                            className="w-5 h-5"
+                          />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </div>
-              {orderItems.length > 0 &&
-                orderItems.some((item: any) => item.itemType !== "Beverage") && (
+                <div className="border-t border-dashed border-gray-300"></div>
+                <div
+                  className="p-4"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, rgba(106, 27, 154, 0.1) 0%, rgba(211, 47, 47, 0.1) 100%)",
+                  }}
+                >
+                  <div className="flex text-xs justify-between text-[#5A5A5A] mb-1">
+                    <span>Tax 6%</span>
+                    <span>{tax.toLocaleString()} XOF</span>
+                  </div>
+                  <div className="flex justify-between font-bold text-xl text-[#303030]">
+                    <span>
+                      Subtotal{" "}
+                      <span className="font-normal text-sm">(Incl. tax)</span>
+                    </span>
+                    <span className="text-[#303030] font-medium">
+                      {total.toLocaleString()} XOF
+                    </span>
+                  </div>
+                </div>
+                {orderItems.length > 0 &&
+                  orderItems.some(
+                    (item: any) => item.itemType !== "Beverage"
+                  ) && (
+                    <button
+                      className="w-full py-2 text-lg font-semibold bg-green-500 text-white shadow hover:opacity-90 transition-all"
+                      onClick={handleOrderAction}
+                    >
+                      Send to Kitchen
+                    </button>
+                  )}
+                {orderItems.length > 0 && (
                   <button
-                    className="w-full py-2 text-lg font-semibold bg-green-500 text-white shadow hover:opacity-90 transition-all"
-                    onClick={handleOrderAction}
+                    className="select-payment-btn w-full py-3 text-lg font-bold bg-gradient-to-r from-[#6A1B9A] to-[#D32F2F] text-white rounded-b-2xl rounded-t-none shadow hover:opacity-90 transition-all"
+                    onClick={() => {
+                      setShowOrderSummaryModal(true);
+                      const walkthrough = useWalkthroughStore.getState();
+                      const step = walkthrough.steps[walkthrough.currentStep];
+                      if (
+                        step?.selector === ".select-payment-btn" &&
+                        (!step.advanceOn ||
+                          step.advanceOn === "both" ||
+                          step.advanceOn === "ui")
+                      ) {
+                        walkthrough.next();
+                      }
+                    }}
+                    disabled={!orderSummaryClickable}
+                    style={{
+                      pointerEvents: orderSummaryClickable ? "auto" : "none",
+                      opacity: orderSummaryClickable ? 1 : 0.6,
+                    }}
                   >
-                    Send to Kitchen
+                    Select Payment Option
                   </button>
                 )}
-              {orderItems.length > 0 && (
-                <button
-                  className="select-payment-btn w-full py-3 text-lg font-bold bg-gradient-to-r from-[#6A1B9A] to-[#D32F2F] text-white rounded-b-2xl rounded-t-none shadow hover:opacity-90 transition-all"
-                  onClick={() => {
-                    setShowOrderSummaryModal(true);
-                    const walkthrough = useWalkthroughStore.getState();
-                    const step = walkthrough.steps[walkthrough.currentStep];
-                    if (step?.selector === ".select-payment-btn" && (!step.advanceOn || step.advanceOn === "both" || step.advanceOn === "ui")) {
-                      walkthrough.next();
-                    }
-                  }}
-                  disabled={!orderSummaryClickable}
-                  style={{ pointerEvents: orderSummaryClickable ? 'auto' : 'none', opacity: orderSummaryClickable ? 1 : 0.6 }}
-                >
-                  Select Payment Option
-                </button>
-              )}
-            </div>
-          )}
+              </div>
+            )}
           {/* Start Order Panel */}
-          {currentOrder && currentOrder.items && currentOrder.items.length === 0 && !showOrderSentPanel && !showConfirmationModal && !showSummaryPanel && (
-            <div className="w-full h-full flex flex-col justify-between overflow-scroll">
-              <div
-                className="rounded-t-2xl p-4 text-black text-left"
-                style={{
-                  background:
-                    "linear-gradient(180deg, rgba(106, 27, 154, 0.5) 0%, rgba(211, 47, 47, 0.5) 100%)",
-                }}
-              >
-                <div className="text-2xl font-bold">Start Order</div>
-                <div className="text-xs font-normal">
-                  Floor, Table, Person Display
+          {currentOrder &&
+            currentOrder.items &&
+            currentOrder.items.length === 0 &&
+            !showOrderSentPanel &&
+            !showConfirmationModal &&
+            !showSummaryPanel && (
+              <div className="w-full h-full flex flex-col justify-between overflow-scroll">
+                <div
+                  className="rounded-t-2xl p-4 text-black text-left"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, rgba(106, 27, 154, 0.5) 0%, rgba(211, 47, 47, 0.5) 100%)",
+                  }}
+                >
+                  <div className="text-2xl font-bold">Start Order</div>
+                  <div className="text-xs font-normal">
+                    Floor, Table, Person Display
+                  </div>
                 </div>
+                <div className="flex flex-col items-center justify-between gap-4 py-8 px-4">
+                  <div className="flex w-1/2 gap-2 text-lg">
+                    <img src={personIcon} alt="person icon" />
+                    Persons:{" "}
+                    <span className="font-bold">
+                      {persons.toString().padStart(2, "0")}
+                    </span>
+                  </div>
+                  <div className="flex w-1/2 gap-2 text-lg">
+                    <img src={floorIcon} alt="floor icon" />
+                    Floor: <span className="font-bold">{selectedFloor}</span>
+                  </div>
+                  <div className="flex w-1/2 gap-2 text-lg">
+                    <img src={tableIcon} alt="table icon" />
+                    Table:{" "}
+                    <span className="font-bold">
+                      {(selectedTable ?? "").replace("t-", "")}
+                    </span>
+                  </div>
+                </div>
+                <button
+                  className="w-full py-3 rounded-b-2xl text-lg font-semibold text-white bg-gradient-to-r from-[#6A1B9A] to-[#D32F2F] shadow-md hover:opacity-90 transition-all"
+                  onClick={() => {
+                    setShowSummaryPanel(true);
+                  }}
+                >
+                  Start Order
+                </button>
               </div>
-              <div className="flex flex-col items-center justify-between gap-4 py-8 px-4">
-                <div className="flex w-1/2 gap-2 text-lg">
-                  <img src={personIcon} alt="person icon" />
-                  Persons: <span className="font-bold">{persons.toString().padStart(2, "0")}</span>
-                </div>
-                <div className="flex w-1/2 gap-2 text-lg">
-                  <img src={floorIcon} alt="floor icon" />
-                  Floor: <span className="font-bold">{(selectedFloor ?? "F-01").replace("F-", "")}</span>
-                </div>
-                <div className="flex w-1/2 gap-2 text-lg">
-                  <img src={tableIcon} alt="table icon" />
-                  Table: <span className="font-bold">{(selectedTable ?? "").replace("t-", "")}</span>
-                </div>
-              </div>
-              <button
-                className="w-full py-3 rounded-b-2xl text-lg font-semibold text-white bg-gradient-to-r from-[#6A1B9A] to-[#D32F2F] shadow-md hover:opacity-90 transition-all"
-                onClick={() => {
-                  setShowSummaryPanel(true);
-                }}
-              >
-                Start Order
-              </button>
-            </div>
-          )}
+            )}
         </div>
       </div>
       {/* Modals */}
@@ -934,8 +1084,8 @@ const Orders: React.FC = () => {
           tax,
           total,
           orderId: (currentOrder as any)?.orderId,
-          paymentType: '',
-          customerName: '',
+          paymentType: "",
+          customerName: "",
         }}
         onUpdateItemQuantity={(itemId, newQty) => {
           updateOrderItem(itemId, { quantity: newQty });
@@ -951,27 +1101,40 @@ const Orders: React.FC = () => {
         total={total}
         onConfirm={async (method) => {
           if (isActive) return;
-          const orderId = (currentOrder && (currentOrder as any).orderId) || `${currentOrder?.tableId}-${currentOrder?.floor}-${currentOrder?.persons}`;
+          const orderId =
+            (currentOrder && (currentOrder as any).orderId) ||
+            `${currentOrder?.tableId}-${currentOrder?.floor}-${currentOrder?.persons}`;
           if (currentOrder && orderId) {
             await updateOrder(orderId, {
               paymentDetails: {
                 method,
-                status: 'Paid',
+                status: "Paid",
               },
             });
-            const subtotal = currentOrder.items.reduce((sum: number, item: any) => {
-              const addOnsTotal = (item.addOns?.reduce((a: number, addon: any) => a + (addon.price || 0), 0) || 0) * (item.quantity || 1);
-              return sum + item.price * (item.quantity || 1) + addOnsTotal;
-            }, 0);
+            const subtotal = currentOrder.items.reduce(
+              (sum: number, item: any) => {
+                const addOnsTotal =
+                  (item.addOns?.reduce(
+                    (a: number, addon: any) => a + (addon.price || 0),
+                    0
+                  ) || 0) * (item.quantity || 1);
+                return sum + item.price * (item.quantity || 1) + addOnsTotal;
+              },
+              0
+            );
             const tax = Math.round(subtotal * 0.06);
             const total = subtotal + tax;
             const now = new Date().toISOString();
             await createOrder({
               orderId,
-              status: 'Pending',
-              orderType: 'Dine-In',
-              tableInfo: { tableId: currentOrder.tableId, floor: currentOrder.floor, status: 'Occupied' },
-              waiterName: 'John Doe',
+              status: "Pending",
+              orderType: "Dine-In",
+              tableInfo: {
+                tableId: currentOrder.tableId,
+                floor: currentOrder.floor.toString(),
+                status: "Occupied",
+              },
+              waiterName: "John Doe",
               pricingSummary: {
                 subtotal,
                 tax,
@@ -981,25 +1144,25 @@ const Orders: React.FC = () => {
               },
               paymentDetails: {
                 method,
-                status: 'Paid',
+                status: "Paid",
               },
               items: currentOrder.items,
               createdAt: now,
               updatedAt: now,
-              statusHistory: [{ status: 'Pending' as OrderStatus, at: now }],
+              statusHistory: [{ status: "Pending" as OrderStatus, at: now }],
             });
             setShowPaymentOptions(false);
             setShowSuccessModal(true);
           }
         }}
       />
-      {isActive && steps[currentStep]?.selector === '.ready-to-scan-modal' && (
+      {isActive && steps[currentStep]?.selector === ".ready-to-scan-modal" && (
         <ReadyToScanModal onClose={() => setTimeout(next, 2000)} />
       )}
-      {isActive && steps[currentStep]?.selector === '.ready-to-pay-modal' && (
+      {isActive && steps[currentStep]?.selector === ".ready-to-pay-modal" && (
         <ReadyToPayModal onClose={() => setTimeout(next, 2000)} />
       )}
-      {isActive && steps[currentStep]?.selector === '.payment-done-modal' && (
+      {isActive && steps[currentStep]?.selector === ".payment-done-modal" && (
         <PaymentDoneModal onClose={handlePaymentDoneClose} />
       )}
       <SuccessModal
@@ -1011,8 +1174,13 @@ const Orders: React.FC = () => {
           setShowSuccessModal(false);
           resetOrder();
           const newOrderId = Date.now().toString();
-          startOrder({ tableId: '', floor: '', persons: 1, orderId: newOrderId });
-          navigate('/orders', { state: { showOrderSentPanel: true } });
+          startOrder({
+            tableId: "",
+            floor: 0,
+            persons: 1,
+            orderId: newOrderId,
+          });
+          navigate("/orders", { state: { showOrderSentPanel: true } });
         }}
       />
     </div>
