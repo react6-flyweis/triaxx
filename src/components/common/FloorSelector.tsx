@@ -62,7 +62,7 @@ const FloorSelector: React.FC<Props> = ({
         const key = floor.Floor_Name + (floor.Floor_Type_id ?? "");
         const emoji = floor.Floor_Type_id?.emozi || "";
         const label = floor.Floor_Name || "Unnamed Floor";
-        const isSelected = selectedFloor === label;
+        const isSelected = selectedFloor === floor.Floor_id.toString();
         return (
           <button
             key={key}
@@ -71,7 +71,7 @@ const FloorSelector: React.FC<Props> = ({
                 ? "bg-gradient-to-b from-[#6A1B9A] to-[#D32F2F] text-white"
                 : "bg-[#f7f2fa]"
             }`}
-            onClick={() => onSelect(label)}
+            onClick={() => onSelect(floor.Floor_id.toString())}
           >
             <div className="flex items-center justify-center gap-1">
               {emoji && <span className="text-sm">{emoji}</span>}
