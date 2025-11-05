@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { setCredentials } from "../slice/authSlice";
+import type { ItemAddonsApiResponse } from "@/types/addon";
 
 interface LoginCredentials {
   email: string;
@@ -121,6 +122,11 @@ export const apiSlice = createApi({
       query: () => "/api/master/faq/all",
       // keep raw server shape; components will read `data` field
     }),
+    // Get all item addons
+    getItemAddons: builder.query<ItemAddonsApiResponse, void>({
+      query: () => "/api/restaurant/item_addons/getall",
+      // server returns { success: boolean, count: number, data: ItemAddon[] }
+    }),
   }),
 });
 
@@ -129,4 +135,5 @@ export const {
   useFetchUserProfileQuery,
   useGetNotificationsQuery,
   useGetFaqsQuery,
+  useGetItemAddonsQuery,
 } = apiSlice;
