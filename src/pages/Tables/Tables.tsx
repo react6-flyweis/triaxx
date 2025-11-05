@@ -1,38 +1,39 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getTablesByFloor } from "@/api/tableApi";
-import type { Table } from "@/api/tableApi";
+import { useGetTablesByFloorQuery } from "@/redux/api/tablesApi";
+import type { BackendTableItem, BackendTablesFlattened } from "@/types/table";
 import { TableIcon } from "@/icons/TableIcon";
+import { useGetTableBookingStatusesQuery } from "@/redux/api/tablesApi";
 import OrderSummaryModal from "@/components/common/OrderSummaryModal";
 import PaymentModal from "@/components/common/PaymentModal";
 import { SuccessModal } from "@/components/common/SuccessModal";
 import * as orderApi from "@/api/orderApi";
 import type { OrderItem } from "@/types/order";
 import editIcon from "@/assets/table/edit.svg";
-import CheckmarkIcon from "@/icons/CheckmarkIcon";
-import ReadyDishIcon from "@/icons/ReadyDishIcon";
+// import CheckmarkIcon from "@/icons/CheckmarkIcon";
+// import ReadyDishIcon from "@/icons/ReadyDishIcon";
+// import TimerIcon from "@/icons/ClockIcon";
 import { useOrderFlowStore } from "@/store/zustandStores";
 import EditFloorPlan from "@/components/common/EditFloorPlan";
 import { useWalkthroughStore } from "@/store/walkthroughStore";
-import TimerIcon from "@/icons/ClockIcon";
-import { orderHistoryTrainingSteps } from '@/walkthrough/steps';
+import { orderHistoryTrainingSteps } from "@/walkthrough/steps";
 
-const statusTabs = [
-  { label: "All Tables", value: "all" },
-  { label: "Served", value: "Served" },
-  { label: "Waiting", value: "Waiting" },
-  { label: "Reserved", value: "Reserved" },
-  // { label: "Ready", value: "Ready" },
-  // { label: "Occupied", value: "Occupied" },
-];
+// const statusTabs = [
+//   { label: "All Tables", value: "all" },
+//   { label: "Served", value: "Served" },
+//   { label: "Waiting", value: "Waiting" },
+//   { label: "Reserved", value: "Reserved" },
+//   // { label: "Ready", value: "Ready" },
+//   // { label: "Occupied", value: "Occupied" },
+// ];
 
-const statusIconMap: Record<string, React.ReactNode> = {
-  Served: <CheckmarkIcon width={20} height={20} />,
-  Ready: <ReadyDishIcon width={20} height={20} />,
-  Waiting: <TimerIcon width={20} height={20} />,
-  // Add more mappings as needed
-};
+// const statusIconMap: Record<string, React.ReactNode> = {
+//   Served: <CheckmarkIcon width={20} height={20} />,
+//   Ready: <ReadyDishIcon width={20} height={20} />,
+//   Waiting: <TimerIcon width={20} height={20} />,
+//   // Add more mappings as needed
+// };
 
 // Status color mapping for TableIcon
 const statusStyleMap: Record<string, { color: string; textColor: string }> = {
@@ -45,63 +46,67 @@ const statusStyleMap: Record<string, { color: string; textColor: string }> = {
   Ready: { color: "#FFE3BC", textColor: "#FEC002" },
 };
 
-// Helper: group tables by row (first digit of number, e.g., T11 → row 1)
-function groupTablesByRow(tables: Table[]) {
-  const rowMap: Record<string, Table[]> = {};
+// Helper: group tables by row number provided by server (Row_No)
+function groupTablesByRow(tables: BackendTablesFlattened) {
+  const rowMap: Record<string, BackendTablesFlattened> = {};
   tables.forEach((table) => {
-    // Extract row from table.number (e.g., T11 → 1, T22 → 2)
-    const match = table.number.match(/T(\d{2})/);
-    let row = "1";
-    if (match) {
-      row = match[1][0];
-    }
+    const row = table.rowNo !== undefined ? String(table.rowNo) : "1";
     if (!rowMap[row]) rowMap[row] = [];
     rowMap[row].push(table);
   });
-  // Sort rows numerically
   const sortedRows = Object.keys(rowMap).sort((a, b) => Number(a) - Number(b));
   return sortedRows.map((row) => ({
     row,
-    tables: rowMap[row].sort(
-      (a, b) => Number(a.number.slice(2)) - Number(b.number.slice(2))
-    ),
+    tables: rowMap[row],
   }));
 }
+
+// Normalize server booking status to frontend-friendly keys used in UI
+// const normalizeStatus = (raw?: string) => {
+//   if (!raw) return "Available";
+//   const s = raw.toLowerCase();
+//   if (s.includes("empty")) return "Available";
+//   if (s.includes("served")) return "Served";
+//   if (s.includes("waiting")) return "Waiting";
+//   if (s.includes("ready")) return "Ready";
+//   if (s.includes("reserved") || s.includes("book")) return "Reserved";
+//   return "Available";
+// };
 
 const TableCard = ({
   table,
   onClick,
 }: {
-  table: Table;
+  table: BackendTableItem & { floorName?: string; rowNo?: number };
   onClick: () => void;
 }) => {
+  const capacity =
+    table["Seating-Persons_Count"] || table["Seating_Persons_Count"] || 2;
   let size: "small" | "medium" | "long" = "small";
-  if (table.capacity === 4) size = "medium";
-  if (table.capacity === 8) size = "long";
-  const icon =
-    table.status && statusIconMap[table.status]
-      ? statusIconMap[table.status]
-      : undefined;
-  // Build status prop for TableIcon
+  if (capacity === 4) size = "medium";
+  if (capacity === 8) size = "long";
+
+  const status = table["Table-Booking-Status_id"]?.Name || "";
+  // const icon =
+  //   status && statusIconMap[status] ? statusIconMap[status] : undefined;
   const statusObj =
-    table.status && table.status !== "Available"
-      ? { text: table.status, ...(statusStyleMap[table.status] || {}) }
+    status && status !== "Available"
+      ? { text: status, ...(statusStyleMap[status] || {}) }
       : undefined;
+  const label = table["Table-code"] || ""; // name ,code
   return (
     <div
       className={`flex flex-col items-center justify-center cursor-pointer mx-2 my-2  relative min-w-fit${
-        table.status === "Available" || table.status === undefined
-          ? " table-available"
-          : ""
+        status === "Available" ? " table-available" : ""
       }`}
       onClick={onClick}
     >
       <TableIcon
         size={size}
-        label={table.number.toLowerCase().replace(/^t(\d+)$/, "t-$1")}
+        label={label}
         status={statusObj}
-        icon={icon}
-        timer={table.timer}
+        // icon={icon}
+        timer={(table as any).timer}
       />
       {/* Show timer for Waiting tables */}
       {/* {table.status === 'Waiting' && table.timer !== undefined && (
@@ -116,8 +121,7 @@ const TableCard = ({
 const TablePage: React.FC = () => {
   const navigate = useNavigate();
   const startOrder = useOrderFlowStore((s) => s.startOrder);
-  const [tables, setTables] = useState<Table[]>([]);
-  const [loading, setLoading] = useState(false);
+  // Use RTK Query to fetch tables by floor
   const [activeTab, setActiveTab] = useState("all");
   const [orderSummary, setOrderSummary] = useState<any | null>(null);
   const [orderSummaryOpen, setOrderSummaryOpen] = useState(false);
@@ -127,34 +131,65 @@ const TablePage: React.FC = () => {
 
   const floor = useOrderFlowStore((s) => s.floor);
   const persons = useOrderFlowStore((s) => s.persons);
+
+  const {
+    data: tablesResp,
+    isLoading: isLoadingTables,
+    refetch,
+  } = useGetTablesByFloorQuery(floor || 1);
+  const { data: statusesResp } = useGetTableBookingStatusesQuery();
   // const currentOrder = useOrderFlowStore((s) => s.currentOrder);
   const isInOrderFlow = useOrderFlowStore((s) => s.isInOrderFlow);
-  const { completed, activeTraining, startTraining, reset } = useWalkthroughStore();
+  const { completed, activeTraining, startTraining, reset } =
+    useWalkthroughStore();
+
+  // data is provided by RTK Query hook `tablesResp`
 
   useEffect(() => {
-    setLoading(true);
-    getTablesByFloor(floor).then((t) => {
-      setTables(t);
-      setLoading(false);
-    });
-  }, [floor]);
-
-  useEffect(() => {
-    if (completed && activeTraining === 'table') {
+    if (completed && activeTraining === "table") {
       reset();
       setTimeout(() => {
-        startTraining('orderHistory', orderHistoryTrainingSteps);
-        navigate('/');
+        startTraining("orderHistory", orderHistoryTrainingSteps);
+        navigate("/");
       }, 50);
     }
   }, [completed, activeTraining, startTraining, reset, navigate]);
 
+  // Flatten server rows into table list with rowNo and floorName attached
+  const serverTables: BackendTablesFlattened = tablesResp?.data
+    ? Object.values(tablesResp.data).flatMap((row: any) =>
+        (row.tables || []).map((t: BackendTableItem) => ({
+          ...t,
+          floorName: row.Floor?.Floor_Name,
+          rowNo: row.Row_No,
+        }))
+      )
+    : [];
+
+  const availableStatusNames = statusesResp?.data?.map((s) => s.Name) || [];
+
+  const statusTabs = [
+    { label: "All Tables", value: "all" },
+    ...availableStatusNames.map((n: string) => ({ label: n, value: n })),
+  ];
+
   const filteredTables =
-    activeTab === "all" ? tables : tables.filter((t) => t.status === activeTab);
+    activeTab === "all"
+      ? serverTables
+      : serverTables.filter((t) => {
+          const raw =
+            t["Table-Booking-Status_id"]?.Name ||
+            t["Table-Booking-Status"] ||
+            t.TableBookingStatus;
+          return raw === activeTab;
+        });
+
   const groupedRows = groupTablesByRow(filteredTables);
 
   // Handler for table click
-  const handleTableClick = async (table: Table) => {
+  const handleTableClick = async (
+    table: BackendTableItem & { rowNo?: number }
+  ) => {
     console.log("[Walkthrough Debug] Clicked table:", table);
     console.log(
       "[Walkthrough Debug] Current state - floor:",
@@ -165,9 +200,16 @@ const TablePage: React.FC = () => {
       isInOrderFlow
     );
 
-    // If table has a status other than 'Available' and has an order, show bill (regardless of entry point)
-    if (table.status !== "Available" && table.currentOrder) {
-      const order = await orderApi.getOrderById(table.currentOrder);
+    const tableStatus = table["Table-Booking-Status_id"]?.Name || "";
+
+    // If table has a status other than 'Available' and has an order id, show bill (regardless of entry point)
+    const possibleOrderId =
+      (table as any).order_id ||
+      (table as any).orderId ||
+      (table as any).currentOrder ||
+      (table as any).current_order;
+    if (tableStatus !== "Available" && possibleOrderId) {
+      const order = await orderApi.getOrderById(possibleOrderId);
       if (order) {
         setOrderSummary({
           items: order.items,
@@ -186,11 +228,11 @@ const TablePage: React.FC = () => {
     // If in order flow and clicking available table, start order and navigate
     if (
       isInOrderFlow &&
-      (table.status === "Available" || table.status === undefined)
+      (tableStatus === "Empty" || tableStatus === undefined)
     ) {
       console.log(
         "[Walkthrough Debug] In order flow, starting order for table:",
-        table.id
+        table._id || table.Table_id
       );
       // Advance walkthrough before navigating
       const walkthrough = useWalkthroughStore.getState();
@@ -203,7 +245,13 @@ const TablePage: React.FC = () => {
       ) {
         walkthrough.next();
       }
-      startOrder({ tableId: table.id, floor, persons });
+      const orderPayload = {
+        tableId: table.Table_id?.toString() || "",
+        floor,
+        persons,
+      };
+      console.log("Starting order with payload:", orderPayload);
+      startOrder(orderPayload);
       navigate("/orders");
       return;
     }
@@ -211,7 +259,7 @@ const TablePage: React.FC = () => {
     // If not in order flow (coming from sidebar) and clicking available table, do nothing
     if (
       !isInOrderFlow &&
-      (table.status === "Available" || table.status === undefined)
+      (tableStatus === "Available" || tableStatus === undefined)
     ) {
       console.log(
         "[Walkthrough Debug] Not in order flow, doing nothing for available table"
@@ -230,7 +278,7 @@ const TablePage: React.FC = () => {
                 Table{" "}
                 <span className="font-bold text-[#00000099]">(Floor Plan)</span>
               </h1>
-        </div>
+            </div>
             {/* <div className="flex flex-col sm:flex-row gap-2 items-center min-w-0"> */}
             {/* <FloorDropdown floors={floors} selected={selectedFloor} onChange={setSelectedFloor} /> */}
             {/* </div> */}
@@ -243,11 +291,11 @@ const TablePage: React.FC = () => {
                 <span className="pr-2">Edit Tables</span>
               </button>
 
-              <div className="overflow-x-scroll rounded-full bg-[#F1F1F1] p-2">
-          <div className="flex gap-2">
+              <div className="overflow-x-scroll thin-scrollbar rounded-full bg-[#F1F1F1] p-2">
+                <div className="flex gap-2">
                   {" "}
                   {statusTabs.map((tab) => (
-            <button
+                    <button
                       key={tab.value}
                       className={`px-4 py-1.5 rounded-full font-medium text-base transition-all ${
                         activeTab === tab.value
@@ -276,18 +324,20 @@ const TablePage: React.FC = () => {
                       style={{ minWidth: 110 }}
                     >
                       {tab.label}
-            </button>
-          ))}
-        </div>
-      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
           {/* Matrix layout: each row is horizontally scrollable */}
           <div className="flex flex-col gap-0 ">
-            {loading ? (
+            {isLoadingTables ? (
               <div className="flex items-center justify-center py-8">
                 <div className="text-center">
-                  <div className="text-lg font-semibold text-gray-600">Loading tables...</div>
+                  <div className="text-lg font-semibold text-gray-600">
+                    Loading tables...
+                  </div>
                 </div>
               </div>
             ) : groupedRows.length > 0 ? (
@@ -298,7 +348,7 @@ const TablePage: React.FC = () => {
                 >
                   {tables.map((table) => (
                     <TableCard
-                      key={table.id}
+                      key={table._id || table.Table_id}
                       table={table}
                       onClick={() => handleTableClick(table)}
                     />
@@ -318,9 +368,12 @@ const TablePage: React.FC = () => {
                   <div className="text-sm text-gray-500">
                     {activeTab === "all" && "There are no tables in the system"}
                     {activeTab === "Served" && "No tables have been served yet"}
-                    {activeTab === "Waiting" && "No tables are currently waiting"}
-                    {activeTab === "Reserved" && "No tables are currently reserved"}
-                    {activeTab === "Available" && "All tables are currently occupied"}
+                    {activeTab === "Waiting" &&
+                      "No tables are currently waiting"}
+                    {activeTab === "Reserved" &&
+                      "No tables are currently reserved"}
+                    {activeTab === "Available" &&
+                      "All tables are currently occupied"}
                   </div>
                 </div>
               </div>
@@ -334,18 +387,27 @@ const TablePage: React.FC = () => {
             onUpdateItemQuantity={async (itemId, newQty) => {
               if (orderSummary?.orderId) {
                 // Find the item and update its quantity
-                const updatedItems = orderSummary.items.map((item: OrderItem) => 
+                const updatedItems = orderSummary.items.map((item: OrderItem) =>
                   item.itemId === itemId ? { ...item, quantity: newQty } : item
                 );
-                
+
                 // Recalculate pricing
-                const subtotal = updatedItems.reduce((sum: number, item: OrderItem) => {
-                  const addOnsTotal = (item.addOns?.reduce((a: number, addon) => a + (addon.price || 0), 0) || 0) * (item.quantity || 1);
-                  return sum + item.price * (item.quantity || 1) + addOnsTotal;
-                }, 0);
+                const subtotal = updatedItems.reduce(
+                  (sum: number, item: OrderItem) => {
+                    const addOnsTotal =
+                      (item.addOns?.reduce(
+                        (a: number, addon) => a + (addon.price || 0),
+                        0
+                      ) || 0) * (item.quantity || 1);
+                    return (
+                      sum + item.price * (item.quantity || 1) + addOnsTotal
+                    );
+                  },
+                  0
+                );
                 const tax = Math.round(subtotal * 0.06);
                 const total = subtotal + tax;
-                
+
                 // Update the order via API
                 await orderApi.updateOrder(orderSummary.orderId, {
                   items: updatedItems,
@@ -356,9 +418,9 @@ const TablePage: React.FC = () => {
                     discount: 0,
                     serviceCharge: 0,
                     totalAmount: total,
-                  }
+                  },
                 });
-                
+
                 // Update local state
                 setOrderSummary({
                   ...orderSummary,
@@ -374,7 +436,7 @@ const TablePage: React.FC = () => {
               setShowPaymentModal(true);
             }}
           />
-          
+
           {/* Payment Modal */}
           <PaymentModal
             open={showPaymentModal}
@@ -386,16 +448,16 @@ const TablePage: React.FC = () => {
                 await orderApi.updateOrder(orderSummary.orderId, {
                   paymentDetails: {
                     method,
-                    status: 'Paid',
+                    status: "Paid",
                     transactionId: `TXN-${Date.now()}`,
-                  }
+                  },
                 });
                 setShowPaymentModal(false);
                 setShowSuccessModal(true);
               }
             }}
           />
-          
+
           {/* Success Modal */}
           <SuccessModal
             open={showSuccessModal}
@@ -404,10 +466,8 @@ const TablePage: React.FC = () => {
             buttonText="Back to Tables"
             onButtonClick={() => {
               setShowSuccessModal(false);
-              // Refresh tables to show updated status
-              getTablesByFloor(floor).then((t) => {
-                setTables(t);
-              });
+              // Refetch tables via RTK Query
+              refetch?.();
             }}
           />
         </>
