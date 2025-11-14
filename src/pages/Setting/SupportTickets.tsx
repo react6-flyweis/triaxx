@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { useSupportTicketListStore } from "@/store/zustandStores";
+import React, { useState } from "react";
+import { useGetAllSupportTicketsQuery } from "@/redux/api/supportTicketsApi";
 import ongoingIcon from "@/assets/setting/sms-tracking-gray.svg";
 import ongoingIconLight from "@/assets/setting/sms-tracking.svg";
 
@@ -36,22 +36,24 @@ const statusBtnColor = {
 };
 
 const SupportTickets: React.FC = () => {
-  const {
-    tickets,
-    loading,
-    error,
-    filter,
-    period,
-    search,
-    fetchTickets,
-    setFilter,
-    setPeriod,
-    setSearch,
-  } = useSupportTicketListStore();
   const navigate = useNavigate();
-  useEffect(() => {
-    fetchTickets();
-  }, [filter, period, search, fetchTickets]);
+  const [filter, setFilter] = useState<"all" | "ongoing" | "resolved">("all");
+  const [period, setPeriod] = useState<"week" | "day" | "month">("week");
+  const [search, setSearch] = useState("");
+
+  // Map filter to status for API
+  const getStatusFromFilter = (filter: string) => {
+    if (filter === "ongoing") return "Pending";
+    if (filter === "resolved") return "Resolved";
+    return ""; // all tickets
+  };
+
+  const { data, isLoading, error } = useGetAllSupportTicketsQuery({
+    page: 1,
+    limit: 100,
+    search: search,
+    status: getStatusFromFilter(filter),
+  });
 
   return (
     <div className="p-6 md:p-10 min-h-screen bg-white">
@@ -106,73 +108,117 @@ const SupportTickets: React.FC = () => {
       </div>
       {/* Ticket List */}
       <div className="flex flex-col gap-6">
-        {loading ? (
-          <div className="text-center py-10">Loading tickets...</div>
+        {isLoading ? (
+          // Skeleton placeholders while loading
+          <div className="space-y-4">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="rounded-2xl p-6 bg-white/30 shadow flex flex-col gap-4 animate-pulse"
+              >
+                <div className="flex justify-between items-start mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className={`w-3 h-3 rounded-full bg-gray-300`} />
+                    <div className="h-4 w-32 bg-gray-300 rounded" />
+                  </div>
+                  <div className="h-4 w-20 bg-gray-300 rounded" />
+                </div>
+                <div className="h-6 w-48 bg-gray-300 rounded" />
+                <div className="h-4 w-full bg-gray-200 rounded" />
+                <div className="flex items-center gap-2 mt-2">
+                  <div className="w-7 h-7 rounded-full bg-gray-300" />
+                  <div className="h-4 w-40 bg-gray-300 rounded" />
+                  <div className="ml-auto h-4 w-24 bg-gray-300 rounded" />
+                </div>
+              </div>
+            ))}
+          </div>
         ) : error ? (
-          <div className="text-center text-red-600 py-10">{error}</div>
-        ) : tickets.length === 0 ? (
+          <div className="text-center text-red-600 py-10">
+            {typeof error === "object" && "message" in error
+              ? (error as { message: string }).message
+              : "Failed to load tickets"}
+          </div>
+        ) : !data || data.data.length === 0 ? (
           <div className="text-center py-10 text-[#BDBDBD]">
             No tickets found.
           </div>
         ) : (
-          tickets.map((ticket) => (
-            <div
-              key={ticket.ticketNumber}
-              className="rounded-2xl p-6 bg-gradient-to-br from-[#F8EAEE] via-[#F9F6FB] to-[#F8EAEE] shadow flex flex-col gap-2 relative"
-            >
-              <div className="flex justify-between items-start mb-2">
-                <div className="flex items-center gap-2">
+          data.data.map((ticket) => {
+            // Map API status to UI status
+            const uiStatus =
+              ticket.Ticket_status === "Resolved" ? "resolved" : "ongoing";
+            const formattedDate = new Date(ticket.CreateAt).toLocaleTimeString(
+              [],
+              {
+                hour: "2-digit",
+                minute: "2-digit",
+              }
+            );
+
+            return (
+              <div
+                key={ticket.support_ticket_id}
+                className="rounded-2xl p-6 bg-linear-to-br from-[#F8EAEE] via-[#F9F6FB] to-[#F8EAEE] shadow flex flex-col gap-2 relative"
+              >
+                <div className="flex justify-between items-start mb-2">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`w-3 h-3 rounded-full ${
+                        statusColor[uiStatus] || "bg-[#007AFF]"
+                      }`}
+                    ></span>
+                    <span className="text-black font-medium text-base">
+                      Ticket# {ticket.support_ticket_id}
+                    </span>
+                  </div>
+                  <div className="text-black text-sm font-medium">
+                    Posted at {formattedDate}
+                  </div>
+                </div>
+                <div className="font-bold text-lg mb-1">
+                  Support Ticket #{ticket.support_ticket_id}
+                </div>
+                <div className="text-black/80 text-base mb-2 line-clamp-2">
+                  {ticket.question}
+                </div>
+                <div className="flex items-center gap-2 mt-2">
+                  <img
+                    src="/assets/profile/user.svg"
+                    alt="avatar"
+                    className="w-7 h-7 rounded-full"
+                  />
+                  <span className="text-black/80 font-semibold text-base">
+                    {ticket.Customer?.Name || "N/A"} -{" "}
+                    {ticket.Customer?.phone || "N/A"}
+                  </span>
                   <span
-                    className={`w-3 h-3 rounded-full ${
-                      statusColor[ticket.status] || "bg-[#007AFF]"
-                    }`}
-                  ></span>
-                  <span className="text-black font-medium text-base">
-                    Ticket# {ticket.ticketNumber}
+                    className="ml-auto text-primary-gradient font-semibold cursor-pointer"
+                    onClick={() =>
+                      navigate(`/settings/tickets/${ticket.support_ticket_id}`)
+                    }
+                  >
+                    Open Ticket
                   </span>
                 </div>
-                <div className="text-black text-sm font-medium">
-                  Posted at {ticket.postedAt}
+                <div className="absolute top-6 right-6 flex items-center gap-2">
+                  <button
+                    className={`flex items-center gap-2 px-4 py-1 rounded-lg font-semibold ${
+                      statusBtnColor[uiStatus] || "bg-[#007AFF] text-white"
+                    }`}
+                    style={{ minWidth: 110 }}
+                  >
+                    <img
+                      src={ongoingIconLight}
+                      alt="status"
+                      className="w-5 h-5"
+                    />
+                    {uiStatus === "resolved" ? "Resolved" : "On-Going"}
+                  </button>
                 </div>
               </div>
-              <div className="font-bold text-lg mb-1">{ticket.subject}</div>
-              <div className="text-black/80 text-base mb-2 line-clamp-2">
-                {ticket.message}
-              </div>
-              <div className="flex items-center gap-2 mt-2">
-                <img
-                  src={ticket.avatar}
-                  alt="avatar"
-                  className="w-7 h-7 rounded-full"
-                />
-                <span className="text-black/80 font-semibold text-base">
-                  {ticket.businessName}
-                </span>
-                <span
-                  className="ml-auto text-primary-gradient font-semibold cursor-pointer"
-                  onClick={() => navigate(`/settings/tickets/${ticket?.ticketNumber}`)}
-                  
-                >
-                  Open Ticket
-                </span>
-              </div>
-              <div className="absolute top-6 right-6 flex items-center gap-2">
-                <button
-                  className={`flex items-center gap-2 px-4 py-1 rounded-lg font-semibold ${
-                    statusBtnColor[ticket.status] || "bg-[#007AFF] text-white"
-                  }`}
-                  style={{ minWidth: 110 }}
-                >
-                  <img
-                    src={ongoingIconLight}
-                    alt="status"
-                    className="w-5 h-5"
-                  />
-                  {ticket.status === "resolved" ? "Resolved" : "On-Going"}
-                </button>
-              </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>
