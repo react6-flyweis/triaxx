@@ -10,13 +10,8 @@ import tableIcon from "@/assets/table_filled_icon.svg";
 import TrashIcon from "@/assets/Trash.svg";
 import { SuccessModal } from "@/components/common/SuccessModal";
 import successIcon from "@/assets/order/success_icon_large.svg";
-import { createOrder, updateOrder } from "@/api/orderApi";
-import type {
-  OrderStatus,
-  OrderType,
-  PaymentMethod,
-  PaymentStatus,
-} from "@/types/order";
+import { createOrder, updateOrder, createPOSOrder } from "@/api/orderApi";
+import type { OrderStatus } from "@/types/order";
 import OrderSummaryModal from "@/components/common/OrderSummaryModal";
 import PaymentModal from "@/components/common/PaymentModal";
 import { useWalkthroughStore } from "@/store/walkthroughStore";
@@ -31,6 +26,9 @@ import {
   useGetItemTypeByIdQuery,
 } from "@/redux/api/quickOrderSlice";
 import FloorSelector from "@/components/common/FloorSelector";
+import CustomerModal from "@/components/common/CustomerModal";
+import { createCustomer } from "@/api/customerApi";
+import type { CustomerFormData } from "@/types/customer";
 
 // NOTE: floor list is now fetched from the API via FloorSelector component
 
@@ -73,6 +71,8 @@ const Orders: React.FC = () => {
   const [showPaymentOptions, setShowPaymentOptions] = useState(false);
   const [showReadyToScan, setShowReadyToScan] = useState(false);
   const [showReadyToPay, setShowReadyToPay] = useState(false);
+  const [showCustomerModal, setShowCustomerModal] = useState(false);
+  const [customerLoading, setCustomerLoading] = useState(false);
 
   const selectedCategory = useWalkthroughUIStore((s) => s.selectedCategory);
   const setSelectedCategory = useWalkthroughUIStore(
@@ -347,6 +347,14 @@ const Orders: React.FC = () => {
 
   // Handle order action
   const handleOrderAction = async () => {
+    // Check if customer exists, if not show customer modal
+    if (!currentOrder?.customerId) {
+      console.log("[Order Action] No customer ID, showing customer modal");
+      setShowCustomerModal(true);
+      return;
+    }
+
+    // Proceed with normal flow
     if (hasKitchenItem) {
       setShowConfirmationModal(true);
     } else if (allCounter) {
@@ -357,43 +365,50 @@ const Orders: React.FC = () => {
   // Confirm order and call API
   const handleConfirmationContinue = async () => {
     if (!currentOrder) return;
+
+    // Check if customer ID exists
+    if (!currentOrder.customerId) {
+      alert("Customer information is required. Please add customer details.");
+      return;
+    }
+
     setOrderSending(true);
     try {
-      const now = new Date().toISOString();
-      const orderPayload = {
-        orderId: Date.now().toString(),
-        status: "Pending" as OrderStatus,
-        orderType: "Dine-In" as OrderType,
-        tableInfo: {
-          tableId: currentOrder.tableId,
-          floor: currentOrder.floor.toString(),
-          status: "Occupied",
-        },
-        waiterName: "John Doe",
-        pricingSummary: {
-          subtotal,
-          tax,
-          discount: 0,
-          serviceCharge: 0,
-          totalAmount: total,
-        },
-        paymentDetails: {
-          method: "Cash" as PaymentMethod,
-          status: "Unpaid" as PaymentStatus,
-        },
-        items: currentOrder.items,
-        createdAt: now,
-        updatedAt: now,
-        statusHistory: [{ status: "Pending" as OrderStatus, at: now }],
+      // Transform items to POS order format
+      const posOrderItems = currentOrder.items.map((item: any) => ({
+        item_id: parseInt(item.itemId),
+        item_Quentry: item.quantity || 1,
+        item_Addons_id:
+          item.addOns && item.addOns.length > 0
+            ? parseInt(item.addOns[0].id)
+            : undefined,
+        item_Variants_id: item.size ? 1 : undefined, // You may need to map size to variant ID
+      }));
+
+      // Create POS order request
+      const posOrderPayload = {
+        items: posOrderItems,
+        Tax: tax,
+        Customer_id: currentOrder.customerId,
+        Dining_Option: "Dine in",
+        Table_id: parseInt(currentOrder.tableId.replace("t-", "")),
+        Kitchen_id: 0,
+        Status: true,
       };
-      const result = await createOrder(orderPayload);
-      if (result && result.order && result.order.orderId) {
-        setCurrentOrderId(result.order.orderId);
+
+      console.log("Sending POS order:", posOrderPayload);
+      const result = await createPOSOrder(posOrderPayload);
+
+      if (result.success && result.data.Order_id) {
+        console.log("POS order created successfully:", result.data);
+        setCurrentOrderId(result.data.Order_id.toString());
       }
+
       setShowConfirmationModal(false);
       setShowOrderSentPanel(true);
-    } catch {
-      console.error("Failed to send order");
+    } catch (error) {
+      console.error("Failed to send order:", error);
+      alert("Failed to create order. Please try again.");
     } finally {
       setOrderSending(false);
     }
@@ -501,6 +516,60 @@ const Orders: React.FC = () => {
     setShowOrderSentPanel(true);
     next();
     navigate("/orders");
+  };
+
+  // Handle customer creation
+  const handleCustomerSubmit = async (customerData: CustomerFormData) => {
+    if (!currentOrder) {
+      console.error("No order in progress");
+      return;
+    }
+
+    if (!selectedTable) {
+      console.error("No table selected");
+      return;
+    }
+
+    setCustomerLoading(true);
+    try {
+      const response = await createCustomer({
+        phone: customerData.phone,
+        Name: customerData.name,
+        DOB: customerData.dob,
+        Customer_type_id: customerData.customerTypeId,
+        Table_id: parseInt(selectedTable.replace("t-", "")),
+      });
+
+      if (response.success && response.data.Customer_id) {
+        console.log("[Customer] Created successfully", {
+          customerId: response.data.Customer_id,
+        });
+
+        // Update the current order with customer ID
+        startOrder({
+          tableId: currentOrder.tableId,
+          floor: currentOrder.floor,
+          persons: currentOrder.persons,
+          customerId: response.data.Customer_id,
+        });
+
+        setShowCustomerModal(false);
+
+        // Now proceed with the order action
+        setTimeout(() => {
+          if (hasKitchenItem) {
+            setShowConfirmationModal(true);
+          } else if (allCounter) {
+            setShowOrderSentPanel(true);
+          }
+        }, 100);
+      }
+    } catch (error) {
+      console.error("Error creating customer:", error);
+      alert("Failed to create customer. Please try again.");
+    } finally {
+      setCustomerLoading(false);
+    }
   };
 
   // Walkthrough completion
@@ -1057,6 +1126,12 @@ const Orders: React.FC = () => {
         </div>
       </div>
       {/* Modals */}
+      <CustomerModal
+        open={showCustomerModal}
+        onClose={() => setShowCustomerModal(false)}
+        onSubmit={handleCustomerSubmit}
+        isLoading={customerLoading}
+      />
       <ItemDetailsModal
         open={showItemDetailsModal}
         item={modalItem}
@@ -1094,6 +1169,12 @@ const Orders: React.FC = () => {
           setShowOrderSummaryModal(false);
           setTimeout(() => setShowPaymentOptions(true), 200);
         }}
+      />
+      <CustomerModal
+        open={showCustomerModal}
+        onClose={() => setShowCustomerModal(false)}
+        onSubmit={handleCustomerSubmit}
+        isLoading={customerLoading}
       />
       <PaymentModal
         open={showPaymentOptions}
