@@ -71,6 +71,16 @@ interface UserResponse {
   data: User;
 }
 
+interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+}
+
+interface ChangePasswordResponse {
+  success: boolean;
+  message: string;
+}
+
 export const userApi = createApi({
   reducerPath: "userApi",
   baseQuery: fetchBaseQuery({
@@ -89,7 +99,17 @@ export const userApi = createApi({
     getUserByAuth: builder.query<UserResponse, void>({
       query: () => "/api/user/getbyauth",
     }),
+    changePassword: builder.mutation<
+      ChangePasswordResponse,
+      ChangePasswordRequest
+    >({
+      query: (credentials) => ({
+        url: "/api/user/change-password",
+        method: "PUT",
+        body: credentials,
+      }),
+    }),
   }),
 });
 
-export const { useGetUserByAuthQuery } = userApi;
+export const { useGetUserByAuthQuery, useChangePasswordMutation } = userApi;
