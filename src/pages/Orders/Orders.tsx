@@ -199,8 +199,24 @@ const Orders: React.FC = () => {
   // Handle pending customized item
   useEffect(() => {
     if (pendingCustomizedItem && selectedTable && currentOrder) {
+      console.log(
+        "[Orders] adding pendingCustomizedItem to currentOrder:",
+        pendingCustomizedItem
+      );
       addItemToOrder(pendingCustomizedItem);
       clearPendingCustomizedItem();
+      // If walkthrough is active and the current step is an order-item step,
+      // advance the walkthrough after the item is actually added.
+      const walkthrough = useWalkthroughStore.getState();
+      const step = walkthrough.steps[walkthrough.currentStep];
+      if (
+        walkthrough.isActive &&
+        (step?.selector === ".order-item-first" ||
+          step?.selector === ".order-item-second" ||
+          step?.selector === ".order-item-third")
+      ) {
+        walkthrough.next();
+      }
     }
   }, [pendingCustomizedItem, selectedTable, currentOrder]);
 
@@ -243,8 +259,23 @@ const Orders: React.FC = () => {
     }
   }, [location.state]);
 
-  // Dummy size check
-  const itemHasSize = () => true;
+  // Check if item has size or variants. We treat an item as having size
+  // options if the item has a 'size' property or if there's a 'variants' or
+  // 'sizes' property (depending on API). This prevents the walkthrough from
+  // skipping modal flows for items that need configuration.
+  const itemHasSize = (it?: any) => {
+    if (!it) return false;
+    // If API sends an array of variants or sizes with more than one option,
+    // show the size modal to allow explicit selection.
+    if (it.variants && Array.isArray(it.variants) && it.variants.length > 0)
+      return true;
+    if (it.sizes && Array.isArray(it.sizes) && it.sizes.length > 1) return true;
+    // Some APIs may use flags, or count fields
+    if (it.variantsCount && Number(it.variantsCount) > 0) return true;
+    if (it.sizesCount && Number(it.sizesCount) > 1) return true;
+    // else: a single 'size' string or default size should not trigger modal
+    return false;
+  };
 
   // Handle right panel click (table-first flow)
   const handleRightPanelClick = () => {
@@ -261,23 +292,66 @@ const Orders: React.FC = () => {
 
   // Handle item click (item-first flow)
   const handleAddToCart = (item: any) => {
+    console.log("[Orders] handleAddToCart invoked for item:", item?.itemId);
+    const walkthrough = useWalkthroughStore.getState();
     if (!currentOrder && !selectedTable && !showFloorPersonsPanel) {
       setTimeout(() => {
         setModalItem(item);
-        if (itemHasSize()) {
+        const showSizeModal = itemHasSize(item) || walkthrough.isActive; // Force size modal in walkthrough
+        console.log(
+          `[Orders] showSizeModal=${showSizeModal} itemHasSize=${itemHasSize(
+            item
+          )} walkthrough.isActive=${walkthrough.isActive}`
+        );
+        if (showSizeModal) {
           setShowItemDetailsModal(true);
         } else {
           setShowAddonsModal(true);
         }
         setShowFloorPersonsPanel(true);
+        // If in walkthrough order-item step, advance the walkthrough to highlight the modal/dialog
+        const step = walkthrough.steps[walkthrough.currentStep];
+        if (
+          walkthrough.isActive &&
+          (step?.selector === ".order-item-first" ||
+            step?.selector === ".order-item-second" ||
+            step?.selector === ".order-item-third")
+        ) {
+          // Advance to the next walkthrough step which should be the modal highlight
+          useWalkthroughStore.getState().next();
+        }
       }, 100);
       return;
     }
     setModalItem(item);
-    if (itemHasSize()) {
+    const showSizeModal = itemHasSize(item) || walkthrough.isActive; // Force size modal in walkthrough
+    console.log(
+      `[Orders] showSizeModal=${showSizeModal} itemHasSize=${itemHasSize(
+        item
+      )} walkthrough.isActive=${walkthrough.isActive}`
+    );
+    if (showSizeModal) {
       setShowItemDetailsModal(true);
+      const step = walkthrough.steps[walkthrough.currentStep];
+      if (
+        walkthrough.isActive &&
+        (step?.selector === ".order-item-first" ||
+          step?.selector === ".order-item-second" ||
+          step?.selector === ".order-item-third")
+      ) {
+        useWalkthroughStore.getState().next();
+      }
     } else {
       setShowAddonsModal(true);
+      const step = walkthrough.steps[walkthrough.currentStep];
+      if (
+        walkthrough.isActive &&
+        (step?.selector === ".order-item-first" ||
+          step?.selector === ".order-item-second" ||
+          step?.selector === ".order-item-third")
+      ) {
+        useWalkthroughStore.getState().next();
+      }
     }
   };
 
@@ -311,6 +385,8 @@ const Orders: React.FC = () => {
       }),
       notes: note,
     };
+    // Mark as confirmed so addItemToOrder during walkthrough will accept it
+    (customizedItem as any).confirmed = true;
     if (!currentOrder && !selectedTable) {
       setPendingCustomizedItem(customizedItem);
       setShowAddonsModal(false);
@@ -318,12 +394,29 @@ const Orders: React.FC = () => {
       setModalSize("M");
       return;
     }
+    console.log(
+      "[Orders] handleAddonsSave: adding customizedItem:",
+      customizedItem
+    );
     addItemToOrder(customizedItem);
     setFeedback(`${modalItem.name} added to order!`);
     setTimeout(() => setFeedback(""), 1200);
     setShowAddonsModal(false);
     setModalItem(null);
     setModalSize("M");
+    // Advance walkthrough if active - we finished adding an item via
+    // the modals while in a walkthrough.
+    const walkthrough = useWalkthroughStore.getState();
+    const step = walkthrough.steps[walkthrough.currentStep];
+    if (
+      walkthrough.isActive &&
+      (step?.selector === ".order-item-first" ||
+        step?.selector === ".order-item-second" ||
+        step?.selector === ".order-item-third" ||
+        step?.selector === ".addons-save-btn")
+    ) {
+      walkthrough.next();
+    }
   };
 
   // Order summary helpers
@@ -351,6 +444,16 @@ const Orders: React.FC = () => {
     if (!currentOrder?.customerId) {
       console.log("[Order Action] No customer ID, showing customer modal");
       setShowCustomerModal(true);
+      // Advance walkthrough if it expects the customer modal next
+      const walkthrough = useWalkthroughStore.getState();
+      const step = walkthrough.steps[walkthrough.currentStep];
+      if (
+        walkthrough.isActive &&
+        (step?.selector === ".send-to-kitchen-btn" ||
+          step?.selector === ".order-summary-panel")
+      ) {
+        walkthrough.next();
+      }
       return;
     }
 
@@ -555,6 +658,17 @@ const Orders: React.FC = () => {
 
         setShowCustomerModal(false);
 
+        // Advance walkthrough if active and pointing to the create customer step
+        const walkthrough = useWalkthroughStore.getState();
+        const step = walkthrough.steps[walkthrough.currentStep];
+        if (
+          walkthrough.isActive &&
+          (step?.selector === ".customer-modal" ||
+            step?.selector === ".create-customer-btn")
+        ) {
+          walkthrough.next();
+        }
+
         // Now proceed with the order action
         setTimeout(() => {
           if (hasKitchenItem) {
@@ -652,8 +766,10 @@ const Orders: React.FC = () => {
                         step?.selector === ".order-item-second" ||
                         step?.selector === ".order-item-third")
                     ) {
-                      addItemToOrder({ ...item, quantity: 1 });
-                      walkthrough.next();
+                      // During walkthrough, don't bypass the normal user flow.
+                      // Force opening the item details/addons flow so the user
+                      // has to confirm size/addons before the item is added.
+                      handleAddToCart(item);
                       return;
                     }
                     handleAddToCart(item);
@@ -1040,7 +1156,7 @@ const Orders: React.FC = () => {
                     (item: any) => item.itemType !== "Beverage"
                   ) && (
                     <button
-                      className="w-full py-2 text-lg font-semibold bg-green-500 text-white shadow hover:opacity-90 transition-all"
+                      className="send-to-kitchen-btn w-full py-2 text-lg font-semibold bg-green-500 text-white shadow hover:opacity-90 transition-all"
                       onClick={handleOrderAction}
                     >
                       Send to Kitchen
@@ -1126,12 +1242,6 @@ const Orders: React.FC = () => {
         </div>
       </div>
       {/* Modals */}
-      <CustomerModal
-        open={showCustomerModal}
-        onClose={() => setShowCustomerModal(false)}
-        onSubmit={handleCustomerSubmit}
-        isLoading={customerLoading}
-      />
       <ItemDetailsModal
         open={showItemDetailsModal}
         item={modalItem}
@@ -1139,7 +1249,36 @@ const Orders: React.FC = () => {
         onSelect={(size) => {
           setModalSize(size);
           setShowItemDetailsModal(false);
-          setTimeout(() => setShowAddonsModal(true), 100);
+          const walkthrough = useWalkthroughStore.getState();
+          const step = walkthrough.steps[walkthrough.currentStep];
+          if (
+            walkthrough.isActive &&
+            (step?.selector === ".order-item-first" ||
+              step?.selector === ".order-item-second" ||
+              step?.selector === ".order-item-third" ||
+              (typeof step?.selector === "string" &&
+                (step.selector.includes(".item-size-option") ||
+                  step.selector.includes(".item-size-options"))))
+          ) {
+            // Advance to highlight add button inside size modal
+            useWalkthroughStore.getState().next();
+          }
+          setTimeout(() => {
+            setShowAddonsModal(true);
+            // Advance walkthrough to highlight Addons modal
+            const walkthrough2 = useWalkthroughStore.getState();
+            const step2 = walkthrough2.steps[walkthrough2.currentStep];
+            if (
+              walkthrough2.isActive &&
+              ((typeof step2?.selector === "string" &&
+                step2.selector.includes(".item-size-add-btn")) ||
+                (typeof step2?.selector === "string" &&
+                  (step2.selector.includes(".item-size-option") ||
+                    step2.selector.includes(".item-size-options"))))
+            ) {
+              useWalkthroughStore.getState().next();
+            }
+          }, 100);
         }}
       />
       <AddonsModal
