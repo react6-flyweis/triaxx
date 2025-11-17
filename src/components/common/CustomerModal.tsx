@@ -98,7 +98,7 @@ const CustomerModal: React.FC<CustomerModalProps> = ({
         className="absolute inset-0 bg-[rgba(0,0,0,0.15)] backdrop-blur-sm"
         onClick={handleClose}
       />
-      <div className="bg-white rounded-2xl w-[400px] max-w-[90%] shadow-xl overflow-hidden relative z-10">
+      <div className="bg-white rounded-2xl w-[400px] max-w-[90%] shadow-xl overflow-hidden relative z-10  customer-modal">
         {/* Header */}
         <div className="bg-gradient-to-r from-[#6A1B9A] to-[#D32F2F] p-4 text-white rounded-t-2xl">
           <div className="text-xl font-bold">Customer Information</div>
@@ -213,7 +213,7 @@ const CustomerModal: React.FC<CustomerModalProps> = ({
             <button
               type="submit"
               disabled={isLoading}
-              className="flex-1 py-3 rounded-lg text-base font-semibold text-white bg-gradient-to-r from-[#6A1B9A] to-[#D32F2F] shadow-md hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="create-customer-btn flex-1 py-3 rounded-lg text-base font-semibold text-white bg-gradient-to-r from-[#6A1B9A] to-[#D32F2F] shadow-md hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? "Creating..." : "Create Customer"}
             </button>
