@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useWalkthroughStore } from "@/store/walkthroughStore";
 import type { OrderItem } from "@/types/order";
 import { useGetItemAddonsQuery } from "@/redux/api/apiSlice";
 import type { ItemAddon } from "@/types/addon";
@@ -22,6 +23,7 @@ const AddonsModal: React.FC<AddonsModalProps> = ({
   onClose,
   onSave,
 }) => {
+  const isWalkthroughActive = useWalkthroughStore((s) => s.isActive);
   const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
   const [note, setNote] = useState("");
   const { data: addonsResp, isLoading, isError } = useGetItemAddonsQuery();
@@ -31,6 +33,7 @@ const AddonsModal: React.FC<AddonsModalProps> = ({
     if (open) {
       setSelectedAddons([]);
       setNote("");
+      console.log("[AddonsModal] open for item:", item?.itemId);
     }
   }, [open, item]);
 
@@ -49,13 +52,14 @@ const AddonsModal: React.FC<AddonsModalProps> = ({
           ? "opacity-100 pointer-events-auto"
           : "opacity-0 pointer-events-none"
       }`}
+      style={{ zIndex: isWalkthroughActive ? 11000 : undefined }}
     >
       <div
         className="absolute inset-0 bg-[rgba(0,0,0,0.15)] backdrop-blur-sm"
         onClick={onClose}
       />
       {open && item && (
-        <div className="bg-white rounded-2xl w-[400px] max-w-full shadow-xl overflow-hidden relative z-10">
+        <div className="bg-white rounded-2xl w-[400px] max-w-full shadow-xl overflow-hidden relative z-10 addons-modal">
           {/* Header */}
           <div
             className="rounded-t-2xl py-4 px-6  text-black text-left"
@@ -87,7 +91,7 @@ const AddonsModal: React.FC<AddonsModalProps> = ({
                 noPriceAddons.map((addon) => (
                   <label
                     key={addon._id}
-                    className="flex items-center gap-2 cursor-pointer text-base font-normal"
+                    className="flex items-center gap-2 cursor-pointer text-base font-normal addon-item"
                   >
                     <input
                       type="checkbox"
@@ -116,7 +120,7 @@ const AddonsModal: React.FC<AddonsModalProps> = ({
                 withPriceAddons.map((addon) => (
                   <label
                     key={addon._id}
-                    className="flex items-center gap-2 cursor-pointer text-base font-normal"
+                    className="flex items-center gap-2 cursor-pointer text-base font-normal addon-item"
                   >
                     <input
                       type="checkbox"
@@ -156,8 +160,14 @@ const AddonsModal: React.FC<AddonsModalProps> = ({
           {/* Save button remains as is */}
           <div className="px-8 pb-8 pt-2 bg-white">
             <button
-              className="w-full py-3 rounded-xl text-lg font-semibold text-white bg-gradient-to-b from-[#6A1B9A] to-[#D32F2F] shadow-md hover:opacity-90 transition-all"
+              className="w-full py-3 rounded-xl text-lg font-semibold text-white bg-gradient-to-b from-[#6A1B9A] to-[#D32F2F] shadow-md hover:opacity-90 transition-all addons-save-btn"
               onClick={() => {
+                console.log(
+                  "[AddonsModal] onSave clicked with addons:",
+                  selectedAddons,
+                  "note:",
+                  note
+                );
                 onSave({ addons: selectedAddons, note });
                 onClose();
               }}
