@@ -7,7 +7,7 @@ import eyeIcon from "@/assets/eye_icon.svg";
 import { useNavigate, useLocation } from "react-router-dom";
 import chefImg from "@/assets/chef.svg";
 import { useWalkthroughStore } from "@/store/walkthroughStore";
-import { useAuthStore } from "@/store/zustandStores";
+import { logoutAll } from "@/services/authHelpers";
 import { useChangePasswordMutation } from "@/redux/api/userApi";
 
 interface User {
@@ -44,7 +44,9 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
   forceWorkTab,
   user,
 }) => {
-  const logout = useAuthStore((state) => state.logout);
+  const logout = () => {
+    logoutAll();
+  };
   const navigate = useNavigate();
   const location = useLocation();
   const { isActive, activeTraining, steps, currentStep, complete } =
