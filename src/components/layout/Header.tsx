@@ -1,5 +1,6 @@
 import React from "react";
-import { useStore } from "@/store/zustandStores";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/redux/store";
 import { useNavigate } from "react-router-dom";
 
 import HamburgerIcon from "@/assets/navbar/hamburger_menu.svg";
@@ -12,7 +13,7 @@ import { useWalkthroughStore } from "@/store/walkthroughStore";
 // import UserAvatar from '@/assets/navbar/profile_icon.svg';
 
 const Header: React.FC = () => {
-  const user = useStore((state) => state.user);
+  const user = useSelector((state: RootState) => state.auth.user);
   const navigate = useNavigate();
 
   return (
@@ -56,16 +57,16 @@ const Header: React.FC = () => {
         <div
           className="profile-btn flex items-center gap-3 pl-2 pr-4 py-2 rounded-full bg-[linear-gradient(180deg,rgba(106,27,154,0.1)_0%,rgba(211,47,47,0.1)_100%)] cursor-pointer"
           onClick={() => {
-              useWalkthroughStore.getState().next();
+            useWalkthroughStore.getState().next();
             navigate("/profile");
           }}
         >
           <img
-            src={user?.profilePic}
+            src={user?.user_image}
             alt="User Avatar"
             className="h-8 w-8 rounded-full bg-white p-1"
           />
-          <span className="font-medium">{user?.name}</span>
+          <span className="font-medium">{user?.Name}</span>
         </div>
       </div>
     </header>
