@@ -1,11 +1,13 @@
 import React, { useEffect } from "react";
-import { useStore } from "@/store/zustandStores";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/redux/store";
 import clockIcon from "@/assets/profile/clock_icon2.svg";
-import rolesIcon from '@/assets/profile/user_icon_light.svg';
-import orderServedIcon from '@/assets/profile/total_earninig.svg'
-import { useNavigate } from 'react-router-dom';
-import backIcon from '@/assets/back.svg';
-import notificationIcon from '@/assets/profile/notification_light.svg';
+import rolesIcon from "@/assets/profile/user_icon_light.svg";
+import orderServedIcon from "@/assets/profile/total_earninig.svg";
+import { useNavigate } from "react-router-dom";
+import backIcon from "@/assets/back.svg";
+import notificationIcon from "@/assets/profile/notification_light.svg";
+import { useStore } from "@/store/zustandStores";
 
 interface WorkSummaryProps {
   layout: "desktop" | "mobile";
@@ -100,7 +102,10 @@ const WeeklyBarChart = ({
                   : "#00000099",
               }}
             ></div>
-            <span className="text-xs text-[#000] font-semibold mt-1" style={{ opacity: 0.7 }}>
+            <span
+              className="text-xs text-[#000] font-semibold mt-1"
+              style={{ opacity: 0.7 }}
+            >
               {dayLabels[idx]}
             </span>
           </div>
@@ -111,7 +116,8 @@ const WeeklyBarChart = ({
 };
 
 const WorkSummary: React.FC<WorkSummaryProps> = ({ layout }) => {
-  const user = useStore((state) => state.user);
+  const user = useSelector((state: RootState) => state.auth.user);
+  // Keep workSummary as zustand-local state for now
   const workSummary = useStore((state) => state.workSummary);
   const fetchWorkSummary = useStore((state) => state.fetchWorkSummary);
   const navigate = useNavigate();
@@ -128,11 +134,10 @@ const WorkSummary: React.FC<WorkSummaryProps> = ({ layout }) => {
   }
 
   useEffect(() => {
-     if (!user) return
-    if (!workSummary ) {
+    if (!workSummary) {
       fetchWorkSummary();
     }
-  }, [workSummary, fetchWorkSummary, user?.employeeId]);
+  }, [workSummary, fetchWorkSummary, user?.Employee_id, user]);
 
   if (!workSummary) {
     return <div className="text-center py-10">Loading work summary...</div>;
@@ -146,16 +151,33 @@ const WorkSummary: React.FC<WorkSummaryProps> = ({ layout }) => {
     <div className=" pt-0 ">
       {/* Mobile Header */}
       <div className="md:hidden block mb-4">
-        <div className="relative w-full h-20" style={{background: "linear-gradient(90deg, #D32F2F 0%, #6A1B9A 100%)"}}>
+        <div
+          className="relative w-full h-20"
+          style={{
+            background: "linear-gradient(90deg, #D32F2F 0%, #6A1B9A 100%)",
+          }}
+        >
           <div className="flex items-center justify-between px-4 pt-6">
             <div className="flex gap-4">
-              <button className="text-white text-2xl" onClick={() => navigate(-1)}>
+              <button
+                className="text-white text-2xl"
+                onClick={() => navigate(-1)}
+              >
                 <img src={backIcon} alt="Back" className="w-6 h-6" />
               </button>
-              <span className="text-white text-2xl font-bold text-left">Work Summary</span>
+              <span className="text-white text-2xl font-bold text-left">
+                Work Summary
+              </span>
             </div>
-            <button onClick={() => navigate('/notifications')}  className="focus:outline-none text-white">
-              <img src={notificationIcon} alt="Notifications" className="w-8 h-8" />
+            <button
+              onClick={() => navigate("/notifications")}
+              className="focus:outline-none text-white"
+            >
+              <img
+                src={notificationIcon}
+                alt="Notifications"
+                className="w-8 h-8"
+              />
             </button>
           </div>
         </div>
@@ -166,10 +188,7 @@ const WorkSummary: React.FC<WorkSummaryProps> = ({ layout }) => {
       </div>
       <div className={containerClass}>
         {/* Today's Progress (Circular Progress) */}
-        <div
-          className="rounded-2xl p-6 flex flex-col items-center min-w-[260px] min-h-[260px] relative bg-[linear-gradient(180deg,rgba(106,27,154,0.1)_0%,rgba(211,47,47,0.1)_100%)]"
-         
-        >
+        <div className="rounded-2xl p-6 flex flex-col items-center min-w-[260px] min-h-[260px] relative bg-[linear-gradient(180deg,rgba(106,27,154,0.1)_0%,rgba(211,47,47,0.1)_100%)]">
           <div className="mb-2 font-bold text-lg text-[#000]">
             Today's Progress
           </div>
@@ -194,15 +213,24 @@ const WorkSummary: React.FC<WorkSummaryProps> = ({ layout }) => {
           <WeeklyBarChart data={workSummary.weekly} />
         </div>
         {/* Last three cards together in a row for desktop */}
-        {layout === 'desktop' ? (
+        {layout === "desktop" ? (
           <div className="col-span-1 flex flex-col gap-4 w-full">
             <div className="bg-[linear-gradient(180deg,rgba(106,27,154,0.1)_0%,rgba(211,47,47,0.1)_100%)] rounded-2xl p-5 flex flex-col min-w-[260px] min-h-[120px]">
               <div className="flex items-center gap-2 mb-1 ">
-                <img src={rolesIcon} alt="icon" className="w-7 h-7 bg-primary-gradient p-1 rounded-lg" />
+                <img
+                  src={rolesIcon}
+                  alt="icon"
+                  className="w-7 h-7 bg-primary-gradient p-1 rounded-lg"
+                />
                 <span className="font-bold text-lg">Total Customer</span>
-                <span className="text-green-600 text-xs font-semibold ml-2">+{workSummary.growthPercent}% <span className="inline-block align-middle">↑</span></span>
+                <span className="text-green-600 text-xs font-semibold ml-2">
+                  +{workSummary.growthPercent}%{" "}
+                  <span className="inline-block align-middle">↑</span>
+                </span>
               </div>
-              <div className="text-xl font-bold mb-1 text-primary-gradient">{workSummary.totalCustomers}</div>
+              <div className="text-xl font-bold mb-1 text-primary-gradient">
+                {workSummary.totalCustomers}
+              </div>
               <div className="flex flex-wrap gap-2 text-sm mt-2">
                 <span className="font-bold text-black/80">• Total</span>
                 <span className="text-black/60">• morning</span>
@@ -213,13 +241,27 @@ const WorkSummary: React.FC<WorkSummaryProps> = ({ layout }) => {
             </div>
             <div className="flex gap-4 mt-4">
               {[1, 2].map((_, idx) => (
-                <div key={idx} className="bg-[linear-gradient(180deg,rgba(106,27,154,0.1)_0%,rgba(211,47,47,0.1)_100%)] rounded-2xl p-5 flex flex-col min-w-[180px] min-h-[120px]">
+                <div
+                  key={idx}
+                  className="bg-[linear-gradient(180deg,rgba(106,27,154,0.1)_0%,rgba(211,47,47,0.1)_100%)] rounded-2xl p-5 flex flex-col min-w-[180px] min-h-[120px]"
+                >
                   <div className="flex items-center gap-2 mb-1">
-                    <img src={orderServedIcon} alt="icon" className="w-6 h-6 bg-primary-gradient p-0.5 rounded-lg" />
-                    <span className="text-green-600 text-xs font-semibold">+{workSummary.growthPercent}% <span className="inline-block align-middle">↑</span></span>
+                    <img
+                      src={orderServedIcon}
+                      alt="icon"
+                      className="w-6 h-6 bg-primary-gradient p-0.5 rounded-lg"
+                    />
+                    <span className="text-green-600 text-xs font-semibold">
+                      +{workSummary.growthPercent}%{" "}
+                      <span className="inline-block align-middle">↑</span>
+                    </span>
                   </div>
-                  <div className="text-xl font-bold mb-1 text-primary-gradient">{workSummary.totalOrdersServed}</div>
-                  <div className="text-sm font-semibold">Total order Served</div>
+                  <div className="text-xl font-bold mb-1 text-primary-gradient">
+                    {workSummary.totalOrdersServed}
+                  </div>
+                  <div className="text-sm font-semibold">
+                    Total order Served
+                  </div>
                 </div>
               ))}
             </div>
@@ -229,12 +271,21 @@ const WorkSummary: React.FC<WorkSummaryProps> = ({ layout }) => {
             {/* Total Customer Today */}
             <div className="bg-[linear-gradient(180deg,rgba(106,27,154,0.1)_0%,rgba(211,47,47,0.1)_100%)] rounded-2xl px-5 py-4 flex flex-col min-w-[220px] min-h-[100px] shadow-sm">
               <div className="flex items-center gap-3 mb-1">
-                <img src={rolesIcon} alt="icon" className="w-7 h-7 bg-primary-gradient p-1 rounded-lg" />
+                <img
+                  src={rolesIcon}
+                  alt="icon"
+                  className="w-7 h-7 bg-primary-gradient p-1 rounded-lg"
+                />
                 <span className="font-bold text-lg">Total Customer Today</span>
               </div>
               <div className="flex items-center gap-2 mt-1">
-                <span className="text-lg font-bold text-primary-gradient">{workSummary.totalCustomers}</span>
-                <span className="text-green-600 text-xs font-semibold">+{workSummary.growthPercent}% <span className="inline-block align-middle">↑</span></span>
+                <span className="text-lg font-bold text-primary-gradient">
+                  {workSummary.totalCustomers}
+                </span>
+                <span className="text-green-600 text-xs font-semibold">
+                  +{workSummary.growthPercent}%{" "}
+                  <span className="inline-block align-middle">↑</span>
+                </span>
               </div>
               <div className="flex flex-wrap gap-2 text-sm mt-2">
                 <span className="font-bold text-black/80">• Total</span>
@@ -246,12 +297,21 @@ const WorkSummary: React.FC<WorkSummaryProps> = ({ layout }) => {
             {/* Total Order Served Today */}
             <div className="bg-[linear-gradient(180deg,rgba(106,27,154,0.1)_0%,rgba(211,47,47,0.1)_100%)] rounded-2xl px-5 py-4 flex flex-col min-w-[220px] min-h-[100px] shadow-sm">
               <div className="flex items-center gap-3 mb-1">
-                <img src={orderServedIcon} alt="icon" className="w-7 h-7 bg-primary-gradient p-1 rounded-lg" />
+                <img
+                  src={orderServedIcon}
+                  alt="icon"
+                  className="w-7 h-7 bg-primary-gradient p-1 rounded-lg"
+                />
                 <span className="font-bold text-lg">Total Customer Today</span>
               </div>
               <div className="flex items-center gap-2 mt-1">
-                <span className="text-lg font-bold text-primary-gradient">{workSummary.totalCustomers}</span>
-                <span className="text-green-600 text-xs font-semibold">+{workSummary.growthPercent}% <span className="inline-block align-middle">↑</span></span>
+                <span className="text-lg font-bold text-primary-gradient">
+                  {workSummary.totalCustomers}
+                </span>
+                <span className="text-green-600 text-xs font-semibold">
+                  +{workSummary.growthPercent}%{" "}
+                  <span className="inline-block align-middle">↑</span>
+                </span>
               </div>
               {/* <div className="flex flex-wrap gap-2 text-sm mt-2">
                 <span className="font-bold text-black/80">• Total</span>
@@ -263,12 +323,21 @@ const WorkSummary: React.FC<WorkSummaryProps> = ({ layout }) => {
             {/* Total Tips Earned */}
             <div className="bg-[linear-gradient(180deg,rgba(106,27,154,0.1)_0%,rgba(211,47,47,0.1)_100%)] rounded-2xl px-5 py-4 flex flex-col min-w-[220px] min-h-[100px] shadow-sm">
               <div className="flex items-center gap-3 mb-1">
-                <img src={orderServedIcon} alt="icon" className="w-7 h-7 bg-primary-gradient p-1 rounded-lg" />
+                <img
+                  src={orderServedIcon}
+                  alt="icon"
+                  className="w-7 h-7 bg-primary-gradient p-1 rounded-lg"
+                />
                 <span className="font-bold text-lg">Total Tips Earned</span>
               </div>
               <div className="flex items-center gap-2 mt-1">
-                <span className="text-lg font-bold text-primary-gradient">{workSummary.totalTips}</span>
-                <span className="text-green-600 text-xs font-semibold">+{workSummary.growthPercent}% <span className="inline-block align-middle">↑</span></span>
+                <span className="text-lg font-bold text-primary-gradient">
+                  {workSummary.totalTips}
+                </span>
+                <span className="text-green-600 text-xs font-semibold">
+                  +{workSummary.growthPercent}%{" "}
+                  <span className="inline-block align-middle">↑</span>
+                </span>
               </div>
             </div>
           </div>
