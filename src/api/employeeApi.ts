@@ -4,6 +4,7 @@
 
 // import api from './axios';
 import setCookie from "@/utils/setCookie";
+import api from "@/api/axios";
 
 export interface EmployeeLoginPayload {
   employeeId: string;
@@ -208,6 +209,32 @@ export async function fetchEmployeeWorkSummary(
       S2: 2400,
     },
   };
+}
+
+// Fetch weekly orders summary for an employee from the backend
+export async function fetchEmployeeWeeklyOrders(
+  employeeId: string | number
+): Promise<{
+  week_range?: { start: string; end: string };
+  filter?: { employee_id: string | number };
+  chart?: { [day: string]: { day: string; orders: number } };
+  employees?: unknown[];
+  total_orders?: number;
+  summary?: {
+    totalCustomer?: number;
+    totalOrderServed?: number;
+    todayWorkingHour?: number;
+  };
+}> {
+  try {
+    const res = await api.get("/api/employee/order_history/weeklysummary", {
+      params: { employee_id: employeeId },
+    });
+    return res.data?.data ?? {};
+  } catch (error) {
+    console.error("fetchEmployeeWeeklyOrders error:", error);
+    return {};
+  }
 }
 
 // Get current employee's performance metrics
