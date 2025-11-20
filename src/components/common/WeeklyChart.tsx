@@ -1,5 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { fetchWeeklySummary } from "@/api/orderApi";
+import React, { useMemo, useState, useEffect } from "react";
 import {
   BarChart,
   Bar,
@@ -21,7 +20,7 @@ const dayLabels = ["S", "M", "T", "W", "T", "F", "S"];
 const WeeklyChart: React.FC<{
   employeeId?: number | string;
   initialData?: ChartData | LooseChartData;
-}> = ({ employeeId, initialData }) => {
+}> = ({ initialData }) => {
   const normalize = (d?: ChartData | LooseChartData): ChartData => {
     const base: ChartData = {
       S: { day: "Sunday", orders: 0 },
@@ -50,26 +49,16 @@ const WeeklyChart: React.FC<{
   );
   const [loading, setLoading] = useState<boolean>(!initialData);
 
+  // Update chart data if initialData prop changes (e.g., fetched by parent after mount)
   useEffect(() => {
-    let mounted = true;
-    const fetchData = async () => {
-      if (!employeeId) return;
+    if (initialData) {
+      setData(normalize(initialData));
+      setLoading(false);
+    } else {
+      setData(null);
       setLoading(true);
-      try {
-        const chart = await fetchWeeklySummary(employeeId!);
-        if (mounted && chart) setData(normalize(chart));
-      } catch {
-        // keep existing data
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    };
-    // Only fetch fresh data if no initial data was provided
-    if (!initialData && employeeId) fetchData();
-    return () => {
-      mounted = false;
-    };
-  }, [employeeId, initialData]);
+    }
+  }, [initialData]);
 
   const todayIndex = new Date().getDay(); // 0 = Sunday, 6 = Saturday mapped to days array order
 
