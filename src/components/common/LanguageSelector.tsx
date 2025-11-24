@@ -1,21 +1,26 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useGetLanguagesQuery } from "@/redux/api/apiSlice";
+import i18n from "@/i18n";
 import DownArrowIcon from "@/assets/header/down_arrow.svg";
 import AmericaFlag from "@/assets/flag/america.svg";
 
 interface LanguageItem {
-  _id: string;
-  Language_name: string;
-  Status: boolean;
-  Language_id?: number;
+  code: string;
+  name: string;
 }
 
+import FranceFlag from "@/assets/flag/france.svg";
+
 const FLAG_MAP: Record<string, string> = {
-  English: AmericaFlag,
-  // add more mappings if needed (e.g. French: FranceFlag)
+  en: AmericaFlag,
+  fr: FranceFlag,
 };
 
 const STORAGE_KEY = "selectedLanguage";
+
+const SUPPORTED_LANGUAGES: LanguageItem[] = [
+  { code: "en", name: "English" },
+  { code: "fr", name: "Français" },
+];
 
 interface Props {
   // Optional className to override the trigger element (language pill) styles
@@ -27,57 +32,47 @@ const LanguageSelector: React.FC<Props> = ({
   triggerClassName = "",
   containerClassName = "",
 }) => {
-  const { data, isLoading, isError } = useGetLanguagesQuery();
-  const languages = data?.data ?? [];
+  // use a local supported language list rather than calling the backend
+  const languages = useMemo(() => SUPPORTED_LANGUAGES, []);
 
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<LanguageItem | null>(null);
 
   // Initialize from localStorage or server/user default
   useEffect(() => {
+    // initialize selected language code from localStorage or i18n language
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
-        const parsed = JSON.parse(raw) as LanguageItem;
-        setSelected(parsed);
+        const parsedCode = raw as string;
+        const found =
+          languages.find((l) => l.code === parsedCode) ?? languages[0];
+        setSelected(found);
+        i18n.changeLanguage(found.code).catch(() => {});
         return;
       }
     } catch {
-      // ignore parse errors
+      // ignore
     }
 
-    if (languages && languages.length > 0) {
-      // choose saved available language or first
-      setSelected((prev) => prev ?? languages[0]);
-    }
+    // fall back to i18n language or first supported lang
+    const current = i18n.language ? i18n.language.split("-")[0] : "en";
+    const found = languages.find((l) => l.code === current) ?? languages[0];
+    setSelected(found || null);
   }, [languages]);
 
   useEffect(() => {
     if (selected) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(selected));
+      localStorage.setItem(STORAGE_KEY, selected.code);
     }
   }, [selected]);
 
   const displayFlag = useMemo(() => {
     if (!selected) return undefined;
-    return FLAG_MAP[selected.Language_name] ?? undefined;
+    return FLAG_MAP[selected.code] ?? undefined;
   }, [selected]);
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-[linear-gradient(180deg,rgba(106,27,154,0.1)_0%,rgba(211,47,47,0.1)_100%)] cursor-pointer">
-        <span className="font-medium">Loading…</span>
-      </div>
-    );
-  }
-
-  if (isError || !data) {
-    return (
-      <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-[linear-gradient(180deg,rgba(106,27,154,0.1)_0%,rgba(211,47,47,0.1)_100%)] cursor-pointer">
-        <span className="font-medium">Language</span>
-      </div>
-    );
-  }
+  // No remote fetch — always render the selector for supported languages
 
   return (
     <div className={`relative ${containerClassName}`}>
@@ -87,16 +82,16 @@ const LanguageSelector: React.FC<Props> = ({
         aria-haspopup="listbox"
         aria-expanded={open}
       >
-        <span className="font-medium">{selected?.Language_name ?? "—"}</span>
+        <span className="font-medium">{selected?.name ?? "—"}</span>
         {displayFlag ? (
           <img
             src={displayFlag}
-            alt={`${selected?.Language_name} flag`}
+            alt={`${selected?.name} flag`}
             className="h-4 w-6 rounded-sm"
           />
         ) : (
           <div className="h-4 w-6 rounded-sm flex items-center justify-center bg-white text-xs">
-            {selected?.Language_name?.slice(0, 2).toUpperCase()}
+            {selected?.name?.slice(0, 2).toUpperCase()}
           </div>
         )}
         <img src={DownArrowIcon} alt="Dropdown" className="h-3 w-3" />
@@ -109,29 +104,30 @@ const LanguageSelector: React.FC<Props> = ({
         >
           {languages.map((lang) => (
             <li
-              key={lang._id}
+              key={lang.code}
               role="option"
-              aria-selected={selected?._id === lang._id}
+              aria-selected={selected?.code === lang.code}
               className={`flex items-center gap-3 px-3 py-2 cursor-pointer hover:bg-gray-100 ${
-                selected?._id === lang._id ? "bg-gray-100 font-medium" : ""
+                selected?.code === lang.code ? "bg-gray-100 font-medium" : ""
               }`}
               onClick={() => {
                 setSelected(lang);
                 setOpen(false);
+                i18n.changeLanguage(lang.code).catch(() => {});
               }}
             >
-              {FLAG_MAP[lang.Language_name] ? (
+              {FLAG_MAP[lang.code] ? (
                 <img
-                  src={FLAG_MAP[lang.Language_name]}
+                  src={FLAG_MAP[lang.code]}
                   alt="flag"
                   className="h-4 w-6 rounded-sm"
                 />
               ) : (
                 <div className="h-4 w-6 rounded-sm flex items-center justify-center bg-[#f3f4f6] text-xs">
-                  {lang.Language_name.slice(0, 2).toUpperCase()}
+                  {lang.name.slice(0, 2).toUpperCase()}
                 </div>
               )}
-              <span>{lang.Language_name}</span>
+              <span>{lang.name}</span>
             </li>
           ))}
         </ul>
