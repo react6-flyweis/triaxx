@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import backIcon from "@/assets/back.svg";
 import notificationIcon from "@/assets/profile/notification_light.svg";
 import { useGetEmployeeWeeklyOrdersQuery } from "@/redux/api/employeeApi";
+import { useTranslation } from "react-i18next";
 
 interface WorkSummaryProps {
   layout: "desktop" | "mobile";
@@ -19,6 +20,7 @@ interface WorkSummaryProps {
 // Today's progress extracted into `src/components/common/TodayProgress.tsx`
 
 const WorkSummary: React.FC<WorkSummaryProps> = ({ layout }) => {
+  const { t } = useTranslation();
   const user = useSelector((state: RootState) => state.auth.user);
   const navigate = useNavigate();
   // Use RTK Query weekly summary for chart + progress
@@ -37,12 +39,12 @@ const WorkSummary: React.FC<WorkSummaryProps> = ({ layout }) => {
   // No manual fetch/useEffect anymore — RTK Query handles data fetching, caching and re-fetching
 
   const formatHours = (h: number) => {
-    if (!h) return "00:00 hrs";
+    if (!h) return `00:00 ${t("workSummary.timeHoursSuffix", "hrs")}`;
     const hours = Math.floor(h);
     const minutes = Math.round((h - hours) * 60);
     const mm = String(minutes).padStart(2, "0");
     const hh = String(hours).padStart(2, "0");
-    return `${hh}:${mm} hrs`;
+    return `${hh}:${mm} ${t("workSummary.timeHoursSuffix", "hrs")}`;
   };
 
   if (loadingWeekly) {
@@ -150,10 +152,14 @@ const WorkSummary: React.FC<WorkSummaryProps> = ({ layout }) => {
                 className="text-white text-2xl"
                 onClick={() => navigate(-1)}
               >
-                <img src={backIcon} alt="Back" className="w-6 h-6" />
+                <img
+                  src={backIcon}
+                  alt={t("workSummary.backAlt", "Back")}
+                  className="w-6 h-6"
+                />
               </button>
               <span className="text-white text-2xl font-bold text-left">
-                Work Summary
+                {t("workSummary.title")}
               </span>
             </div>
             <button
@@ -162,7 +168,7 @@ const WorkSummary: React.FC<WorkSummaryProps> = ({ layout }) => {
             >
               <img
                 src={notificationIcon}
-                alt="Notifications"
+                alt={t("profile.notificationsAlt", "Notifications")}
                 className="w-8 h-8"
               />
             </button>
@@ -171,7 +177,7 @@ const WorkSummary: React.FC<WorkSummaryProps> = ({ layout }) => {
       </div>
       {/* Desktop Title */}
       <div className="hidden md:block text-xl font-semibold mb-4 text-[#00000099]">
-        Work Summary
+        {t("workSummary.title")}
       </div>
       <div className={containerClass}>
         {/* Today's Progress (Circular Progress) */}
@@ -185,20 +191,22 @@ const WorkSummary: React.FC<WorkSummaryProps> = ({ layout }) => {
         })()}
         {/* Weekly Summary (Bar Chart*/}
         <div className="bg-[linear-gradient(180deg,rgba(106,27,154,0.1)_0%,rgba(211,47,47,0.1)_100%)] rounded-2xl p-6 flex flex-col items-start min-w-[260px] min-h-[260px]">
-          <div className="mb-2 font-bold text-lg ">Weekly Summary</div>
+          <div className="mb-2 font-bold text-lg ">
+            {t("workSummary.weeklySummary")}
+          </div>
           {/** compute total orders for the week from API summary or workSummary.weekly */}
           <div className="text-[#D32F2F] font-semibold mb-2 text-lg">
             {(() => {
               const totalFromSummary =
                 apiSummary?.totalOrderServed ?? weeklyResp?.total_orders;
               if (typeof totalFromSummary === "number")
-                return `${totalFromSummary} Orders`;
+                return `${totalFromSummary} ${t("workSummary.ordersSuffix")}`;
               const total = Object.values((apiChart ?? {}) || {}).reduce(
                 (sum: number, item: { orders?: number }) =>
                   sum + (item?.orders || 0),
                 0
               );
-              return `${total} Orders`;
+              return `${total} ${t("workSummary.ordersSuffix")}`;
             })()}
           </div>
           <WeeklyChart employeeId={user?.Employee_id} initialData={apiChart} />
@@ -213,7 +221,9 @@ const WorkSummary: React.FC<WorkSummaryProps> = ({ layout }) => {
                   alt="icon"
                   className="w-7 h-7 bg-primary-gradient p-1 rounded-lg"
                 />
-                <span className="font-bold text-lg">Total Customer</span>
+                <span className="font-bold text-lg">
+                  {t("workSummary.totalCustomer")}
+                </span>
                 <span className="text-green-600 text-xs font-semibold ml-2">
                   +{growthPercent}%{" "}
                   <span className="inline-block align-middle">↑</span>
@@ -223,11 +233,21 @@ const WorkSummary: React.FC<WorkSummaryProps> = ({ layout }) => {
                 {apiSummary?.totalCustomer ?? 0}
               </div>
               <div className="flex flex-wrap gap-2 text-sm mt-2">
-                <span className="font-bold text-black/80">• Total</span>
-                <span className="text-black/60">• morning</span>
-                <span className="text-black/60">• Noon</span>
-                <span className="text-black/60">• Evening</span>
-                <span className="text-black/60">• Night</span>
+                <span className="font-bold text-black/80">
+                  {t("workSummary.periods.total")}
+                </span>
+                <span className="text-black/60">
+                  {t("workSummary.periods.morning")}
+                </span>
+                <span className="text-black/60">
+                  {t("workSummary.periods.noon")}
+                </span>
+                <span className="text-black/60">
+                  {t("workSummary.periods.evening")}
+                </span>
+                <span className="text-black/60">
+                  {t("workSummary.periods.night")}
+                </span>
               </div>
             </div>
             <div className="flex gap-4 mt-4">
@@ -253,7 +273,7 @@ const WorkSummary: React.FC<WorkSummaryProps> = ({ layout }) => {
                       0}
                   </div>
                   <div className="text-sm font-semibold">
-                    Total order Served
+                    {t("workSummary.totalOrderServed")}
                   </div>
                 </div>
               ))}
@@ -269,7 +289,9 @@ const WorkSummary: React.FC<WorkSummaryProps> = ({ layout }) => {
                   alt="icon"
                   className="w-7 h-7 bg-primary-gradient p-1 rounded-lg"
                 />
-                <span className="font-bold text-lg">Total Customer Today</span>
+                <span className="font-bold text-lg">
+                  {t("workSummary.totalCustomerToday")}
+                </span>
               </div>
               <div className="flex items-center gap-2 mt-1">
                 <span className="text-lg font-bold text-primary-gradient">
@@ -295,7 +317,9 @@ const WorkSummary: React.FC<WorkSummaryProps> = ({ layout }) => {
                   alt="icon"
                   className="w-7 h-7 bg-primary-gradient p-1 rounded-lg"
                 />
-                <span className="font-bold text-lg">Total Customer Today</span>
+                <span className="font-bold text-lg">
+                  {t("workSummary.totalCustomerToday")}
+                </span>
               </div>
               <div className="flex items-center gap-2 mt-1">
                 <span className="text-lg font-bold text-primary-gradient">
@@ -323,7 +347,9 @@ const WorkSummary: React.FC<WorkSummaryProps> = ({ layout }) => {
                   alt="icon"
                   className="w-7 h-7 bg-primary-gradient p-1 rounded-lg"
                 />
-                <span className="font-bold text-lg">Total Tips Earned</span>
+                <span className="font-bold text-lg">
+                  {t("workSummary.totalTipsEarned")}
+                </span>
               </div>
               <div className="flex items-center gap-2 mt-1">
                 <span className="text-lg font-bold text-primary-gradient">
