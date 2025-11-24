@@ -16,6 +16,7 @@ import editIcon from "@/assets/table/edit.svg";
 // import TimerIcon from "@/icons/ClockIcon";
 import { useOrderFlowStore } from "@/store/zustandStores";
 import EditFloorPlan from "@/components/common/EditFloorPlan";
+import { useTranslation } from "react-i18next";
 import { useWalkthroughStore } from "@/store/walkthroughStore";
 import { orderHistoryTrainingSteps } from "@/walkthrough/steps";
 
@@ -119,6 +120,7 @@ const TableCard = ({
 };
 
 const TablePage: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const startOrder = useOrderFlowStore((s) => s.startOrder);
   // Use RTK Query to fetch tables by floor
@@ -169,7 +171,7 @@ const TablePage: React.FC = () => {
   const availableStatusNames = statusesResp?.data?.map((s) => s.Name) || [];
 
   const statusTabs = [
-    { label: "All Tables", value: "all" },
+    { label: t("tables.statusTabs.all"), value: "all" },
     ...availableStatusNames.map((n: string) => ({ label: n, value: n })),
   ];
 
@@ -277,8 +279,7 @@ const TablePage: React.FC = () => {
           <div className="flex flex-col lg:flex-row justify-between mb-6 lg:justify-between  lg:gap-4 gap-2">
             <div className="flex flex-col sm:flex-row sm:items-center gap-4  ">
               <h1 className="text-2xl md:text-3xl font-bold whitespace-nowrap">
-                Table{" "}
-                <span className="font-bold text-[#00000099]">(Floor Plan)</span>
+                {t("tables.title")}
               </h1>
             </div>
             {/* <div className="flex flex-col sm:flex-row gap-2 items-center min-w-0"> */}
@@ -289,8 +290,8 @@ const TablePage: React.FC = () => {
                 className="px-3 py-1.5 flex gap-2 items-center rounded-lg bg-gradient-to-b from-[#6A1B9A] to-[#D32F2F] text-white font-medium shadow text-base sm:text-lg whitespace-nowrap min-w-fit sm:px-4 sm:py-2"
                 onClick={() => setEditMode(true)}
               >
-                <img src={editIcon} alt="edit" />
-                <span className="pr-2">Edit Tables</span>
+                <img src={editIcon} alt={t("tables.edit")} />
+                <span className="pr-2">{t("tables.editTables")}</span>
               </button>
 
               <div className="overflow-x-scroll thin-scrollbar rounded-full bg-[#F1F1F1] p-2">
@@ -338,7 +339,7 @@ const TablePage: React.FC = () => {
               <div className="flex items-center justify-center py-8">
                 <div className="text-center">
                   <div className="text-lg font-semibold text-gray-600">
-                    Loading tables...
+                    {t("tables.loading")}
                   </div>
                 </div>
               </div>
@@ -361,21 +362,14 @@ const TablePage: React.FC = () => {
               <div className="flex items-center justify-center py-12">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-gray-400 mb-2">
-                    {activeTab === "all" && "No tables available"}
-                    {activeTab === "Served" && "No tables served"}
-                    {activeTab === "Waiting" && "No tables waiting"}
-                    {activeTab === "Reserved" && "No tables reserved"}
-                    {activeTab === "Available" && "No available tables"}
+                    {t(`tables.empty.${activeTab}`, {
+                      defaultValue: t("tables.empty.all"),
+                    })}
                   </div>
                   <div className="text-sm text-gray-500">
-                    {activeTab === "all" && "There are no tables in the system"}
-                    {activeTab === "Served" && "No tables have been served yet"}
-                    {activeTab === "Waiting" &&
-                      "No tables are currently waiting"}
-                    {activeTab === "Reserved" &&
-                      "No tables are currently reserved"}
-                    {activeTab === "Available" &&
-                      "All tables are currently occupied"}
+                    {t(`tables.emptySubtitle.${activeTab}`, {
+                      defaultValue: t("tables.emptySubtitle.all"),
+                    })}
                   </div>
                 </div>
               </div>
