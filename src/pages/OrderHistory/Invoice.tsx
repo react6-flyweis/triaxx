@@ -1,4 +1,5 @@
-import  { useState } from "react";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useOrderStore } from "@/store/zustandStores";
 import printIcon from "@/assets/order/Print.svg";
 import type { Order } from "@/types/order";
@@ -6,6 +7,7 @@ import PrintBillModal from "@/components/common/PrintBillModal";
 
 const Invoice = ({ onBack }: { onBack?: () => void }) => {
   const { orders, fetchOrders } = useOrderStore();
+  const { t } = useTranslation();
   const [showDateDropdown, setShowDateDropdown] = useState(false);
   const [dateFilter, setDateFilter] = useState("Today");
   const [printOrder, setPrintOrder] = useState<Order | null>(null);
@@ -15,9 +17,11 @@ const Invoice = ({ onBack }: { onBack?: () => void }) => {
       <div className="flex items-center justify-between gap-6 mb-8">
         <h1 className="text-2xl font-bold text-gray-700 whitespace-nowrap">
           <span className="cursor-pointer" onClick={onBack}>
-            Order History's{" "}
+            {t("orderHistory.title")}{" "}
           </span>
-          <span className="font-bold text-black">&gt; Invoices</span>
+          <span className="font-bold text-black">
+            &gt; {t("orderHistory.invoice.title")}
+          </span>
         </h1>
         <div className="flex items-center gap-2">
           <div className="relative">
@@ -26,7 +30,17 @@ const Invoice = ({ onBack }: { onBack?: () => void }) => {
                 className="px-6 py-2 rounded-full font-medium bg-white text-black flex items-center gap-2"
                 onClick={() => setShowDateDropdown((v) => !v)}
               >
-                {dateFilter}
+                {(() => {
+                  // display localized label for current dateFilter value
+                  const map: Record<string, string> = {
+                    Today: "today",
+                    Yesterday: "yesterday",
+                    "This week": "thisWeek",
+                    "This Month": "thisMonth",
+                  };
+                  const key = map[dateFilter] || "allTime";
+                  return t(`orderHistory.dateFilter.${key}`);
+                })()}
                 <svg
                   className="w-4 h-4"
                   fill="none"
@@ -55,7 +69,16 @@ const Invoice = ({ onBack }: { onBack?: () => void }) => {
                         fetchOrders({ dateRange: option });
                       }}
                     >
-                      {option}
+                      {(() => {
+                        const mapping: Record<string, string> = {
+                          Today: "today",
+                          Yesterday: "yesterday",
+                          "This week": "thisWeek",
+                          "This Month": "thisMonth",
+                        };
+                        const key = mapping[option] || "allTime";
+                        return t(`orderHistory.dateFilter.${key}`);
+                      })()}
                     </button>
                   )
                 )}
@@ -78,12 +101,24 @@ const Invoice = ({ onBack }: { onBack?: () => void }) => {
               className="text-[#00000099] text-base font-semibold px-2 "
               style={{}}
             >
-              <th className="py-4 px-4">S no</th>
-              <th className="py-4 px-4">Invoice id</th>
-              <th className="py-4 px-4">Date</th>
-              <th className="py-4 px-4">Order Type</th>
-              <th className="py-4 px-4">Total amount</th>
-              <th className="py-4 px-4">Action</th>
+              <th className="py-4 px-4">
+                {t("orderHistory.invoice.tableHeaders.sNo")}
+              </th>
+              <th className="py-4 px-4">
+                {t("orderHistory.invoice.tableHeaders.invoiceId")}
+              </th>
+              <th className="py-4 px-4">
+                {t("orderHistory.invoice.tableHeaders.date")}
+              </th>
+              <th className="py-4 px-4">
+                {t("orderHistory.invoice.tableHeaders.orderType")}
+              </th>
+              <th className="py-4 px-4">
+                {t("orderHistory.invoice.tableHeaders.totalAmount")}
+              </th>
+              <th className="py-4 px-4">
+                {t("orderHistory.invoice.tableHeaders.action")}
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -109,19 +144,22 @@ const Invoice = ({ onBack }: { onBack?: () => void }) => {
                     : ""}
                 </td>
                 <td className="py-4 px-4 text-[16px] font-semibold text-black">
-                  {order.orderType || "Dine in"}
+                  {order.orderType || t("orderHistory.invoice.dineIn")}
                 </td>
                 <td className="py-4 px-4 text-[16px] font-semibold text-black">
                   {order.pricingSummary?.totalAmount?.toLocaleString() || ""}{" "}
                   XOF
                 </td>
                 <td className="py-4 px-4 text-[16px] font-semibold text-black">
-                  <button className="flex items-center gap-1 text-black hover:text-primary-gradient" onClick={() => setPrintOrder(order)}>
+                  <button
+                    className="flex items-center gap-1 text-black hover:text-primary-gradient"
+                    onClick={() => setPrintOrder(order)}
+                  >
                     <img
                       src={printIcon}
-                      alt="print"
+                      alt={t("orderHistory.invoice.print")}
                     />{" "}
-                    Print
+                    {t("orderHistory.invoice.print")}
                   </button>
                 </td>
               </tr>
@@ -129,7 +167,11 @@ const Invoice = ({ onBack }: { onBack?: () => void }) => {
           </tbody>
         </table>
       </div>
-      <PrintBillModal open={!!printOrder} onClose={() => setPrintOrder(null)} order={printOrder} />
+      <PrintBillModal
+        open={!!printOrder}
+        onClose={() => setPrintOrder(null)}
+        order={printOrder}
+      />
     </div>
   );
 };
