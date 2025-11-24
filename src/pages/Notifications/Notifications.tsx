@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { useUserStore } from "@/store/zustandStores";
 import userAvatar from "@/assets/profile/user.svg";
 import { useGetNotificationsQuery } from "@/redux/api/apiSlice";
@@ -69,6 +70,7 @@ function groupNotifications(notifications: any[]) {
 }
 
 const NotificationList: React.FC = () => {
+  const { t } = useTranslation();
   const markNotificationAsRead = useUserStore((s) => s.markNotificationAsRead);
   const { data: apiResp, isLoading } = useGetNotificationsQuery();
 
@@ -99,7 +101,7 @@ const NotificationList: React.FC = () => {
     navigate(-1);
   };
 
-  if (isLoading) return <div className="p-8">Loading...</div>;
+  if (isLoading) return <div className="p-8">{t("notifications.loading")}</div>;
 
   const grouped = groupNotifications(notifications);
 
@@ -122,7 +124,7 @@ const NotificationList: React.FC = () => {
                 <img src={backIcon} alt="back" />
               </button>
               <span className="text-white text-2xl font-bold text-left">
-                Notifications
+                {t("notifications.title")}
               </span>
             </div>
             {/* <img
@@ -134,7 +136,7 @@ const NotificationList: React.FC = () => {
           </div>
         </div>
       ) : (
-        <h1 className="text-2xl font-bold mb-8">Notifications</h1>
+        <h1 className="text-2xl font-bold mb-8">{t("notifications.title")}</h1>
       )}
       <div
         className={
@@ -144,11 +146,35 @@ const NotificationList: React.FC = () => {
         {grouped.map(({ group, notifications }) => (
           <React.Fragment key={group}>
             <div className="text-lg font-bold text-gray-800 mt-6 mb-2 ">
-              {group}
+              {(() => {
+                if (group === "Today") return t("notifications.today");
+                if (group === "Yesterday") return t("notifications.yesterday");
+                if (/\d+ days ago/.test(group)) {
+                  const n = Number((group.match(/(\d+) days ago/) || [])[1]);
+                  return t("notifications.daysAgo", { count: n });
+                }
+                if (group === "a week ago") return t("notifications.aWeekAgo");
+                if (group === "a month ago")
+                  return t("notifications.aMonthAgo");
+                return group;
+              })()}
             </div>
             {notifications.map((notif) => {
-              const timeLabel =
-                group === "Today" ? formatTime(notif.createdAt) : group;
+              let timeLabel = "";
+              if (group === "Today") {
+                timeLabel = formatTime(notif.createdAt);
+              } else if (group === "Yesterday") {
+                timeLabel = t("notifications.yesterday");
+              } else if (/\d+ days ago/.test(group)) {
+                const n = Number((group.match(/(\d+) days ago/) || [])[1]);
+                timeLabel = t("notifications.daysAgo", { count: n });
+              } else if (group === "a week ago") {
+                timeLabel = t("notifications.aWeekAgo");
+              } else if (group === "a month ago") {
+                timeLabel = t("notifications.aMonthAgo");
+              } else {
+                timeLabel = group;
+              }
               return (
                 <div
                   key={notif.id}
@@ -178,7 +204,7 @@ const NotificationList: React.FC = () => {
                       }
                     >
                       <span className="font-semibold text-black">
-                        {notif.title}
+                        {notif.title || t("notifications.defaultTitle")}
                       </span>
                     </div>
                     <div
