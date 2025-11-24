@@ -7,9 +7,9 @@ import eyeIcon from "@/assets/eye_icon.svg";
 import { useNavigate, useLocation } from "react-router-dom";
 import chefImg from "@/assets/chef.svg";
 import { useWalkthroughStore } from "@/store/walkthroughStore";
-import { logoutAll } from "@/services/authHelpers";
 import { useChangePasswordMutation } from "@/redux/api/userApi";
-
+import { signOut } from "@/services/authHelpers";
+import toast from "react-hot-toast";
 interface User {
   _id: string;
   Name: string;
@@ -44,9 +44,7 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
   forceWorkTab,
   user,
 }) => {
-  const logout = () => {
-    logoutAll();
-  };
+  // signOut handles redux + zustand + cookie cleanup
   const navigate = useNavigate();
   const location = useLocation();
   const { isActive, activeTraining, steps, currentStep, complete } =
@@ -71,6 +69,15 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
     currentPassword.trim() !== "" &&
     newPassword.trim() !== "" &&
     passwordsMatch;
+
+  const handleLogout = () => {
+    signOut();
+    toast.success("Logged out successfully!", {
+      duration: 4000,
+      position: "top-right",
+    });
+    navigate("/login");
+  };
 
   useEffect(() => {
     if (location.state && location.state.tab) {
@@ -147,7 +154,7 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
     setSuccessModalOpen(true);
     setTimeout(() => {
       setSuccessModalOpen(false);
-      logout();
+      handleLogout();
       setSelectedTab(null);
     }, 2000);
   };
