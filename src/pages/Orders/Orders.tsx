@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { useOrderFlowStore } from "@/store/zustandStores";
 import { useNavigate, useLocation } from "react-router-dom";
 import ItemDetailsModal from "@/components/common/ItemDetailsModal";
@@ -105,9 +106,11 @@ const Orders: React.FC = () => {
   });
 
   // Map categories dynamically from itemTypesData
+  const { t } = useTranslation();
+
   const categories = useMemo(
     () => [
-      { label: "All Items", value: "all", icon: null },
+      { label: t("orders.categories.allItems"), value: "all", icon: null },
       ...(itemTypesData?.data?.map((type: any) => ({
         label: type.Name,
         value: type.Items_types_id.toString(),
@@ -399,7 +402,7 @@ const Orders: React.FC = () => {
       customizedItem
     );
     addItemToOrder(customizedItem);
-    setFeedback(`${modalItem.name} added to order!`);
+    setFeedback(t("orders.addedToOrder", { name: modalItem.name }));
     setTimeout(() => setFeedback(""), 1200);
     setShowAddonsModal(false);
     setModalItem(null);
@@ -471,7 +474,7 @@ const Orders: React.FC = () => {
 
     // Check if customer ID exists
     if (!currentOrder.customerId) {
-      alert("Customer information is required. Please add customer details.");
+      alert(t("orders.errors.customerRequired"));
       return;
     }
 
@@ -511,7 +514,7 @@ const Orders: React.FC = () => {
       setShowOrderSentPanel(true);
     } catch (error) {
       console.error("Failed to send order:", error);
-      alert("Failed to create order. Please try again.");
+      alert(t("orders.errors.createOrderFailed"));
     } finally {
       setOrderSending(false);
     }
@@ -680,7 +683,7 @@ const Orders: React.FC = () => {
       }
     } catch (error) {
       console.error("Error creating customer:", error);
-      alert("Failed to create customer. Please try again.");
+      alert(t("orders.errors.createCustomerFailed"));
     } finally {
       setCustomerLoading(false);
     }
@@ -702,7 +705,7 @@ const Orders: React.FC = () => {
   return (
     <div className="flex flex-col mb-20 py-4 sm:p-8 bg-[#fafafa] max-w-screen">
       <h1 className="text-2xl font-bold mb-4 sm:mb-6 flex items-center gap-4">
-        Quick Orders
+        {t("orders.title")}
       </h1>
       <div className="flex flex-col lg:flex-row gap-4 lg:gap-8 h-auto lg:h-[70vh] items-stretch">
         {/* Left: Menu Items Grid */}
@@ -745,7 +748,7 @@ const Orders: React.FC = () => {
             </div>
           ) : hasError || filteredItems.length === 0 ? (
             <div className="col-span-2 sm:col-span-3 md:col-span-4 lg:col-span-5 text-center text-gray-400">
-              No items found.
+              {t("orders.noItems")}
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-2 sm:gap-4">
@@ -832,9 +835,12 @@ const Orders: React.FC = () => {
                     : (Math.random() * 1000).toFixed(0)}
                 </div>
                 <div className="flex justify-between">
-                  <div className="text-xs font-semibold">Order Created</div>
+                  <div className="text-xs font-semibold">
+                    {t("orders.orderSent.created")}
+                  </div>
                   <div className="text-xs font-semibold text-right">
-                    Table - {currentOrder?.tableId.replace("t-", "")}
+                    {t("orders.tableLabel")}{" "}
+                    {currentOrder?.tableId.replace("t-", "")}
                   </div>
                 </div>
               </div>
@@ -847,16 +853,18 @@ const Orders: React.FC = () => {
                 className="w-full py-3 rounded-b-2xl text-lg font-semibold text-white bg-gradient-to-r from-[#6A1B9A] to-[#D32F2F] shadow-md hover:opacity-90 transition-all"
                 onClick={handleNextOrder}
               >
-                Next Order
+                {t("orders.nextOrder")}
               </button>
             </div>
           )}
           {/* Confirmation Modal */}
           <SuccessModal
             open={showConfirmationModal}
-            title="Order Sent to Kitchen"
-            subtitle="Your Dish has been created and will be updated in the menu in couple of minutes"
-            buttonText={orderSending ? "Sending..." : "Continue"}
+            title={t("orders.orderSent.title")}
+            subtitle={t("orders.orderSent.subtitle")}
+            buttonText={
+              orderSending ? t("actions.sending") : t("actions.continue")
+            }
             onButtonClick={handleConfirmationContinue}
           />
           {/* Floor/persons selection UI */}
@@ -873,15 +881,15 @@ const Orders: React.FC = () => {
                       "linear-gradient(180deg, rgba(106, 27, 154, 0.5) 0%, rgba(211, 47, 47, 0.5) 100%)",
                   }}
                 >
-                  <div className="text-lg font-bold">Floor Map</div>
+                  <div className="text-lg font-bold">{t("floor.title")}</div>
                   <div className="text-xs font-normal">
-                    Select Floor and Persons
+                    {t("floor.subtitle")}
                   </div>
                 </div>
                 <div className="">
                   <div className="p-6">
                     <div className="font-semibold mb-6 text-start">
-                      Select Persons:
+                      {t("floor.selectPersons")}
                     </div>
                     <div className="flex items-center justify-center gap-2">
                       <button
@@ -915,7 +923,7 @@ const Orders: React.FC = () => {
                   </div>
                   <div className="mb-6 p-6">
                     <div className="font-semibold mb-6 text-start">
-                      Select Floor:
+                      {t("floor.selectFloor")}
                     </div>
                     <div>
                       <FloorSelector
@@ -943,7 +951,7 @@ const Orders: React.FC = () => {
                       handleSelectTable();
                     }}
                   >
-                    Select Table
+                    {t("floor.selectTable")}
                   </button>
                 </div>
               </div>
@@ -959,12 +967,10 @@ const Orders: React.FC = () => {
                 onClick={handleRightPanelClick}
               >
                 <div className="text-2xl font-bold text-[#00000099] mb-2">
-                  Tap to Select Table
+                  {t("orders.tapToSelectTable")}
                 </div>
                 <div className="text-2xl font-bold text-[#00000099] mb-2">
-                  &amp;
-                  <br />
-                  Start Order
+                  {t("orders.andStartOrder")}
                 </div>
               </div>
             )}
@@ -982,26 +988,29 @@ const Orders: React.FC = () => {
                       "linear-gradient(180deg, rgba(106, 27, 154, 0.5) 0%, rgba(211, 47, 47, 0.5) 100%)",
                   }}
                 >
-                  <div className="text-2xl font-bold">Start Order</div>
+                  <div className="text-2xl font-bold">
+                    {t("orders.startOrder.title")}
+                  </div>
                   <div className="text-xs font-normal">
-                    Floor, Table, Person Display
+                    {t("orders.startOrder.subtitle")}
                   </div>
                 </div>
                 <div className="flex flex-col items-center justify-between gap-4 py-8 px-4">
                   <div className="flex w-1/2 gap-2 text-lg">
                     <img src={personIcon} alt="person icon" />
-                    Persons:{" "}
+                    {t("orders.personsLabel")}{" "}
                     <span className="font-bold">
                       {persons.toString().padStart(2, "0")}
                     </span>
                   </div>
                   <div className="flex w-1/2 gap-2 text-lg">
                     <img src={floorIcon} alt="floor icon" />
-                    Floor: <span className="font-bold">{selectedFloor}</span>
+                    {t("orders.floorLabel")}{" "}
+                    <span className="font-bold">{selectedFloor}</span>
                   </div>
                   <div className="flex w-1/2 gap-2 text-lg">
                     <img src={tableIcon} alt="table icon" />
-                    Table:{" "}
+                    {t("orders.tableLabel")}{" "}
                     <span className="font-bold">
                       {(selectedTable ?? "").replace("t-", "")}
                     </span>
@@ -1022,7 +1031,7 @@ const Orders: React.FC = () => {
                     });
                   }}
                 >
-                  Start Order
+                  {t("orders.startOrder.button")}
                 </button>
               </div>
             )}
@@ -1046,17 +1055,28 @@ const Orders: React.FC = () => {
                       "linear-gradient(180deg, rgba(106, 27, 154, 0.5) 0%, rgba(211, 47, 47, 0.5) 100%)",
                   }}
                 >
-                  <div className="text-2xl font-bold">Order Summary</div>
+                  <div className="text-2xl font-bold">
+                    {t("orders.orderSummary.title")}
+                  </div>
                   <div className="text-base font-medium">
-                    Table - {currentOrder.tableId.replace("t-", "")}
+                    {t("orders.tableLabel")}{" "}
+                    {currentOrder.tableId.replace("t-", "")}
                   </div>
                 </div>
                 <div className="flex flex-col gap-2 py-4 px-4 flex-1 overflow-y-auto">
                   <div className="flex font-medium text-base border-b border-black pb-2">
-                    <div className="w-12">Qty</div>
-                    <div className="flex-1">Item</div>
-                    <div className="w-20">Size</div>
-                    <div className="w-20 text-right">Total</div>
+                    <div className="w-12">
+                      {t("orders.orderSummary.headers.qty")}
+                    </div>
+                    <div className="flex-1">
+                      {t("orders.orderSummary.headers.item")}
+                    </div>
+                    <div className="w-20">
+                      {t("orders.orderSummary.headers.size")}
+                    </div>
+                    <div className="w-20 text-right">
+                      {t("orders.orderSummary.headers.total")}
+                    </div>
                   </div>
                   {orderItems.map((item: any, idx: number) => (
                     <div
@@ -1104,7 +1124,7 @@ const Orders: React.FC = () => {
                           }`}
                           onClick={() => handleToggleAllergy(item.itemId)}
                         >
-                          Allergy
+                          {t("orders.allergy")}
                         </button>
                       </div>
                       <div
@@ -1117,11 +1137,11 @@ const Orders: React.FC = () => {
                         <button
                           className="w-8 h-8 flex items-baseline justify-end mt-auto opacity-80 hover:opacity-100"
                           onClick={() => handleDeleteItem(item.itemId)}
-                          aria-label="Delete item"
+                          aria-label={t("orders.deleteItem")}
                         >
                           <img
                             src={TrashIcon}
-                            alt="Delete"
+                            alt={t("orders.deleteItem")}
                             className="w-5 h-5"
                           />
                         </button>
@@ -1138,14 +1158,13 @@ const Orders: React.FC = () => {
                   }}
                 >
                   <div className="flex text-xs justify-between text-[#5A5A5A] mb-1">
-                    <span>Tax 6%</span>
+                    <span>
+                      {t("orders.orderSummary.taxLabel", { rate: 6 })}
+                    </span>
                     <span>{tax.toLocaleString()} XOF</span>
                   </div>
                   <div className="flex justify-between font-bold text-xl text-[#303030]">
-                    <span>
-                      Subtotal{" "}
-                      <span className="font-normal text-sm">(Incl. tax)</span>
-                    </span>
+                    <span>{t("orders.orderSummary.subtotal")}</span>
                     <span className="text-[#303030] font-medium">
                       {total.toLocaleString()} XOF
                     </span>
@@ -1159,7 +1178,7 @@ const Orders: React.FC = () => {
                       className="send-to-kitchen-btn w-full py-2 text-lg font-semibold bg-green-500 text-white shadow hover:opacity-90 transition-all"
                       onClick={handleOrderAction}
                     >
-                      Send to Kitchen
+                      {t("orders.sendToKitchen")}
                     </button>
                   )}
                 {orderItems.length > 0 && (
@@ -1184,7 +1203,7 @@ const Orders: React.FC = () => {
                       opacity: orderSummaryClickable ? 1 : 0.6,
                     }}
                   >
-                    Select Payment Option
+                    {t("orders.orderSummary.choosePayment")}
                   </button>
                 )}
               </div>
@@ -1204,26 +1223,29 @@ const Orders: React.FC = () => {
                       "linear-gradient(180deg, rgba(106, 27, 154, 0.5) 0%, rgba(211, 47, 47, 0.5) 100%)",
                   }}
                 >
-                  <div className="text-2xl font-bold">Start Order</div>
+                  <div className="text-2xl font-bold">
+                    {t("orders.startOrder.title")}
+                  </div>
                   <div className="text-xs font-normal">
-                    Floor, Table, Person Display
+                    {t("orders.startOrder.subtitle")}
                   </div>
                 </div>
                 <div className="flex flex-col items-center justify-between gap-4 py-8 px-4">
                   <div className="flex w-1/2 gap-2 text-lg">
                     <img src={personIcon} alt="person icon" />
-                    Persons:{" "}
+                    {t("orders.personsLabel")}{" "}
                     <span className="font-bold">
                       {persons.toString().padStart(2, "0")}
                     </span>
                   </div>
                   <div className="flex w-1/2 gap-2 text-lg">
                     <img src={floorIcon} alt="floor icon" />
-                    Floor: <span className="font-bold">{selectedFloor}</span>
+                    {t("orders.floorLabel")}{" "}
+                    <span className="font-bold">{selectedFloor}</span>
                   </div>
                   <div className="flex w-1/2 gap-2 text-lg">
                     <img src={tableIcon} alt="table icon" />
-                    Table:{" "}
+                    {t("orders.tableLabel")}{" "}
                     <span className="font-bold">
                       {(selectedTable ?? "").replace("t-", "")}
                     </span>
@@ -1235,7 +1257,7 @@ const Orders: React.FC = () => {
                     setShowSummaryPanel(true);
                   }}
                 >
-                  Start Order
+                  {t("orders.startOrder.button")}
                 </button>
               </div>
             )}
@@ -1387,9 +1409,9 @@ const Orders: React.FC = () => {
       )}
       <SuccessModal
         open={showSuccessModal}
-        title="Payment Received Successful !"
-        subtitle="Your payment has been processed and the order has been updated."
-        buttonText="Start new Order"
+        title={t("orders.orderSummary.paymentSuccess")}
+        subtitle={t("orders.orderSummary.paymentDoneText")}
+        buttonText={t("orders.startNewOrder")}
         onButtonClick={() => {
           setShowSuccessModal(false);
           resetOrder();
