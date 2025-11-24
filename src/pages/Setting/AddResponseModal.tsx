@@ -3,6 +3,7 @@ import { useCreateSupportTicketReplyMutation } from "@/redux/api/supportTicketsA
 import { useSelector } from "react-redux";
 import type { RootState } from "@/redux/store";
 import uploadIcon from "@/assets/setting/upload.svg";
+import { useTranslation } from "react-i18next";
 
 interface AddResponseFormProps {
   onClose: () => void;
@@ -25,6 +26,7 @@ const AddResponseForm: React.FC<AddResponseFormProps> = ({
   const employeeIdFromStore = useSelector(
     (s: RootState) => s.auth.user?.Employee_id
   ) as number | undefined;
+  const { t } = useTranslation();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -75,34 +77,42 @@ const AddResponseForm: React.FC<AddResponseFormProps> = ({
       {/* Header */}
       <div className="mb-8">
         <span className="text-[#00000099] font-bold text-2xl cursor-pointer">
-          All Ticket{" "}
+          {t("support.tickets.tabs.all")}
         </span>
         <span className="text-black font-bold text-2xl">
           {" "}
-          &gt; Add Response
+          &gt; {t("support.tickets.addResponse")}
         </span>
       </div>
       {/* Form */}
       <form onSubmit={handleSubmit}>
         <div className="mb-6">
-          <label className="block font-semibold mb-2">Add Response</label>
+          <label className="block font-semibold mb-2">
+            {t("support.tickets.replyTitle")}
+          </label>
           <textarea
             className="w-full border rounded-md px-4 py-3 min-h-[120px] text-black placeholder-black focus:outline-none"
-            placeholder={"Explain here..."}
+            placeholder={t("supportTickets.createMessagePlaceholder")}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
           />
         </div>
         <div className="mb-8">
-          <label className="block font-semibold mb-2">Images Uploaded</label>
+          <label className="block font-semibold mb-2">
+            {t("support.tickets.images.uploaded")}
+          </label>
           <div className="flex items-center gap-2">
             <button
               type="button"
               className="flex items-center gap-2 px-4 py-1 rounded bg-linear-to-r from-[#6A1B9A] to-[#D32F2F] text-white font-semibold text-sm"
               onClick={() => fileInputRef.current?.click()}
             >
-              Upload Img
-              <img src={uploadIcon} alt="upload" className="w-5 h-5" />
+              {t("support.tickets.images.upload")}
+              <img
+                src={uploadIcon}
+                alt={t("support.tickets.images.upload")}
+                className="w-5 h-5"
+              />
             </button>
             <input
               type="file"
@@ -132,7 +142,7 @@ const AddResponseForm: React.FC<AddResponseFormProps> = ({
             disabled={isCreating}
             className="px-12 py-2 rounded-lg font-semibold text-white text-lg bg-linear-to-r from-[#D32F2F] to-[#6A1B9A] shadow disabled:opacity-50"
           >
-            {isCreating ? "Sending..." : "Submit Response"}
+            {isCreating ? t("actions.sending") : t("support.tickets.submit")}
           </button>
         </div>
         <div className="flex justify-center mt-4">
@@ -141,7 +151,7 @@ const AddResponseForm: React.FC<AddResponseFormProps> = ({
             className="text-[#6A1B9A]  font-semibold"
             onClick={onClose}
           >
-            Cancel
+            {t("actions.cancel")}
           </button>
         </div>
       </form>
