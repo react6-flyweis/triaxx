@@ -3,8 +3,10 @@ import { useUserStore } from "@/store/zustandStores";
 import type { UserProfile } from "@/store/zustandStores";
 import PowerIcon from "@/icons/PowerIcon";
 import { useGetClockRecordsByAuthQuery } from "@/redux/api/clockApi";
+import { useTranslation } from "react-i18next";
 
 function RecentActivities() {
+  const { t } = useTranslation();
   const { data: clockData, isLoading, error } = useGetClockRecordsByAuthQuery();
 
   // Format date helper
@@ -35,18 +37,19 @@ function RecentActivities() {
     const diffHours = Math.floor(diffMins / 60);
     const diffDays = Math.floor(diffHours / 24);
 
-    if (diffDays > 0) return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
-    if (diffHours > 0)
-      return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
-    if (diffMins > 0) return `${diffMins} minute${diffMins > 1 ? "s" : ""} ago`;
-    return "Just now";
+    if (diffDays > 0) return t("clock.timeAgo.days", { count: diffDays });
+    if (diffHours > 0) return t("clock.timeAgo.hours", { count: diffHours });
+    if (diffMins > 0) return t("clock.timeAgo.minutes", { count: diffMins });
+    return t("clock.timeAgo.justNow");
   };
 
   if (isLoading) {
     return (
       <div className="mt-8">
-        <h2 className="text-2xl font-bold mb-4">Recent Activities</h2>
-        <div className="text-center py-8">Loading...</div>
+        <h2 className="text-2xl font-bold mb-4">
+          {t("clock.recentActivities")}
+        </h2>
+        <div className="text-center py-8">{t("clock.loading")}</div>
       </div>
     );
   }
@@ -54,9 +57,11 @@ function RecentActivities() {
   if (error) {
     return (
       <div className="mt-8">
-        <h2 className="text-2xl font-bold mb-4">Recent Activities</h2>
+        <h2 className="text-2xl font-bold mb-4">
+          {t("clock.recentActivities")}
+        </h2>
         <div className="text-center py-8 text-red-500">
-          Failed to load clock records
+          {t("clock.loadFailed")}
         </div>
       </div>
     );
@@ -70,7 +75,7 @@ function RecentActivities() {
       <div className="flex flex-col gap-4">
         {records.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
-            No clock records found
+            {t("clock.noRecords")}
           </div>
         ) : (
           records.map((record) => {
@@ -78,8 +83,11 @@ function RecentActivities() {
             const clockInTime = formatTime(record.in_time);
             const clockOutTime = formatTime(record.out_time);
             const activityText = record.out_time
-              ? `Clocked in at ${clockInTime} and clocked out at ${clockOutTime}`
-              : `Clocked in at ${clockInTime} (Still active)`;
+              ? t("clock.activity.withOut", {
+                  in: clockInTime,
+                  out: clockOutTime,
+                })
+              : t("clock.activity.stillActive", { in: clockInTime });
 
             return (
               <div
@@ -105,85 +113,85 @@ function RecentActivities() {
   );
 }
 
-const infoBoxes = [
-  (user: UserProfile | null) => ({
-    content: (
-      <>
-        <img
-          src={user?.profilePic}
-          alt="avatar"
-          className="w-14 h-14 rounded-full mr-2 inline-block align-middle"
-        />
-        <div className="flex flex-col justify-around">
-          <span className="align-middle font-medium">{user?.name}</span>
-          <span className="text-sm  font-normal">{user?.role}</span>
-        </div>
-      </>
-    ),
-    className: "min-w-[120px] flex items-center flex-row",
-  }),
-  (_user: UserProfile | null, clockInTime?: string) => ({
-    content: (
-      <div className="flex flex-col justify-center items-center">
-        <span className="font-bold">{clockInTime || "8:00 am"}</span>
-        <span className="text-xs">Clock in</span>
-      </div>
-    ),
-    className: "",
-  }),
-  (user: UserProfile | null) => ({
-    content: (
-      <>
-        <span className="font-bold">
-          {user?.workSummary?.today?.workedTime || "00"}
-        </span>
-        <span className="text-xs">
-          hrs <br />
-          Worked today
-        </span>
-      </>
-    ),
-    className: "",
-  }),
-  () => ({
-    content: (
-      <>
-        <span className="font-bold">00</span>
-        <span className="text-xs">
-          mins <br />
-          Break
-        </span>
-      </>
-    ),
-    className: "",
-  }),
-  () => ({
-    content: (
-      <>
-        <span className="font-bold">--</span>
-        <span className="text-xs">
-          mins
-          <br /> Break
-        </span>
-      </>
-    ),
-    className: "",
-  }),
-  (user: UserProfile | null) => ({
-    content: (
-      <>
-        <span className="font-bold">
-          {user?.workDetails?.leavesLeft ?? "--"}
-        </span>
-        <span className="text-xs">Leaves Left</span>
-      </>
-    ),
-    className: "",
-  }),
-];
-
 const ClockInOut: React.FC = () => {
+  const { t } = useTranslation();
   const user = useUserStore((s) => s.user);
+  const infoBoxes = [
+    (user: UserProfile | null) => ({
+      content: (
+        <>
+          <img
+            src={user?.profilePic}
+            alt="avatar"
+            className="w-14 h-14 rounded-full mr-2 inline-block align-middle"
+          />
+          <div className="flex flex-col justify-around">
+            <span className="align-middle font-medium">{user?.name}</span>
+            <span className="text-sm  font-normal">{user?.role}</span>
+          </div>
+        </>
+      ),
+      className: "min-w-[120px] flex items-center flex-row",
+    }),
+    (_user: UserProfile | null, clockInTime?: string) => ({
+      content: (
+        <div className="flex flex-col justify-center items-center">
+          <span className="font-bold">{clockInTime || "8:00 am"}</span>
+          <span className="text-xs">{t("profile.clockIn")}</span>
+        </div>
+      ),
+      className: "",
+    }),
+    (user: UserProfile | null) => ({
+      content: (
+        <>
+          <span className="font-bold">
+            {user?.workSummary?.today?.workedTime || "00"}
+          </span>
+          <span className="text-xs">
+            {t("workSummary.timeHoursSuffix")} <br />
+            Worked today
+          </span>
+        </>
+      ),
+      className: "",
+    }),
+    () => ({
+      content: (
+        <>
+          <span className="font-bold">00</span>
+          <span className="text-xs">
+            mins <br />
+            Break
+          </span>
+        </>
+      ),
+      className: "",
+    }),
+    () => ({
+      content: (
+        <>
+          <span className="font-bold">--</span>
+          <span className="text-xs">
+            mins
+            <br /> Break
+          </span>
+        </>
+      ),
+      className: "",
+    }),
+    (user: UserProfile | null) => ({
+      content: (
+        <>
+          <span className="font-bold">
+            {user?.workDetails?.leavesLeft ?? "--"}
+          </span>
+          <span className="text-xs">{t("clock.leavesLeft")}</span>
+        </>
+      ),
+      className: "",
+    }),
+  ];
   const isClockedIn = useUserStore((s) => s.isClockedIn);
   const clockIn = useUserStore((s) => s.clockIn);
   const clockOut = useUserStore((s) => s.clockOut);
@@ -243,7 +251,7 @@ const ClockInOut: React.FC = () => {
   return (
     <div className=" m-6 px-2 sm:px-6 md:px-10 py-6 w-full">
       <h1 className="text-3xl sm:text-2xl font-bold mb-6">
-        Employee Clock in / out
+        {t("clock.title")}
       </h1>
       <div className="flex  items-center justify-center mb-8  ">
         <div className=" flex flex-col items-center bg-white custom-shadow px-12 py-10 rounded-lg">
@@ -251,7 +259,7 @@ const ClockInOut: React.FC = () => {
             <div
               className={`w-24 h-24 md:w-32 md:h-32 flex justify-center items-center rounded-full  ${
                 isCurrentlyClockedIn
-                  ? "bg-primary-gradient"
+                  ? t("clock.button.clockOut")
                   : "bg-primary-gradient-light"
               }`}
             >
