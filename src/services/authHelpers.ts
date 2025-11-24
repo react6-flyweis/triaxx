@@ -10,18 +10,14 @@ import { removeCookie } from "@/utils/removeCookie";
 /**
  * Logout across both Redux and Zustand (clear cookie & both states)
  */
-export function logoutAll() {
-  // Clear Redux auth state
-  store.dispatch(reduxLogout());
-  // Clear Zustand auth/user store if exists
+
+export function signOut() {
   try {
+    store.dispatch(reduxLogout());
+    localStorage.removeItem("token");
     useUserStore.getState().logout?.();
-  } catch (err) {
-    // ignore - optional
-  }
-  // Clear cookie(s)
-  try {
     removeCookie("authToken");
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (err) {
     // ignore
   }
