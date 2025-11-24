@@ -21,8 +21,8 @@ export const IndexRoutes: React.FC = () => {
   const { data: userResp } = useGetUserByAuthQuery(undefined, { skip: !token });
 
   useEffect(() => {
-    if (userResp && userResp?.data) {
-      dispatch(setCredentials({ token: token ?? "", user: userResp.data }));
+    if (userResp && userResp?.data && token) {
+      dispatch(setCredentials({ token, user: userResp.data }));
     }
   }, [userResp, dispatch, token]);
 
