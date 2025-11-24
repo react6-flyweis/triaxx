@@ -1,0 +1,654 @@
+{
+  "leftPanel": {
+    "heading": "POS that works as hard as you.\nand Faster than you.",
+    "subheading": "Grow without limit with <0>Triaxx</0> and Make timely and accurate decision with real-time reports"
+  },
+  "language": {
+    "select": "Select language"
+  },
+  "header": {
+    "search": "Search",
+    "menu": "Menu",
+    "notifications": "Notifications"
+  },
+  "supportTickets": {
+    "searchPlaceholder": "Search for ticket",
+    "createSubjectPlaceholder": "Enter Subject...",
+    "createMessagePlaceholder": "Explain here..."
+  },
+  "common": {
+    "title": "Quick Orders",
+    "noItems": "No items found.",
+    "close": "Close"
+  },
+  "actions": {
+    "cancel": "Cancel",
+    "done": "Done",
+    "continue": "Continue",
+    "sending": "Sending..."
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in to your account",
+      "welcome": "Welcome Back!",
+      "subtitle": "Login to access your Triaxx Account",
+      "employeeId": "Employee id",
+      "placeholderId": "Enter id",
+      "password": "Password",
+      "placeholderPassword": "Enter Password",
+      "forgotPassword": "Forget Password?",
+      "rememberMe": "Remember me",
+      "submit": "Submit",
+      "submitting": "Submitting...",
+      "success": "Login successful!",
+      "failed": "Login failed. Please try again."
+    },
+    "verify": {
+      "label": "Enter OTP",
+      "placeholder": "Enter OTP here",
+      "submit": "Verify OTP",
+      "verifying": "Verifying...",
+      "instructions": "Please enter the authentication code sent to your registered email"
+    },
+    "otpSent": {
+      "title": "OTP Sent to Registered Email",
+      "body": "An authentication code has been sent to your email"
+    },
+    "reset": {
+      "placeholderNewPassword": "Enter New Password",
+      "placeholderConfirmPassword": "Confirm New Password",
+      "saving": "Saving...",
+      "save": "Save Password"
+    },
+    "forgot": {
+      "placeholderEmail": "Enter Email here"
+    }
+  },
+  "sidebar": {
+    "nav": {
+      "quickOrder": "Quick order",
+      "table": "Table",
+      "orderHistory": "Order History"
+    },
+    "training": {
+      "title": "Training",
+      "training": "Training",
+      "teamChats": "Team chats"
+    },
+    "bottom": {
+      "setting": "Setting",
+      "signOut": "Sign out"
+    },
+    "user": {
+      "defaultName": "Jackline",
+      "defaultRole": "Staff"
+    },
+    "toast": {
+      "loggedOut": "Logged out successfully!"
+    }
+  },
+  "dashboard": {
+    "welcome": "Welcome Jackline!"
+  },
+  "orders": {
+    "title": "Quick Orders",
+    "noItems": "No items found.",
+    "categories": {
+      "allItems": "All Items"
+    },
+    "orderSent": {
+      "title": "Order Sent to Kitchen",
+      "created": "Order Created",
+      "subtitle": "Your Dish has been created and will be updated in the menu in a couple of minutes"
+    },
+    "orderSummary": {
+      "title": "Order Summary",
+      "check": "Check your Order Summary",
+      "printBill": "Print Bill",
+      "choosePayment": "Choose Payment Option",
+      "paymentSuccess": "Payment Success!",
+      "paymentDoneText": "Your payment has been successfully done.",
+      "totalPayment": "Total Payment",
+      "orderNumber": "Order Number",
+      "dateTime": "Date & Time",
+      "paymentType": "Payment Type",
+      "customerName": "Customer Name",
+      "printReceipt": "Print Receipt",
+      "backToSummary": "Back to Summary",
+      "headers": {
+        "qty": "Qty",
+        "item": "Item",
+        "size": "Size",
+        "total": "Total"
+      },
+      "taxLabel": "Tax {{rate}}%",
+      "subtotal": "Subtotal (Incl. tax)"
+    },
+    "allergy": "Allergy",
+    "addedToOrder": "{{name}} added to order!",
+    "nextOrder": "Next Order",
+    "tapToSelectTable": "Tap to Select Table",
+    "andStartOrder": "&\\nStart Order",
+    "startOrder": {
+      "title": "Start Order",
+      "subtitle": "Floor, Table, Person Display",
+      "button": "Start Order"
+    },
+    "personsLabel": "Persons:",
+    "floorLabel": "Floor:",
+    "tableLabel": "Table:",
+    "sendToKitchen": "Send to Kitchen",
+    "deleteItem": "Delete",
+    "startNewOrder": "Start new Order",
+    "tables": {
+      "title": "Table (Floor Plan)",
+      "editTables": "Edit Tables",
+      "loading": "Loading tables...",
+      "statusTabs": {
+        "all": "All Tables"
+      },
+      "empty": {
+        "all": "No tables available",
+        "Served": "No tables served",
+        "Waiting": "No tables waiting",
+        "Reserved": "No tables reserved",
+        "Available": "No available tables"
+      },
+      "emptySubtitle": {
+        "all": "There are no tables in the system",
+        "Served": "No tables have been served yet",
+        "Waiting": "No tables are currently waiting",
+        "Reserved": "No tables are currently reserved",
+        "Available": "All tables are currently occupied"
+      },
+      "edit": "Edit"
+    },
+    "orderHistory": {
+      "title": "Order History",
+      "invoices": "Invoices",
+      "dateFilter": {
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "thisWeek": "This week",
+        "lastWeek": "Last Week",
+        "thisMonth": "This Month",
+        "lastMonth": "Last Month",
+        "reset": "Reset",
+        "allTime": "All Time"
+      },
+      "profile": {
+        "personal": "Personal"
+      },
+      "statusOptions": {
+        "all": "All",
+        "preparing": "Preparing",
+        "served": "Served",
+        "cancelled": "Cancelled"
+      },
+      "empty": {
+        "headingStatus": "No {{status}} orders for {{period}}",
+        "headingDefault": "No orders found for {{period}}",
+        "subtitleStatus": "No orders are in {{status}} status in this time period",
+        "subtitleDefault": "Try adjusting your date range or status filter"
+      },
+      "itemCount": "{{count}} items",
+      "tableLabel": "Table - {{id}}",
+      "taxLabel": "Tax {{rate}}%",
+      "subtotal": "Subtotal (Incl. tax)",
+      "orderCard": {
+        "items": "items"
+      },
+      "minLabel": "Min",
+      "invoice": {
+        "title": "Invoices",
+        "tableHeaders": {
+          "sNo": "S no",
+          "invoiceId": "Invoice id",
+          "date": "Date",
+          "orderType": "Order Type",
+          "totalAmount": "Total amount",
+          "action": "Action"
+        },
+        "print": "Print",
+        "dineIn": "Dine in"
+      }
+    },
+    "payment": {
+      "groups": {
+        "card": "Card Payments",
+        "online": "Online Payments",
+        "split": "Split Payments"
+      },
+      "pay": "Pay {{amount}}",
+      "title": "Payment Options"
+    },
+    "ready": {
+      "done": {
+        "description": "Transaction Successful",
+        "title": "Payment Done"
+      },
+      "toPay": {
+        "description": "Place the card near the payment terminal",
+        "title": "Ready to Pay"
+      },
+      "toScan": {
+        "description": "Hold your membership card or phone near the top of the iPad to scan.",
+        "title": "Ready to Scan"
+      }
+    },
+    "errors": {
+      "customerRequired": "Customer information is required. Please add customer details.",
+      "createOrderFailed": "Failed to create order. Please try again.",
+      "createCustomerFailed": "Failed to create customer. Please try again."
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "loading": "Loading...",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "daysAgo": "{{count}} days ago",
+    "aWeekAgo": "a week ago",
+    "aMonthAgo": "a month ago",
+    "defaultTitle": "Notification"
+  },
+  "chats": {
+    "title": "Chats",
+    "teamTitle": "Team Chat",
+    "roles": {
+      "all": "All",
+      "waiters": "Waiters",
+      "chefs": "Chefs",
+      "managers": "Managers"
+    },
+    "searchPlaceholder": "Search Team",
+    "loadingChats": "Loading chats...",
+    "errorLoadingChats": "Error loading chats",
+    "noChatsYet": "No chats yet",
+    "noChatsFound": "No chats found. Create a chat to get started.",
+    "noChatsMatchSearch": "No chats match your search.",
+    "unknown": "Unknown",
+    "noMessagesYet": "No messages yet.",
+    "startTyping": "Start typing...",
+    "send": "Send",
+    "members": "members",
+    "viewMembers": "View Members",
+    "teamMembers": "Team Members",
+    "userWithId": "User {{id}}",
+    "teamMemberRole": "Team Member",
+    "lastSeen": "last seen {{time}}",
+    "empty": {
+      "title": "Send and receive messages without interruption",
+      "subtitle": "Message your team for any assistance or help required"
+    },
+    "unnamedGroup": "Unnamed group",
+    "user": "User"
+  },
+  "employees": {
+    "title": "Employees"
+  },
+  "success": {
+    "paymentReceivedTitle": "Payment Received Successfully!",
+    "paymentReceivedSubtitle": "Your payment has been processed and the order has been updated.",
+    "backButton": "Back to Order History"
+  },
+  "payment": {
+    "title": "Payment Options",
+    "groups": {
+      "online": "Online Payments",
+      "card": "Card Payments",
+      "split": "Split Payments"
+    },
+    "options": {
+      "cash": "Pay with Cash",
+      "giftcard": "Gift Cards",
+      "gpay": "GPay",
+      "applepay": "Apple Pay",
+      "momo": "MoMo Money",
+      "orange": "Orange Money",
+      "debitcard": "Debit Card Payment",
+      "split": "Split Payment"
+    },
+    "pay": "Pay {{amount}}"
+  },
+  "ready": {
+    "toScan": {
+      "title": "Ready to Scan",
+      "description": "Hold your membership card or phone near the top of the iPad to scan."
+    },
+    "toPay": {
+      "title": "Ready to Pay",
+      "description": "Place the card near the payment terminal"
+    },
+    "done": {
+      "title": "Payment Done",
+      "description": "Transaction Successful",
+      "button": "Done"
+    }
+  },
+  "itemDetails": {
+    "title": "Item Details",
+    "back": "Back",
+    "readMore": "Read More",
+    "size": "Size",
+    "price": "Price",
+    "addItem": "Add Item"
+  },
+  "bill": {
+    "title": "Bill Summary",
+    "items": "Items",
+    "itemsNetTotal": "Items Net Total",
+    "taxes": "Taxes",
+    "discount": "Discount",
+    "total": "Total"
+  },
+  "addons": {
+    "title": "Addons",
+    "draft": "Draft",
+    "table": "Table - {{id}}",
+    "loading": "Loading addons...",
+    "failed": "Failed to load addons",
+    "note": "Note",
+    "notePlaceholder": "Enter Notes here.....",
+    "save": "Save",
+    "extra": "(Extra {{price}} XOF)"
+  },
+  "customer": {
+    "title": "Customer Information",
+    "subtitle": "Please enter customer details",
+    "phoneLabel": "Phone Number",
+    "phonePlaceholder": "Enter 10-digit phone number",
+    "phoneRequired": "Phone number is required",
+    "phoneInvalid": "Phone number must be 10 digits",
+    "nameLabel": "Full Name",
+    "namePlaceholder": "Enter customer name",
+    "nameRequired": "Name is required",
+    "nameTooShort": "Name must be at least 2 characters",
+    "dobLabel": "Date of Birth",
+    "dobRequired": "Date of birth is required",
+    "dobFuture": "Date of birth cannot be in the future",
+    "customerTypeLabel": "Customer Type",
+    "types": {
+      "regular": "Regular",
+      "vip": "VIP",
+      "member": "Member"
+    },
+    "cancel": "Cancel",
+    "creating": "Creating...",
+    "create": "Create Customer"
+  },
+  "logout": {
+    "prompt": "Would you like to Sign out?",
+    "savePassword": "Do you want to save Password",
+    "noStay": "No, Stay",
+    "yesSignOut": "Yes, Sign out"
+  },
+  "signout": {
+    "title": "Signed Out"
+  },
+  "floor": {
+    "title": "Floor Map",
+    "subtitle": "Select Floor and Persons",
+    "selectPersons": "Select Persons:",
+    "selectFloor": "Select Floor:",
+    "selectTable": "Select Table"
+  },
+  "orderHistory": {
+    "dateFilter": {
+      "allTime": "All Time",
+      "lastMonth": "Last Month",
+      "lastWeek": "Last Week",
+      "reset": "Reset",
+      "today": "Today"
+    },
+    "empty": {
+      "headingDefault": "No orders found for {{period}}",
+      "headingStatus": "No {{status}} orders for {{period}}",
+      "subtitleDefault": "Try adjusting your date range or status filter",
+      "subtitleStatus": "No orders are in {{status}} status in this time period"
+    },
+    "invoice": {
+      "dineIn": "Dine in",
+      "print": "Print",
+      "tableHeaders": {
+        "action": "Action",
+        "date": "Date",
+        "invoiceId": "Invoice id",
+        "orderType": "Order Type",
+        "sNo": "S no",
+        "totalAmount": "Total amount"
+      },
+      "title": "Invoices"
+    },
+    "invoices": "Invoices",
+    "itemCount": "{{count}} items",
+    "minLabel": "Min",
+    "statusOptions": {
+      "all": "All",
+      "cancelled": "Cancelled",
+      "preparing": "Preparing",
+      "served": "Served"
+    },
+    "subtotal": "Subtotal (Incl. tax)",
+    "tableLabel": "Table - {{id}}",
+    "taxLabel": "Tax {{rate}}%",
+    "title": "Order History",
+    "success": {
+      "backButton": "Back to Order History",
+      "paymentReceivedSubtitle": "Your payment has been processed and the order has been updated.",
+      "paymentReceivedTitle": "Payment Received Successfully!"
+    }
+  },
+
+  "profile": {
+    "personal": "Personal",
+    "title": "My Profile",
+    "tabs": {
+      "work": "Work Summary",
+      "personal": "Personal",
+      "security": "Security",
+      "signOut": "Sign out"
+    },
+    "employeeDetails": "Employee Details",
+    "labels": {
+      "role": "Role",
+      "responsibility": "Responsibility",
+      "name": "Name",
+      "employeeId": "Employee id",
+      "email": "Email",
+      "phone": "Phone",
+      "onboardingDate": "Onboarding Date",
+      "yearsWithUs": "Years with us"
+    },
+    "privacyPasswordTitle": "Privacy and Password",
+    "changePasswordTitle": "Change Password",
+    "changePasswordInfo": "Fill information to change your password",
+    "enterCurrentPassword": "Enter Current Password",
+    "enterNewPassword": "Enter New Password",
+    "reenterNewPassword": "Re-enter New Password",
+    "showAlt": "Show",
+    "forgetPassword": "Forget Password",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "savePassword": "Save Password",
+    "saving": "Saving...",
+    "chefIllustrationAlt": "Chef Illustration",
+    "infoTitle": "Profile Info",
+    "notificationsAlt": "Notifications",
+    "avatarAlt": "Avatar",
+    "editAlt": "Edit",
+    "userIconAlt": "User",
+    "emailIconAlt": "Email",
+    "phoneIconAlt": "Phone",
+    "empIdIconAlt": "Employee ID",
+    "roleIconAlt": "Role",
+    "personalDataTitle": "My Personal Data",
+    "personalDataSubtitle": "Details about my personal data",
+    "passwordPlaceholder": "My Password",
+    "workDetails": "Work Details",
+    "yearsSuffix": "Years",
+    "updating": "Updating...",
+    "updatePassword": "Update Password",
+    "terms": "Terms & Conditions",
+    "privacyPolicy": "Privacy Policy",
+    "clockIn": "Clock in",
+    "clockIconAlt": "Clock Icon",
+    "employeeTraining": "Employee Training",
+    "account": "Account",
+    "empLabel": "EMP id: {{id}}",
+    "passwordChangeSuccess": "Password changed successfully!",
+    "passwordChangeFailed": "Failed to change password"
+  },
+  "workSummary": {
+    "title": "Work Summary",
+    "backAlt": "Back",
+    "weeklySummary": "Weekly Summary",
+    "ordersSuffix": "Orders",
+    "totalCustomer": "Total Customer",
+    "totalCustomerToday": "Total Customer Today",
+    "totalOrderServed": "Total order Served",
+    "totalTipsEarned": "Total Tips Earned",
+    "periods": {
+      "total": "• Total",
+      "morning": "• Morning",
+      "noon": "• Noon",
+      "evening": "• Evening",
+      "night": "• Night"
+    },
+    "timeHoursSuffix": "hrs"
+  },
+
+  "settings": {
+    "title": "Settings",
+    "personalInfo": {
+      "title": "Personal info",
+      "desc": "You can check all your personal information here."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "desc": "Choose the notification preferences accordingly."
+    },
+    "loginSecurity": {
+      "title": "Login & Security",
+      "desc": "Change the password and email address."
+    },
+    "workSummary": {
+      "title": "Work Summary",
+      "desc": "The work done and the money earned can be monitored here."
+    },
+    "clock": {
+      "title": "Clock in / out",
+      "desc": "Toggle to clock in or out for shifts.",
+      "on": "ON",
+      "off": "OFF"
+    },
+    "support": {
+      "title": "Support Tickets",
+      "desc": "Create or view support tickets."
+    }
+  },
+  "support": {
+    "contact": {
+      "title": "Contact Support",
+      "helpTitle": "Need Help?",
+      "helpBody": "Facing any issues, Custom Feature, New App Development, New Project, connect with us we will respond in 24 hrs.",
+      "emailLabel": "Mail:"
+    },
+    "tickets": {
+      "title": "Support Ticket",
+      "create": "Create Ticket",
+      "viewRaised": "View Raised Ticket",
+      "titlePrefix": "Support Ticket >",
+      "tabs": {
+        "all": "All Tickets",
+        "ongoing": "On-Going",
+        "resolved": "Resolved"
+      },
+      "periods": {
+        "week": "This Week",
+        "day": "Today",
+        "month": "This Month"
+      },
+      "searchPlaceholder": "Search for ticket",
+      "loading": "Loading...",
+      "labels": {
+        "email": "Email",
+        "businessName": "Business Name",
+        "ticketType": "Ticket Type"
+      },
+      "type": {
+        "loading": "Loading ticket types...",
+        "select": "Select a ticket type"
+      },
+      "replyTitle": "Reply Ticket",
+      "images": {
+        "uploaded": "Images Uploaded",
+        "upload": "Upload Img"
+      },
+      "submit": "Submit",
+      "submitting": "Submitting...",
+      "loadFailed": "Failed to load tickets",
+      "noTicketsFound": "No tickets found.",
+      "postedAt": "Posted at",
+      "openTicket": "Open Ticket",
+      "ticketCard": {
+        "ticketId": "Ticket# {{id}}",
+        "title": "Support Ticket #{{id}}"
+      },
+      "notFound": "Ticket not found.",
+      "summary": {
+        "requestor": "Requestor",
+        "subject": "Subject",
+        "createdOn": "Created on",
+        "ticketId": "Ticket ID",
+        "ticketStatus": "Ticket Status"
+      },
+      "addResponse": "Add Response",
+      "success": {
+        "title": "Ticket Response Added Successfully!",
+        "subtitle": "Your response has been added to the support ticket.",
+        "button": "View All Tickets"
+      },
+      "createFailed": "Failed to create ticket"
+    },
+    "faqs": {
+      "title": "FAQ's"
+    }
+  },
+  "clock": {
+    "title": "Employee Clock in / out",
+    "recentActivities": "Recent Activities",
+    "loading": "Loading...",
+    "loadFailed": "Failed to load clock records",
+    "noRecords": "No clock records found",
+    "timeAgo": {
+      "days": "{{count}} day ago",
+      "hours": "{{count}} hour ago",
+      "minutes": "{{count}} minute ago",
+      "justNow": "Just now"
+    },
+    "button": {
+      "clockOut": "Clock out",
+      "clockIn": "Clock in"
+    },
+    "activity": {
+      "withOut": "Clocked in at {{in}} and clocked out at {{out}}",
+      "stillActive": "Clocked in at {{in}} (Still active)"
+    },
+    "leavesLeft": "Leaves Left"
+  },
+  "tables": {
+    "edit": "Edit",
+    "editTables": "Edit Tables",
+    "empty": {
+      "all": "No tables available"
+    },
+    "emptySubtitle": {
+      "all": "There are no tables in the system"
+    },
+    "loading": "Loading tables...",
+    "statusTabs": {
+      "all": "All Tables"
+    },
+    "title": "Table (Floor Plan)"
+  }
+}
