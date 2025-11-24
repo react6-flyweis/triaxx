@@ -1,12 +1,14 @@
 import React from "react";
 import mailIcon from "@/assets/setting/Mail.svg";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import FAQAccordion from "./FAQAccordion";
 import { useWalkthroughStore } from "@/store/walkthroughStore";
 import { profileTrainingSteps } from "@/walkthrough/steps";
 
 const ContactSupport: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { settingsHighlight, setSettingsHighlight, startTraining } =
     useWalkthroughStore();
 
@@ -31,10 +33,10 @@ const ContactSupport: React.FC = () => {
           className="text-[#00000099] font-bold text-[32px] cursor-pointer"
           onClick={() => navigate("/settings")}
         >
-          Settings{" "}
+          {t("settings.title")}
         </span>
         <span className="text-black font-bold  text-[32px]">
-          &gt; Contact Support
+          &gt; {t("support.contact.title")}
         </span>
       </div>
       {/* Main Content */}
@@ -43,12 +45,15 @@ const ContactSupport: React.FC = () => {
         <div className="flex-1 flex flex-col md:flex-row gap-6">
           <div className="border rounded-3xl p-6 flex-1 max-w-[420px] flex flex-col justify-between">
             <div>
-              <div className="font-bold text-xl mb-2">Need Help?</div>
+              <div className="font-bold text-xl mb-2">
+                {t("support.contact.helpTitle")}
+              </div>
               <div className="text-sm text-black/80 mb-2">
-                Facing any issues, Custom Feature, New App Development, New
-                Project, connect with us we will respond in 24 hrs.
+                {t("support.contact.helpBody")}
                 <br />
-                <span className="font-bold">Mail: hi@uiflow.in</span>
+                <span className="font-bold">
+                  {t("support.contact.emailLabel")} hi@uiflow.in
+                </span>
               </div>
             </div>
           </div>
@@ -61,25 +66,29 @@ const ContactSupport: React.FC = () => {
         </div>
         {/* Support Ticket Card */}
         <div className="flex-1 max-w-[420px] border border-[#00000099] rounded-3xl p-6 flex flex-col items-center">
-          <div className="font-bold text-2xl mb-6">Support Ticket</div>
+          <div className="font-bold text-2xl mb-6">
+            {t("support.tickets.title")}
+          </div>
           <button
             className="w-full max-w-xs py-2 rounded-lg font-semibold text-white text-base mb-6 bg-gradient-to-t from-[#D32F2F] to-[#6A1B9A] shadow"
             onClick={() => navigate("/settings/create-ticket")}
           >
-            Create Ticket
+            {t("support.tickets.create")}
           </button>
           <div className=" gradient-border ">
             <button
               className="w-[320px] max-w-xs rounded-lg font-semibold  gradient-border-inner bg-white"
               onClick={() => navigate("/settings/tickets")}
             >
-              View Raised Ticket
+              {t("support.tickets.viewRaised")}
             </button>
           </div>
         </div>
         {/* FAQ Section */}
         <div className="mt-12">
-          <div className="text-3xl font-bold mb-8">FAQ's</div>
+          <div className="text-3xl font-bold mb-8">
+            {t("support.faqs.title")}
+          </div>
           <FAQAccordion />
         </div>
       </div>
