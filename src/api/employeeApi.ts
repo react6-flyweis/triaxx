@@ -78,10 +78,6 @@ export async function loginWithApple(): Promise<AuthResponse> {
   return response;
 }
 
-export function logout() {
-  localStorage.removeItem("token");
-}
-
 // Get current logged-in employee profile
 export const getCurrentEmployeeProfile = async (): Promise<{
   id: string;
