@@ -4,6 +4,7 @@ import { useWalkthroughStore } from "@/store/walkthroughStore";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/redux/store";
 import { signOut } from "@/services/authHelpers";
+import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 
 import TriaxxLogo from "@/assets/tiaxx_logo.svg";
@@ -18,14 +19,19 @@ import SignOutIcon from "@/assets/navbar/logout_icon.svg";
 
 const navItems = [
   {
-    label: "Quick order",
+    key: "sidebar.nav.quickOrder",
     icon: QuickOrderIcon,
     path: "/orders",
     className: "quick-order-btn",
   },
-  { label: "Table", icon: TableIcon, path: "/table", className: "table-btn" },
   {
-    label: "Order History",
+    key: "sidebar.nav.table",
+    icon: TableIcon,
+    path: "/table",
+    className: "table-btn",
+  },
+  {
+    key: "sidebar.nav.orderHistory",
     icon: OrderHistoryIcon,
     path: "/order-history",
     className: "order-history-btn",
@@ -33,9 +39,14 @@ const navItems = [
 ];
 
 const trainingItems = [
-  { label: "Training", icon: TrainingIcon, path: "/training", className: "" },
   {
-    label: "Team chats",
+    key: "sidebar.training.training",
+    icon: TrainingIcon,
+    path: "/training",
+    className: "",
+  },
+  {
+    key: "sidebar.training.teamChats",
     icon: TeamChatsIcon,
     path: "/team-chats",
     className: "team-chats-btn",
@@ -44,12 +55,17 @@ const trainingItems = [
 
 const bottomItems = [
   {
-    label: "Setting",
+    key: "sidebar.bottom.setting",
     icon: SettingIcon,
     path: "/settings",
     className: "settings-btn",
   },
-  { label: "sign out", icon: SignOutIcon, path: "/logout", className: "" },
+  {
+    key: "sidebar.bottom.signOut",
+    icon: SignOutIcon,
+    path: "/logout",
+    className: "",
+  },
 ];
 
 interface SidebarProps {
@@ -68,19 +84,20 @@ const Sidebar: React.FC<SidebarProps> = () => {
           | string
           | undefined)
       : undefined;
+  const { t } = useTranslation();
   const displayName = (() => {
-    if (!user) return "Jackline";
+    if (!user) return t("sidebar.user.defaultName");
     const n = getField("Name") || getField("name");
-    return n || "Jackline";
+    return n || t("sidebar.user.defaultName");
   })();
   const displayRole = (() => {
-    if (!user) return "Staff";
+    if (!user) return t("sidebar.user.defaultRole");
     const u = user as unknown as Record<string, unknown>;
     const roleObj = u["Role_id"] as Record<string, unknown> | undefined;
     if (roleObj && typeof roleObj["role_name"] === "string") {
       return roleObj["role_name"] as string;
     }
-    return (u["role"] as string) || "Staff";
+    return (u["role"] as string) || t("sidebar.user.defaultRole");
   })();
   const imageSrc = (() => {
     if (!user) return UserIcon;
@@ -92,7 +109,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
 
   const handleLogout = () => {
     signOut();
-    toast.success("Logged out successfully!", {
+    toast.success(t("sidebar.toast.loggedOut"), {
       duration: 4000,
       position: "top-right",
     });
@@ -140,7 +157,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
       <nav className="flex flex-col gap-2 mb-8">
         {navItems.map((item) => (
           <Link
-            key={item.label}
+            key={item.key}
             to={item.path}
             onClick={handleNavClick(item.className)}
             className={`flex items-center gap-3 px-5 py-2.5 rounded-full font-medium transition-all duration-150 ${
@@ -151,21 +168,21 @@ const Sidebar: React.FC<SidebarProps> = () => {
           >
             <img
               src={item.icon}
-              alt={item.label}
+              alt={t(item.key)}
               className={`h-5 w-5 ${isActive(item.path) ? "invert" : ""}`}
             />
-            <span>{item.label}</span>
+            <span>{t(item.key)}</span>
           </Link>
         ))}
       </nav>
       {/* Training section */}
       <div className="mb-2 mt-2 text-xs text-[#7c7c7c] font-semibold">
-        Training
+        {t("sidebar.training.title")}
       </div>
       <nav className="flex flex-col gap-2 mb-8">
         {trainingItems.map((item) => (
           <Link
-            key={item.label}
+            key={item.key}
             to={item.path}
             onClick={handleNavClick(item.className)}
             className={`flex items-center gap-3 px-5 py-2.5 rounded-full font-medium transition-all duration-150 ${
@@ -176,28 +193,29 @@ const Sidebar: React.FC<SidebarProps> = () => {
           >
             <img
               src={item.icon}
-              alt={item.label}
+              alt={t(item.key)}
               className={`h-5 w-5 ${isActive(item.path) ? "invert" : ""}`}
             />
-            <span>{item.label}</span>
+            <span>{t(item.key)}</span>
           </Link>
         ))}
       </nav>
       {/* Bottom section */}
       <div className="mt-auto flex flex-col gap-2 w-full">
         {bottomItems.map((item) =>
-          item.label === "sign out" ? (
+          // use translation key to detect sign-out button
+          item.key === "sidebar.bottom.signOut" ? (
             <button
-              key={item.label}
+              key={item.key}
               onClick={handleLogout}
               className="flex w-full items-center gap-3 px-5 py-2.5 rounded-full font-medium text-black hover:bg-[#f3e3ee] transition-all duration-150"
             >
-              <img src={item.icon} alt={item.label} className="h-5 w-5" />
-              <span>{item.label}</span>
+              <img src={item.icon} alt={t(item.key)} className="h-5 w-5" />
+              <span>{t(item.key)}</span>
             </button>
           ) : (
             <Link
-              key={item.label}
+              key={item.key}
               to={item.path}
               onClick={handleNavClick(item.className)}
               className={`flex items-center gap-3 px-5 py-2.5 rounded-full font-medium transition-all duration-150 ${
@@ -208,10 +226,10 @@ const Sidebar: React.FC<SidebarProps> = () => {
             >
               <img
                 src={item.icon}
-                alt={item.label}
+                alt={t(item.key)}
                 className={`h-5 w-5 ${isActive(item.path) ? "invert" : ""}`}
               />
-              <span>{item.label}</span>
+              <span>{t(item.key)}</span>
             </Link>
           )
         )}

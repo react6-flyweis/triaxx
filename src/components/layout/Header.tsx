@@ -2,6 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/redux/store";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import HamburgerIcon from "@/assets/navbar/hamburger_menu.svg";
 import SearchIcon from "@/assets/navbar/search_icon.svg";
@@ -12,6 +13,7 @@ import { useWalkthroughStore } from "@/store/walkthroughStore";
 // import UserAvatar from '@/assets/navbar/profile_icon.svg';
 
 const Header: React.FC = () => {
+  const { t } = useTranslation();
   const user = useSelector((state: RootState) => state.auth.user);
   const navigate = useNavigate();
 
@@ -22,10 +24,14 @@ const Header: React.FC = () => {
         <img src={HamburgerIcon} alt="Menu" className="h-5 w-5 text-gray-500" />
         <input
           type="text"
-          placeholder="Search"
+          placeholder={t("header.search")}
           className="bg-transparent focus:outline-none w-full text-gray-800 placeholder-gray-500 font-medium"
         />
-        <img src={SearchIcon} alt="Search" className="h-5 w-5 text-gray-500" />
+        <img
+          src={SearchIcon}
+          alt={t("header.search")}
+          className="h-5 w-5 text-gray-500"
+        />
       </div>
 
       {/* Right side: Actions */}
@@ -38,7 +44,11 @@ const Header: React.FC = () => {
           className="relative cursor-pointer p-2"
           onClick={() => navigate("/notifications")}
         >
-          <img src={NotificationIcon} alt="Notifications" className="h-6 w-6" />
+          <img
+            src={NotificationIcon}
+            alt={t("header.notifications")}
+            className="h-6 w-6"
+          />
           <div className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full flex items-center justify-center text-white text-[8px] font-bold">
             <span className="absolute -top-px">3</span>
           </div>
@@ -57,7 +67,9 @@ const Header: React.FC = () => {
             alt="User Avatar"
             className="h-8 w-8 rounded-full bg-white p-1"
           />
-          <span className="font-medium">{user?.Name}</span>
+          <span className="font-medium">
+            {user?.Name ?? t("sidebar.user.defaultName")}
+          </span>
         </div>
       </div>
     </header>
