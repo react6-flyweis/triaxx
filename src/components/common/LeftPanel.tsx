@@ -1,6 +1,5 @@
 import React from "react";
-import USFlagImg from "@/assets/flag/america.svg";
-import ChevronDownIconImg from "@/assets/header/down_arrow.svg";
+import LanguageSelector from "@/components/common/LanguageSelector";
 
 interface LeftPanelProps {
   heading?: React.ReactNode;
@@ -17,8 +16,9 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
   ),
   subheading = (
     <p className="mt-6 text-lg text-[#414D60] max-w-md">
-      Grow without limit with <span className="text-primary-gradient">Triaxx</span> and Make timely and accurate decision
-      with real-time reports
+      Grow without limit with{" "}
+      <span className="text-primary-gradient">Triaxx</span> and Make timely and
+      accurate decision with real-time reports
     </p>
   ),
   children,
@@ -31,22 +31,12 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
         {children}
       </div>
       <div className="lg:absolute mt-8 lg:top-130 lg:left-12">
-        <button className="bg-white/90 text-[#372B4C] px-4 py-3 rounded-lg flex items-center text-sm font-medium shadow-md">
-          <img
-            src={USFlagImg}
-            alt="US Flag"
-            className="w-6 h-auto mr-2 rounded"
-          />
-          English
-          <img
-            src={ChevronDownIconImg}
-            alt="dropdown arrow"
-            className="w-4 h-4 ml-3 text-[#372B4C]"
-          />
-        </button>
+        <div className="bg-white/90 text-[#372B4C] px-4 py-3 rounded-lg flex items-center text-sm font-medium shadow-md">
+          <LanguageSelector triggerClassName="bg-transparent px-0 py-0 rounded-none shadow-none" />
+        </div>
       </div>
     </div>
   );
 };
 
-export default LeftPanel; 
+export default LeftPanel;

@@ -5,8 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 import HamburgerIcon from "@/assets/navbar/hamburger_menu.svg";
 import SearchIcon from "@/assets/navbar/search_icon.svg";
-import FrenchFlagIcon from "@/assets/flag/america.svg"; // Placeholder, assuming france.svg is not available
-import DownArrowIcon from "@/assets/header/down_arrow.svg";
+import LanguageSelector from "@/components/common/LanguageSelector";
 import NotificationIcon from "@/assets/header/notification_icon.svg";
 import { useWalkthroughStore } from "@/store/walkthroughStore";
 // Using a placeholder for the user avatar, as it would likely be dynamic
@@ -32,15 +31,7 @@ const Header: React.FC = () => {
       {/* Right side: Actions */}
       <div className="flex items-center gap-4">
         {/* Language Dropdown */}
-        <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-[linear-gradient(180deg,rgba(106,27,154,0.1)_0%,rgba(211,47,47,0.1)_100%)] cursor-pointer">
-          <span className="font-medium">French</span>
-          <img
-            src={FrenchFlagIcon}
-            alt="French Flag"
-            className="h-4 w-6 rounded-sm"
-          />
-          <img src={DownArrowIcon} alt="Dropdown" className="h-3 w-3" />
-        </div>
+        <LanguageSelector />
 
         {/* Notification Icon */}
         <div
