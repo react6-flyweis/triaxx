@@ -1,9 +1,10 @@
 import React, { useRef, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { useTranslation } from "react-i18next";
 import { useReactToPrint, type UseReactToPrintOptions } from "react-to-print";
 import type { Order } from "@/types/order";
-import successReceiptIcon from '@/assets/payment/success_tick_receipt.svg';
-import downloadReceiptIcon from '@/assets/payment/receipt_download.svg';
+import successReceiptIcon from "@/assets/payment/success_tick_receipt.svg";
+import downloadReceiptIcon from "@/assets/payment/receipt_download.svg";
 
 interface PrintBillModalProps {
   open: boolean;
@@ -11,94 +12,144 @@ interface PrintBillModalProps {
   order: Order | null;
 }
 
-const BillContent: React.FC<{ order: Order | null; forPrint?: boolean }> = ({ order, forPrint }) => {
+const BillContent: React.FC<{ order: Order | null; forPrint?: boolean }> = ({
+  order,
+  forPrint,
+}) => {
+  const { t } = useTranslation();
   if (!order) return null;
   const receipt = {
     orderNumber: order.orderId,
-    date: new Date(order.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
-    time: new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    paymentType: order.paymentDetails?.method || '',
-    customerName: order.customerInfo?.name || '',
+    date: new Date(order.createdAt).toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    }),
+    time: new Date(order.createdAt).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    }),
+    paymentType: order.paymentDetails?.method || "",
+    customerName: order.customerInfo?.name || "",
     total: order.pricingSummary.totalAmount,
   };
   return (
-    <div className={forPrint ? "p-6 w-full max-w-xs mx-auto" : "bg-white rounded-2xl shadow p-6 w-full max-w-xs mx-auto flex flex-col items-center print:shadow-none print:rounded-none print:max-w-full print:p-2"} style={forPrint ? { background: 'white', color: 'black' } : {}}>
+    <div
+      className={
+        forPrint
+          ? "p-6 w-full max-w-xs mx-auto"
+          : "bg-white rounded-2xl shadow p-6 w-full max-w-xs mx-auto flex flex-col items-center print:shadow-none print:rounded-none print:max-w-full print:p-2"
+      }
+      style={forPrint ? { background: "white", color: "black" } : {}}
+    >
       <img src={successReceiptIcon} alt="success" className="mb-3" />
-      <div className="text-xl font-semibold text-center mb-1">Bill Summary</div>
-      <div className="text-center text-sm text-[#00000099] font-bold mb-1">Total Payment</div>
-      <div className="text-center text-2xl font-bold mb-4">{receipt.total.toLocaleString()} XOF</div>
+      <div className="text-xl font-semibold text-center mb-1">
+        {t("bill.title")}
+      </div>
+      <div className="text-center text-sm text-[#00000099] font-bold mb-1">
+        {t("orders.orderSummary.totalPayment")}
+      </div>
+      <div className="text-center text-2xl font-bold mb-4">
+        {receipt.total.toLocaleString()} XOF
+      </div>
       <div className="grid grid-cols-2 gap-2 w-full mb-2">
         <div className="bg-[#F6F6F6] rounded-lg p-2 text-xs text-left print:bg-white print:p-1">
-          <div className="font-semibold text-[#00000099]">Order Number</div>
+          <div className="font-semibold text-[#00000099]">
+            {t("orders.orderSummary.orderNumber")}
+          </div>
           <div>{receipt.orderNumber}</div>
         </div>
         <div className="bg-[#F6F6F6] rounded-lg p-2 text-xs text-left print:bg-white print:p-1">
-          <div className="font-semibold text-[#00000099]">Date & Time</div>
-          <div>{receipt.date}, {receipt.time}</div>
+          <div className="font-semibold text-[#00000099]">
+            {t("orders.orderSummary.dateTime")}
+          </div>
+          <div>
+            {receipt.date}, {receipt.time}
+          </div>
         </div>
         <div className="bg-[#F6F6F6] rounded-lg p-2 text-xs text-left print:bg-white print:p-1">
-          <div className="font-semibold text-[#00000099]">Payment Type</div>
-          <div>{receipt.paymentType || '-'}</div>
+          <div className="font-semibold text-[#00000099]">
+            {t("orders.orderSummary.paymentType")}
+          </div>
+          <div>{receipt.paymentType || "-"}</div>
         </div>
         <div className="bg-[#F6F6F6] rounded-lg p-2 text-xs text-left print:bg-white print:p-1">
-          <div className="font-semibold text-[#00000099]">Customer Name</div>
-          <div>{receipt.customerName || '-'}</div>
+          <div className="font-semibold text-[#00000099]">
+            {t("orders.orderSummary.customerName")}
+          </div>
+          <div>{receipt.customerName || "-"}</div>
         </div>
       </div>
       <div className="w-full mt-4">
-        <div className="font-bold mb-2 text-left">Items</div>
+        <div className="font-bold mb-2 text-left">{t("bill.items")}</div>
         <div className="flex flex-col gap-2">
           {order.items.map((item) => (
             <div key={item.itemId} className="flex justify-between text-sm">
-              <span>{item.name} x{item.quantity}</span>
-              <span>{(item.price * (item.quantity || 1)).toLocaleString()} XOF</span>
+              <span>
+                {item.name} x{item.quantity}
+              </span>
+              <span>
+                {(item.price * (item.quantity || 1)).toLocaleString()} XOF
+              </span>
             </div>
           ))}
         </div>
       </div>
       <div className="w-full mt-4">
         <div className="flex justify-between border-b border-[#D32F2F] pb-1 mb-1">
-          <span className="text-base">Items Net Total</span>
-          <span className="text-base font-semibold">{order.pricingSummary.subtotal.toLocaleString()} XOF</span>
+          <span className="text-base">{t("bill.itemsNetTotal")}</span>
+          <span className="text-base font-semibold">
+            {order.pricingSummary.subtotal.toLocaleString()} XOF
+          </span>
         </div>
         <div className="flex justify-between border-b border-[#D32F2F] pb-1 mb-1">
-          <span className="text-base">Taxes</span>
-          <span className="text-base font-semibold">{order.pricingSummary.tax.toLocaleString()} XOF</span>
+          <span className="text-base">{t("bill.taxes")}</span>
+          <span className="text-base font-semibold">
+            {order.pricingSummary.tax.toLocaleString()} XOF
+          </span>
         </div>
         {order.pricingSummary.discount > 0 && (
           <div className="flex justify-between border-b border-[#D32F2F] pb-1 mb-1">
-            <span className="text-base">Discount</span>
-            <span className="text-base font-semibold">-{order.pricingSummary.discount.toLocaleString()} XOF</span>
+            <span className="text-base">{t("bill.discount")}</span>
+            <span className="text-base font-semibold">
+              -{order.pricingSummary.discount.toLocaleString()} XOF
+            </span>
           </div>
         )}
         <div className="flex justify-between">
-          <span className="text-lg font-bold">Total</span>
-          <span className="text-lg font-bold">{order.pricingSummary.totalAmount.toLocaleString()} XOF</span>
+          <span className="text-lg font-bold">{t("bill.total")}</span>
+          <span className="text-lg font-bold">
+            {order.pricingSummary.totalAmount.toLocaleString()} XOF
+          </span>
         </div>
       </div>
     </div>
   );
 };
 
-const PrintBillModal: React.FC<PrintBillModalProps> = ({ open, onClose, order }) => {
+const PrintBillModal: React.FC<PrintBillModalProps> = ({
+  open,
+  onClose,
+  order,
+}) => {
   const printRef = useRef<HTMLDivElement>(null);
   const [printRootReady, setPrintRootReady] = useState(false);
 
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
-    documentTitle: order?.orderId ? `Bill_${order.orderId}` : 'Bill',
+    documentTitle: order?.orderId ? `Bill_${order.orderId}` : "Bill",
     removeAfterPrint: true,
   } as UseReactToPrintOptions);
 
   // Always render the hidden print node at the end of the body
   useEffect(() => {
     let ready = false;
-    if (!document.getElementById('hidden-print-root')) {
-      const div = document.createElement('div');
-      div.id = 'hidden-print-root';
-      div.style.position = 'absolute';
-      div.style.left = '-9999px';
-      div.style.top = '0';
+    if (!document.getElementById("hidden-print-root")) {
+      const div = document.createElement("div");
+      div.id = "hidden-print-root";
+      div.style.position = "absolute";
+      div.style.left = "-9999px";
+      div.style.top = "0";
       document.body.appendChild(div);
       ready = true;
     } else {
@@ -125,29 +176,34 @@ const PrintBillModal: React.FC<PrintBillModalProps> = ({ open, onClose, order })
                 className="mt-6 py-3 rounded-xl text-lg font-semibold text-black border-none transition-all flex items-center justify-center gap-2 print:hidden"
                 onClick={handlePrint}
               >
-                <img src={downloadReceiptIcon} alt="downloadReceiptIcon" /> <span className="text-sm font-bold">Print Bill</span>
+                <img src={downloadReceiptIcon} alt="downloadReceiptIcon" />{" "}
+                <span className="text-sm font-bold">
+                  {t("orders.orderSummary.printBill")}
+                </span>
               </button>
               <button
                 className="w-full mt-3 py-3 rounded-xl text-lg font-semibold text-white bg-gradient-to-r from-[#6A1B9A] to-[#D32F2F] shadow-md hover:opacity-90 transition-all print:hidden"
                 onClick={onClose}
               >
-                Close
+                {t("common.close")}
               </button>
             </div>
           </div>
         </div>
       )}
       {/* Hidden Print Node (always mounted) */}
-      {printRootReady && document.getElementById('hidden-print-root') && createPortal(
-        <div style={{ display: 'none' }}>
-          <div ref={printRef}>
-            <BillContent order={order} forPrint />
-          </div>
-        </div>,
-        document.getElementById('hidden-print-root') as HTMLElement
-      )}
+      {printRootReady &&
+        document.getElementById("hidden-print-root") &&
+        createPortal(
+          <div style={{ display: "none" }}>
+            <div ref={printRef}>
+              <BillContent order={order} forPrint />
+            </div>
+          </div>,
+          document.getElementById("hidden-print-root") as HTMLElement
+        )}
     </>
   );
 };
 
-export default PrintBillModal; 
+export default PrintBillModal;

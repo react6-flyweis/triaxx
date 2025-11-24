@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useWalkthroughStore } from "@/store/walkthroughStore";
 import type { OrderItem } from "@/types/order";
 import { useGetItemAddonsQuery } from "@/redux/api/apiSlice";
@@ -45,6 +46,8 @@ const AddonsModal: React.FC<AddonsModalProps> = ({
     (a) => (a.prices ?? 0) > 0 && a.Status
   );
 
+  const { t } = useTranslation();
+
   return (
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center transition-opacity duration-300 ease-in-out ${
@@ -68,25 +71,27 @@ const AddonsModal: React.FC<AddonsModalProps> = ({
                 "linear-gradient(180deg, rgba(106, 27, 154, 0.5) 0%, rgba(211, 47, 47, 0.5) 100%)",
             }}
           >
-            <div className="text-2xl font-bold">Addons</div>
+            <div className="text-2xl font-bold">{t("addons.title")}</div>
             <div className="flex justify-between">
-              <div className="text-sm font-semibold">Draft</div>
+              <div className="text-sm font-semibold">{t("addons.draft")}</div>
               <div className="text-sm font-semibold text-[#3A3A3C]">
-                Table - {tableId || "--"}
+                {t("addons.table", { id: tableId ?? "--" })}
               </div>
             </div>
           </div>
           {/* Content */}
           <div className="p-8 pt-6 pb-0">
-            <div className="font-bold text-lg text-left mb-6">Addons</div>
+            <div className="font-bold text-lg text-left mb-6">
+              {t("addons.title")}
+            </div>
             {/* No price addons inline */}
             <div className="flex flex-row gap-6 mb-4">
               {isLoading ? (
-                <div className="text-sm text-gray-500">Loading addons...</div>
-              ) : isError ? (
-                <div className="text-sm text-red-500">
-                  Failed to load addons
+                <div className="text-sm text-gray-500">
+                  {t("addons.loading")}
                 </div>
+              ) : isError ? (
+                <div className="text-sm text-red-500">{t("addons.failed")}</div>
               ) : (
                 noPriceAddons.map((addon) => (
                   <label
@@ -144,13 +149,13 @@ const AddonsModal: React.FC<AddonsModalProps> = ({
             </div>
             {/* Note section */}
             <div className="mb-8">
-              <div className="font-bold mb-2 text-left">Note</div>
+              <div className="font-bold mb-2 text-left">{t("addons.note")}</div>
               <textarea
                 className="w-full rounded-xl p-4 text-base font-normal focus:outline-none resize-none min-h-[56px] 
                 
                 bg-[linear-gradient(180deg,rgba(106,27,154,0.1)_0%,rgba(211,47,47,0.1)_100%)] placeholder:text-[#00000099]"
                 rows={2}
-                placeholder="Enter Notes here....."
+                placeholder={t("addons.notePlaceholder")}
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
               />
@@ -172,7 +177,7 @@ const AddonsModal: React.FC<AddonsModalProps> = ({
                 onClose();
               }}
             >
-              Save
+              {t("addons.save")}
             </button>
           </div>
         </div>

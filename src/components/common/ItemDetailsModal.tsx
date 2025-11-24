@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useWalkthroughStore } from "@/store/walkthroughStore";
 import type { OrderItem } from "@/types/order";
 import backIcon from "@/assets/back.svg";
@@ -19,6 +20,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
   onSelect,
 }) => {
   const isWalkthroughActive = useWalkthroughStore((s) => s.isActive);
+  const { t } = useTranslation();
   const [selectedSize, setSelectedSize] = useState("S");
   const [showFullDesc, setShowFullDesc] = useState(false);
 
@@ -56,12 +58,16 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
           <button
             className="absolute left-4 top-1/2 -translate-y-1/2 p-1"
             onClick={onClose}
-            aria-label="Back"
+            aria-label={t("itemDetails.back")}
           >
-            <img src={backIcon} alt="Back" className="w-5 h-5" />
+            <img
+              src={backIcon}
+              alt={t("itemDetails.back")}
+              className="w-5 h-5"
+            />
           </button>
           <div className="text-xl font-bold text-center w-full">
-            Item Details
+            {t("itemDetails.title")}
           </div>
         </div>
         {/* Image */}
@@ -94,13 +100,15 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
                   className="text-primary-gradient cursor-pointer ml-1 text-sm font-normal"
                   onClick={() => setShowFullDesc(true)}
                 >
-                  Read More
+                  {t("itemDetails.readMore")}
                 </span>
               )}
           </div>
           {/* Size */}
           <div className="w-full mb-6">
-            <div className="font-semibold mb-2 text-left">Size</div>
+            <div className="font-semibold mb-2 text-left">
+              {t("itemDetails.size")}
+            </div>
             <div className="flex gap-3 justify-start item-size-options">
               {sizes.map((size) => (
                 <button
@@ -137,7 +145,9 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
         {/* Footer */}
         <div className="w-full flex items-center justify-between px-6 py-4 border-t border-gray-100 bg-white sticky bottom-0 z-20">
           <div className="flex flex-col items-start">
-            <span className="text-sm font-semibold mb-0.5">Price</span>
+            <span className="text-sm font-semibold mb-0.5">
+              {t("itemDetails.price")}
+            </span>
             <span className="text-xl font-bold text-primary-gradient">
               {item.price} XOF
             </span>
@@ -165,7 +175,7 @@ const ItemDetailsModal: React.FC<ItemDetailsModalProps> = ({
               }
             }}
           >
-            Add Item
+            {t("itemDetails.addItem")}
           </button>
         </div>
       </div>
