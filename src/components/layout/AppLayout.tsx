@@ -8,7 +8,7 @@ import SignOutSuccessModal from "../common/SignOutSuccessModal";
 import Header from "./Header";
 import MobileLogoutConfirmation from "../common/MobileLogoutConfirmation";
 import MobileLogoutSuccess from "../common/MobileLogoutSuccess";
-import { logoutAll } from "@/services/authHelpers";
+import { signOut } from "@/services/authHelpers";
 
 const mobileRoutes = [
   "/orders",
@@ -30,7 +30,7 @@ const AppLayout: React.FC = () => {
   const [isMobileConfirmOpen, setMobileConfirmOpen] = useState(false);
   const [isMobileSuccessOpen, setMobileSuccessOpen] = useState(false);
   const logout = () => {
-    logoutAll();
+    signOut();
   };
 
   useEffect(() => {
