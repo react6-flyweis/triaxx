@@ -132,6 +132,7 @@ const PrintBillModal: React.FC<PrintBillModalProps> = ({
   onClose,
   order,
 }) => {
+  const { t } = useTranslation();
   const printRef = useRef<HTMLDivElement>(null);
   const [printRootReady, setPrintRootReady] = useState(false);
 

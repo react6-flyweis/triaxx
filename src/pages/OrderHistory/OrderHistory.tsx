@@ -25,7 +25,7 @@ function getMinutesAgo(isoString: string | undefined) {
   return Math.max(1, Math.round(diffMs / 60000)); // at least 1 min
 }
 
-const getStatusBadge = (order: any, t: any) => {
+const getStatusBadge = ({ order, t }: { order: any; t: any }) => {
   // Find the latest status change for the current status
   const lastStatus =
     order.statusHistory && order.statusHistory.length > 0
@@ -406,19 +406,21 @@ const OrderHistory = () => {
                 </div>
                 <div className="flex flex-col gap-2">
                   {getStatusBadge({
-                    orderId: order.order.order_id,
-                    status: order.order.order_status,
-                    statusHistory: [{ at: order.order.created_at }],
-                    tableInfo: { tableId: `t-${order.table.table_id}` },
-                    items: order.products.items,
-                    pricingSummary: {
-                      taxPercentage: order.tax.tax_percentage,
-                      tax: order.tax.tax_amount,
-                      subtotal: order.subtotal,
-                      totalAmount: order.total,
+                    order: {
+                      orderId: order.order.order_id,
+                      status: order.order.order_status,
+                      statusHistory: [{ at: order.order.created_at }],
+                      tableInfo: { tableId: `t-${order.table.table_id}` },
+                      items: order.products.items,
+                      pricingSummary: {
+                        taxPercentage: order.tax.tax_percentage,
+                        tax: order.tax.tax_amount,
+                        subtotal: order.subtotal,
+                        totalAmount: order.total,
+                      },
+                      customerInfo: { name: "" },
+                      paymentDetails: { method: "Cash" },
                     },
-                    customerInfo: { name: "" },
-                    paymentDetails: { method: "Cash" },
                     t,
                   })}
                 </div>

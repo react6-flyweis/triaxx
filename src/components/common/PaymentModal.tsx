@@ -88,12 +88,12 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                 {opt.icon && (
                   <img
                     src={opt.icon}
-                    alt={t(`orders.payment.options.${opt.labelKey}` as any)}
+                    alt={t(`orders.payment.options.${opt.labelKey}`)}
                     className="w-6 h-6"
                   />
                 )}
                 <span className="font-medium text-base">
-                  {t(`orders.payment.options.${opt.labelKey}` as any)}
+                  {t(`orders.payment.options.${opt.labelKey}`)}
                 </span>
               </div>
               <input
@@ -116,9 +116,15 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
             >
               <div className="flex items-center gap-3">
                 {opt.icon && (
-                  <img src={opt.icon} alt={opt.label} className="w-6 h-6" />
+                  <img
+                    src={opt.icon}
+                    alt={t(`orders.payment.options.${opt.labelKey}`)}
+                    className="w-6 h-6"
+                  />
                 )}
-                <span className="font-medium text-base">{opt.label}</span>
+                <span className="font-medium text-base">
+                  {t(`orders.payment.options.${opt.labelKey}`)}
+                </span>
               </div>
               <input
                 type="radio"
@@ -140,9 +146,15 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
             >
               <div className="flex items-center gap-3">
                 {opt.icon && (
-                  <img src={opt.icon} alt={opt.label} className="w-6 h-6" />
+                  <img
+                    src={opt.icon}
+                    alt={t(`orders.payment.options.${opt.labelKey}`)}
+                    className="w-6 h-6"
+                  />
                 )}
-                <span className="font-medium text-base">{opt.label}</span>
+                <span className="font-medium text-base">
+                  {t(`orders.payment.options.${opt.labelKey}`)}
+                </span>
               </div>
               <input
                 type="radio"
@@ -164,9 +176,15 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
             >
               <div className="flex items-center gap-3">
                 {opt.icon && (
-                  <img src={opt.icon} alt={opt.label} className="w-6 h-6" />
+                  <img
+                    src={opt.icon}
+                    alt={t(`orders.payment.options.${opt.labelKey}`)}
+                    className="w-6 h-6"
+                  />
                 )}
-                <span className="font-medium text-base">{opt.label}</span>
+                <span className="font-medium text-base">
+                  {t(`orders.payment.options.${opt.labelKey}`)}
+                </span>
               </div>
               <input
                 type="radio"
