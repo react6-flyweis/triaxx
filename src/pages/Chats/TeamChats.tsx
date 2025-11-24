@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import searchIcon from "@/assets/chats/searchIcon.svg";
 import sendIcon from "@/assets/chats/sendIcon.svg";
 import mentionIcon from "@/assets/chats/mentionIcon.svg";
@@ -91,6 +92,7 @@ const ChatTile = ({
   allMessages: Record<string, Message[]>;
   unreadCount: number;
 }) => {
+  const { t } = useTranslation();
   const lastMsg = getChatLastMessage(chat, currentUserId, allMessages);
 
   return (
@@ -107,10 +109,10 @@ const ChatTile = ({
       />
       <div className="flex-1 min-w-0">
         <div className="font-semibold text-base truncate text-[#2C2C2E]">
-          {getChatName(chat) || "Unknown"}
+          {getChatName(chat) || t("chats.unknown")}
         </div>
         <div className="truncate text-sm font-normal text-[#666668]">
-          {lastMsg?.text || "No messages yet"}
+          {lastMsg?.text || t("chats.noMessagesYet")}
         </div>
       </div>
       <div className="flex flex-col items-end min-w-[40px]">
@@ -134,42 +136,45 @@ const MessageBubble = ({
 }: {
   message: Message;
   isSelf: boolean;
-}) => (
-  <div className={`flex ${isSelf ? "justify-end" : "justify-start"} mb-2`}>
-    {!isSelf && message.senderAvatar && (
-      <img
-        src={message.senderAvatar}
-        alt={message.senderName || "User"}
-        className="w-8 h-8 rounded-full mr-2"
-      />
-    )}
-    <div
-      className={`max-w-[60%] ${
-        isSelf
-          ? "bg-gradient-to-b from-[#6A1B9A] to-[#D32F2F] text-white"
-          : "bg-[#F8EAEE] text-black"
-      } px-4 py-2 rounded-xl relative`}
-    >
-      {!isSelf && message.senderName && (
-        <div className="text-xs font-bold mb-1 text-[#6A1B9A]">
-          {message.senderName}
-        </div>
+}) => {
+  const { t } = useTranslation();
+  return (
+    <div className={`flex ${isSelf ? "justify-end" : "justify-start"} mb-2`}>
+      {!isSelf && message.senderAvatar && (
+        <img
+          src={message.senderAvatar}
+          alt={message.senderName || t("chats.user")}
+          className="w-8 h-8 rounded-full mr-2"
+        />
       )}
-      <div className="text-base break-words">{message.text}</div>
       <div
-        className={`text-xs mt-1 flex justify-end items-center gap-1 ${
-          isSelf ? "text-white/80" : "text-[#BDBDBD]"
-        }`}
+        className={`max-w-[60%] ${
+          isSelf
+            ? "bg-gradient-to-b from-[#6A1B9A] to-[#D32F2F] text-white"
+            : "bg-[#F8EAEE] text-black"
+        } px-4 py-2 rounded-xl relative`}
       >
-        {new Date(message.timestamp).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        })}{" "}
-        <span>✓✓</span>
+        {!isSelf && message.senderName && (
+          <div className="text-xs font-bold mb-1 text-[#6A1B9A]">
+            {message.senderName}
+          </div>
+        )}
+        <div className="text-base break-words">{message.text}</div>
+        <div
+          className={`text-xs mt-1 flex justify-end items-center gap-1 ${
+            isSelf ? "text-white/80" : "text-[#BDBDBD]"
+          }`}
+        >
+          {new Date(message.timestamp).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}{" "}
+          <span>✓✓</span>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 // 1. Add a mobile detection hook (SSR-safe)
 function useIsMobile() {
@@ -202,6 +207,7 @@ const ChatWindow = ({
   leftPanelRef: React.RefObject<HTMLDivElement>;
   onSendMessage: (text: string, files?: File[]) => Promise<void>;
 }) => {
+  const { t } = useTranslation();
   const chatObj = chat; // Use chat directly since it's already the chat object
   const chatMsgs = messages; // Messages are already filtered
   const [message, setMessage] = useState("");
@@ -296,13 +302,13 @@ const ChatWindow = ({
       ref={membersButtonRef}
       className="flex items-center gap-2 relative z-10 focus:outline-none"
       onClick={() => setShowMembers(true)}
-      title="View Members"
+      title={t("chats.viewMembers")}
       type="button"
     >
       <div className="w-8 h-8 rounded-full bg-gradient-to-b from-[#6A1B9A] to-[#D32F2F] flex items-center justify-center text-white text-xs font-bold border-2 border-white shadow">
         {group.memberIds.length}
       </div>
-      <span className="text-xs text-[#666668]">members</span>
+      <span className="text-xs text-[#666668]">{t("chats.members")}</span>
     </button>
   );
 
@@ -345,7 +351,7 @@ const ChatWindow = ({
                   </span>
                 </div>
                 <div className="text-xs text-[#BDBDBD] mt-1">
-                  last seen 45 minutes ago
+                  {t("chats.lastSeen", { time: "45 minutes ago" })}
                 </div>
               </div>
             </>
@@ -361,7 +367,7 @@ const ChatWindow = ({
                   {chatObj.name}
                 </span>
                 <span className="text-xs text-[#BDBDBD] mt-1">
-                  last seen 45 minutes ago
+                  {t("chats.lastSeen", { time: "45 minutes ago" })}
                 </span>
               </div>
             </>
@@ -381,7 +387,7 @@ const ChatWindow = ({
             className="font-medium text-sm mb-3 rounded-xl border-0 px-2 py-1 text-[#666668]"
             style={{ boxShadow: "0px -3px 0px 0px #E5E5EA inset" }}
           >
-            Team Members
+            {t("chats.teamMembers")}
           </div>
           <div className="flex flex-col gap-3 max-h-60 overflow-y-auto">
             {(chatObj as Group).memberIds.map((id) => (
@@ -394,8 +400,12 @@ const ChatWindow = ({
                     {id.substring(0, 2).toUpperCase()}
                   </div>
                   <div>
-                    <div className="font-semibold text-base">User {id}</div>
-                    <div className="text-xs text-[#BDBDBD]">Team Member</div>
+                    <div className="font-semibold text-base">
+                      {t("chats.userWithId", { id })}
+                    </div>
+                    <div className="text-xs text-[#BDBDBD]">
+                      {t("chats.teamMemberRole")}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -415,7 +425,9 @@ const ChatWindow = ({
           </div>
         )}
         {chatMsgs.length === 0 ? (
-          <div className="text-center text-[#222] mt-20">No messages yet.</div>
+          <div className="text-center text-[#222] mt-20">
+            {t("chats.noMessagesYet")}
+          </div>
         ) : (
           chatMsgs.map((msg) => (
             <MessageBubble
@@ -449,7 +461,7 @@ const ChatWindow = ({
         <input
           type="text"
           className="flex-1 border-none outline-none text-base text-[#666668] placeholder:text-[#BDBDBD]"
-          placeholder="Start typing..."
+          placeholder={t("chats.startTyping")}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyPress={handleKeyPress}
@@ -466,7 +478,7 @@ const ChatWindow = ({
           disabled={uploading || !message.trim()}
           type="button"
         >
-          <img src={sendIcon} alt="send" className="w-6 h-6" />
+          <img src={sendIcon} alt={t("chats.send")} className="w-6 h-6" />
         </button>
       </div>
     </div>
@@ -475,6 +487,7 @@ const ChatWindow = ({
 
 // 2. Update TeamChats component
 const TeamChats: React.FC = () => {
+  const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("All");
   const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
@@ -563,7 +576,7 @@ const TeamChats: React.FC = () => {
       if (fc.type === "group") {
         return {
           id: fc.id,
-          name: fc.name || "Unnamed Group",
+          name: fc.name || t("chats.unnamedGroup"),
           avatar: fc.avatar || "https://via.placeholder.com/48",
           memberIds: fc.memberIds,
           type: "group" as const,
@@ -591,7 +604,7 @@ const TeamChats: React.FC = () => {
         const otherUserId = fc.memberIds.find((id) => id !== currentUser.id);
         return {
           id: fc.id,
-          name: fc.name || `User ${otherUserId}`,
+          name: fc.name || t("chats.userWithId", { id: otherUserId }),
           role: "Team Member",
           avatar: fc.avatar || "https://via.placeholder.com/48",
           lastSeen: new Date().toISOString(),
@@ -662,12 +675,18 @@ const TeamChats: React.FC = () => {
 
       {/* Desktop Title */}
       <div className="text-3xl font-bold mb-4 md:mb-6 px-4 md:px-0 hidden md:block">
-        Chats
+        {t("chats.title")}
       </div>
       {/* Mobile Title with Icon */}
       <div className="flex items-center gap-3 px-4 py-4 md:hidden">
-        <img src={customerServiceIcon} alt="Team Chat" className="w-7 h-7" />
-        <span className="text-xl font-bold text-[#2C2C2E]">Team Chat</span>
+        <img
+          src={customerServiceIcon}
+          alt={t("chats.teamTitle")}
+          className="w-7 h-7"
+        />
+        <span className="text-xl font-bold text-[#2C2C2E]">
+          {t("chats.teamTitle")}
+        </span>
       </div>
       <div className="bg-white lg:shadow-2xl sm:shadow px-0 md:px-6 flex flex-1 min-h-0 rounded-2xl overflow-hidden relative team-chat-full-panel">
         {/* Left: Chat List */}
@@ -684,7 +703,7 @@ const TeamChats: React.FC = () => {
               <input
                 type="text"
                 className="w-full rounded-lg bg-[#FAFAFA] pl-10 pr-6 py-3 text-sm text-[#666668] placeholder:text-[#666668] focus:outline-none"
-                placeholder="Search Team"
+                placeholder={t("chats.searchPlaceholder")}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 style={{ boxShadow: "0px -3px 0px 0px #E5E5EA inset" }}
@@ -708,7 +727,10 @@ const TeamChats: React.FC = () => {
                 onClick={() => handleTabClick(role)}
                 type="button"
               >
-                {role}
+                {(() => {
+                  const key = role.toLowerCase();
+                  return t(`chats.roles.${key}`);
+                })()}
               </button>
             ))}
           </div>
@@ -716,22 +738,26 @@ const TeamChats: React.FC = () => {
           <div className="flex-1 overflow-y-auto min-h-0 h-full flex flex-col px-2 md:px-0">
             {firebaseLoading ? (
               <div className="text-center text-[#666668] mt-10">
-                <p className="text-lg font-semibold mb-2">Loading chats...</p>
+                <p className="text-lg font-semibold mb-2">
+                  {t("chats.loadingChats")}
+                </p>
               </div>
             ) : firebaseError ? (
               <div className="text-center text-red-500 mt-10">
                 <p className="text-lg font-semibold mb-2">
-                  Error loading chats
+                  {t("chats.errorLoadingChats")}
                 </p>
                 <p className="text-sm">{firebaseError}</p>
               </div>
             ) : chatList.length === 0 ? (
               <div className="text-center text-[#666668] mt-10">
-                <p className="text-lg font-semibold mb-2">No chats yet</p>
+                <p className="text-lg font-semibold mb-2">
+                  {t("chats.noChatsYet")}
+                </p>
                 <p className="text-sm">
                   {firebaseChats.length === 0
-                    ? "No chats found. Create a chat to get started."
-                    : "No chats match your search."}
+                    ? t("chats.noChatsFound")
+                    : t("chats.noChatsMatchSearch")}
                 </p>
               </div>
             ) : (
@@ -769,9 +795,9 @@ const TeamChats: React.FC = () => {
           {!selectedChat ? (
             <div className="flex items-center justify-center h-full text-center text-lg text-[#2C2C2E] bg-transparent">
               <div>
-                Send and Receive message without any interruption
+                {t("chats.empty.title")}
                 <br />
-                Message your team for any assistance or help required
+                {t("chats.empty.subtitle")}
               </div>
             </div>
           ) : (
