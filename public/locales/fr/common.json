@@ -1,0 +1,588 @@
+{
+  "leftPanel": {
+    "heading": "Une caisse qui travaille aussi dur que vous.\net plus rapide que vous.",
+    "subheading": "Développez sans limite avec <0>Triaxx</0> et prenez des décisions rapides et précises grâce aux rapports en temps réel"
+  },
+  "language": {
+    "select": "Sélectionner la langue"
+  },
+  "header": {
+    "search": "Rechercher",
+    "menu": "Menu",
+    "notifications": "Notifications"
+  },
+  "supportTickets": {
+    "searchPlaceholder": "Rechercher un ticket",
+    "createSubjectPlaceholder": "Entrez le sujet...",
+    "createMessagePlaceholder": "Expliquez ici..."
+  },
+  "common": {
+    "title": "Commandes rapides",
+    "noItems": "Aucun article trouvé.",
+    "close": "Fermer"
+  },
+  "actions": {
+    "cancel": "Annuler",
+    "done": "Terminé",
+    "continue": "Continuer",
+    "sending": "Envoi..."
+  },
+  "auth": {
+    "login": {
+      "title": "Connectez-vous à votre compte",
+      "welcome": "Content de vous revoir !",
+      "subtitle": "Connectez-vous pour accéder à votre compte Triaxx",
+      "employeeId": "ID employé",
+      "placeholderId": "Entrez l'ID",
+      "password": "Mot de passe",
+      "placeholderPassword": "Entrez le mot de passe",
+      "forgotPassword": "Mot de passe oublié ?",
+      "rememberMe": "Se souvenir de moi",
+      "submit": "Se connecter",
+      "submitting": "Envoi...",
+      "success": "Connexion réussie !",
+      "failed": "Échec de la connexion. Veuillez réessayer."
+    },
+    "verify": {
+      "label": "Entrez le code OTP",
+      "placeholder": "Entrez le code OTP",
+      "submit": "Vérifier",
+      "verifying": "Vérification...",
+      "instructions": "Veuillez saisir le code d'authentification envoyé à votre e-mail enregistré"
+    },
+    "otpSent": {
+      "title": "OTP envoyé à l'e-mail enregistré",
+      "body": "Un code d'authentification a été envoyé à votre e-mail"
+    },
+    "reset": {
+      "placeholderNewPassword": "Entrez le nouveau mot de passe",
+      "placeholderConfirmPassword": "Confirmez le nouveau mot de passe",
+      "saving": "Enregistrement...",
+      "save": "Enregistrer le mot de passe"
+    },
+    "forgot": {
+      "placeholderEmail": "Entrez l'email"
+    }
+  },
+  "sidebar": {
+    "nav": {
+      "quickOrder": "Commande rapide",
+      "table": "Table",
+      "orderHistory": "Historique des commandes"
+    },
+    "training": {
+      "title": "Formation",
+      "training": "Formation",
+      "teamChats": "Discussions d'équipe"
+    },
+    "bottom": {
+      "setting": "Paramètres",
+      "signOut": "Se déconnecter"
+    },
+    "user": {
+      "defaultName": "Jackline",
+      "defaultRole": "Personnel"
+    },
+    "toast": {
+      "loggedOut": "Déconnecté avec succès !"
+    }
+  },
+  "dashboard": {
+    "welcome": "Bienvenue Jackline !"
+  },
+  "orders": {
+    "title": "Commandes rapides",
+    "noItems": "Aucun article trouvé.",
+    "categories": {
+      "allItems": "Tous les éléments"
+    },
+    "orderSent": {
+      "title": "Commande envoyée en cuisine",
+      "created": "Commande créée",
+      "subtitle": "Votre plat a été créé et sera mis à jour dans le menu dans quelques minutes"
+    },
+    "orderSummary": {
+      "title": "Résumé de la commande",
+      "check": "Vérifiez votre résumé de commande",
+      "printBill": "Imprimer la facture",
+      "choosePayment": "Choisissez le mode de paiement",
+      "paymentSuccess": "Paiement réussi !",
+      "paymentDoneText": "Votre paiement a été effectué avec succès.",
+      "totalPayment": "Paiement total",
+      "orderNumber": "Numéro de commande",
+      "dateTime": "Date et heure",
+      "paymentType": "Type de paiement",
+      "customerName": "Nom du client",
+      "printReceipt": "Imprimer le reçu",
+      "backToSummary": "Retour au résumé",
+      "headers": {
+        "qty": "Qté",
+        "item": "Article",
+        "size": "Taille",
+        "total": "Total"
+      },
+      "taxLabel": "Taxe {{rate}}%",
+      "subtotal": "Sous-total (TVA incl.)"
+    },
+    "allergy": "Allergie",
+    "addedToOrder": "{{name}} ajouté à la commande !",
+    "nextOrder": "Commande suivante",
+    "tapToSelectTable": "Appuyez pour sélectionner la table",
+    "andStartOrder": "&\\nDémarrer la commande",
+    "startOrder": {
+      "title": "Démarrer la commande",
+      "subtitle": "Étage, Table, Personnes",
+      "button": "Démarrer la commande"
+    },
+    "personsLabel": "Personnes:",
+    "floorLabel": "Étage:",
+    "tableLabel": "Table:",
+    "sendToKitchen": "Envoyer en cuisine",
+    "deleteItem": "Supprimer",
+    "startNewOrder": "Démarrer une nouvelle commande",
+    "payment": {
+      "groups": {
+        "card": "Paiements par carte",
+        "online": "Paiements en ligne",
+        "split": "Paiements partagés"
+      },
+      "pay": "Payer {{amount}}",
+      "title": "Options de paiement"
+    },
+    "ready": {
+      "done": {
+        "description": "Transaction réussie",
+        "title": "Paiement effectué"
+      },
+      "toPay": {
+        "description": "Placez la carte près du terminal de paiement",
+        "title": "Prêt à payer"
+      },
+      "toScan": {
+        "description": "Tenez votre carte d'adhérent ou votre téléphone près du haut de l'iPad pour scanner.",
+        "title": "Prêt à scanner"
+      }
+    },
+    "errors": {
+      "customerRequired": "Les informations client sont requises. Veuillez ajouter les détails du client.",
+      "createOrderFailed": "Échec de la création de la commande. Veuillez réessayer.",
+      "createCustomerFailed": "Échec de la création du client. Veuillez réessayer."
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "loading": "Chargement...",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "daysAgo": "Il y a {{count}} jours",
+    "aWeekAgo": "Il y a une semaine",
+    "aMonthAgo": "Il y a un mois",
+    "defaultTitle": "Notification"
+  },
+  "chats": {
+    "title": "Chats",
+    "teamTitle": "Chat d'équipe",
+    "roles": {
+      "all": "Tous",
+      "waiters": "Serveurs",
+      "chefs": "Chefs",
+      "managers": "Managers"
+    },
+    "searchPlaceholder": "Rechercher l'équipe",
+    "loadingChats": "Chargement des discussions...",
+    "errorLoadingChats": "Erreur lors du chargement des discussions",
+    "noChatsYet": "Aucune discussion pour le moment",
+    "noChatsFound": "Aucune discussion trouvée. Créez une discussion pour commencer.",
+    "noChatsMatchSearch": "Aucune discussion ne correspond à votre recherche.",
+    "unknown": "Inconnu",
+    "noMessagesYet": "Aucun message pour le moment.",
+    "startTyping": "Commencez à taper...",
+    "send": "Envoyer",
+    "members": "membres",
+    "viewMembers": "Voir les membres",
+    "teamMembers": "Membres de l'équipe",
+    "userWithId": "Utilisateur {{id}}",
+    "teamMemberRole": "Membre de l'équipe",
+    "lastSeen": "vu pour la dernière fois {{time}}",
+    "empty": {
+      "title": "Envoyez et recevez des messages sans interruption",
+      "subtitle": "Envoyez un message à votre équipe pour toute assistance nécessaire"
+    },
+    "unnamedGroup": "Groupe sans nom",
+    "user": "Utilisateur"
+  },
+  "employees": {
+    "title": "Employés"
+  },
+  "payment": {
+    "title": "Options de paiement",
+    "groups": {
+      "online": "Paiements en ligne",
+      "card": "Paiements par carte",
+      "split": "Paiements partagés"
+    },
+    "options": {
+      "cash": "Payer en espèces",
+      "giftcard": "Cartes cadeaux",
+      "gpay": "GPay",
+      "applepay": "Apple Pay",
+      "momo": "MoMo Money",
+      "orange": "Orange Money",
+      "debitcard": "Paiement par carte",
+      "split": "Paiement partagé"
+    },
+    "pay": "Payer {{amount}}"
+  },
+  "ready": {
+    "toScan": {
+      "title": "Prêt à scanner",
+      "description": "Tenez votre carte d'adhérent ou votre téléphone près du haut de l'iPad pour scanner."
+    },
+    "toPay": {
+      "title": "Prêt à payer",
+      "description": "Placez la carte près du terminal de paiement"
+    },
+    "done": {
+      "title": "Paiement effectué",
+      "description": "Transaction réussie",
+      "button": "Terminé"
+    }
+  },
+  "itemDetails": {
+    "title": "Détails de l'article",
+    "back": "Retour",
+    "readMore": "Lire la suite",
+    "size": "Taille",
+    "price": "Prix",
+    "addItem": "Ajouter l'article"
+  },
+  "bill": {
+    "title": "Résumé de la facture",
+    "items": "Articles",
+    "itemsNetTotal": "Total net des articles",
+    "taxes": "Taxes",
+    "discount": "Remise",
+    "total": "Total"
+  },
+  "addons": {
+    "title": "Addons",
+    "draft": "Brouillon",
+    "table": "Table - {{id}}",
+    "loading": "Chargement des addons...",
+    "failed": "Échec du chargement des addons",
+    "note": "Remarque",
+    "notePlaceholder": "Entrez des notes ici...",
+    "save": "Enregistrer",
+    "extra": "(+{{price}} XOF)"
+  },
+  "customer": {
+    "title": "Informations client",
+    "subtitle": "Veuillez saisir les informations du client",
+    "phoneLabel": "Numéro de téléphone",
+    "phonePlaceholder": "Saisissez un numéro de téléphone à 10 chiffres",
+    "phoneRequired": "Le numéro de téléphone est requis",
+    "phoneInvalid": "Le numéro de téléphone doit comporter 10 chiffres",
+    "nameLabel": "Nom complet",
+    "namePlaceholder": "Entrez le nom du client",
+    "nameRequired": "Le nom est requis",
+    "nameTooShort": "Le nom doit comporter au moins 2 caractères",
+    "dobLabel": "Date de naissance",
+    "dobRequired": "La date de naissance est requise",
+    "dobFuture": "La date de naissance ne peut pas être dans le futur",
+    "customerTypeLabel": "Type de client",
+    "types": {
+      "regular": "Régulier",
+      "vip": "VIP",
+      "member": "Membre"
+    },
+    "cancel": "Annuler",
+    "creating": "Création...",
+    "create": "Créer le client"
+  },
+  "logout": {
+    "prompt": "Voulez-vous vous déconnecter ?",
+    "savePassword": "Voulez-vous enregistrer le mot de passe ?",
+    "noStay": "Non, rester",
+    "yesSignOut": "Oui, déconnecter"
+  },
+  "signout": {
+    "title": "Déconnecté"
+  },
+  "floor": {
+    "title": "Plan d'étage",
+    "subtitle": "Sélectionnez l'étage et le nombre de personnes",
+    "selectPersons": "Sélectionnez le nombre de personnes:",
+    "selectFloor": "Sélectionnez l'étage:",
+    "selectTable": "Sélectionner la table"
+  },
+  "orderHistory": {
+    "title": "Historique des commandes",
+    "invoices": "Factures",
+    "dateFilter": {
+      "today": "Aujourd'hui",
+      "yesterday": "Hier",
+      "thisWeek": "Cette semaine",
+      "lastWeek": "La semaine dernière",
+      "thisMonth": "Ce mois-ci",
+      "lastMonth": "Le mois dernier",
+      "reset": "Réinitialiser",
+      "allTime": "Tout le temps"
+    },
+    "profile": {
+      "personal": "Personnel"
+    },
+    "statusOptions": {
+      "all": "Tous",
+      "preparing": "En préparation",
+      "served": "Servi",
+      "cancelled": "Annulé"
+    },
+    "empty": {
+      "headingStatus": "Aucune commande {{status}} pour {{period}}",
+      "headingDefault": "Aucune commande trouvée pour {{period}}",
+      "subtitleStatus": "Aucune commande n'est dans le statut {{status}} pour cette période",
+      "subtitleDefault": "Essayez d'ajuster votre plage de dates ou le filtre de statut"
+    },
+    "itemCount": "{{count}} articles",
+    "tableLabel": "Table - {{id}}",
+    "taxLabel": "Taxe {{rate}}%",
+    "subtotal": "Sous-total (TVA incl.)",
+    "orderCard": {
+      "items": "articles"
+    },
+    "minLabel": "Min",
+    "invoice": {
+      "title": "Factures",
+      "tableHeaders": {
+        "sNo": "N°",
+        "invoiceId": "ID facture",
+        "date": "Date",
+        "orderType": "Type de commande",
+        "totalAmount": "Montant total",
+        "action": "Action"
+      },
+      "print": "Imprimer",
+      "dineIn": "Sur place"
+    },
+    "success": {
+      "backButton": "Retour à l'historique",
+      "paymentReceivedSubtitle": "Votre paiement a été traité et la commande a été mise à jour.",
+      "paymentReceivedTitle": "Paiement reçu avec succès !"
+    }
+  },
+  "profile": {
+    "personal": "Personnel",
+    "title": "Mon profil",
+    "tabs": {
+      "work": "Résumé du travail",
+      "personal": "Personnel",
+      "security": "Sécurité",
+      "signOut": "Se déconnecter"
+    },
+    "employeeDetails": "Détails de l'employé",
+    "labels": {
+      "role": "Rôle",
+      "responsibility": "Responsabilité",
+      "name": "Nom",
+      "employeeId": "ID employé",
+      "email": "Email",
+      "phone": "Téléphone",
+      "onboardingDate": "Date d'intégration",
+      "yearsWithUs": "Années avec nous"
+    },
+    "privacyPasswordTitle": "Confidentialité et mot de passe",
+    "changePasswordTitle": "Changer le mot de passe",
+    "changePasswordInfo": "Remplissez les informations pour changer votre mot de passe",
+    "enterCurrentPassword": "Entrez le mot de passe actuel",
+    "enterNewPassword": "Entrez le nouveau mot de passe",
+    "reenterNewPassword": "Saisissez à nouveau le nouveau mot de passe",
+    "showAlt": "Afficher",
+    "forgetPassword": "Mot de passe oublié",
+    "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+    "savePassword": "Enregistrer le mot de passe",
+    "saving": "Enregistrement...",
+    "chefIllustrationAlt": "Illustration du chef",
+    "infoTitle": "Infos du profil",
+    "notificationsAlt": "Notifications",
+    "avatarAlt": "Avatar",
+    "editAlt": "Modifier",
+    "userIconAlt": "Utilisateur",
+    "emailIconAlt": "Email",
+    "phoneIconAlt": "Téléphone",
+    "empIdIconAlt": "ID employé",
+    "roleIconAlt": "Rôle",
+    "personalDataTitle": "Mes données personnelles",
+    "personalDataSubtitle": "Détails concernant mes données personnelles",
+    "passwordPlaceholder": "Mon mot de passe",
+    "workDetails": "Détails du travail",
+    "yearsSuffix": "ans",
+    "updating": "Mise à jour...",
+    "updatePassword": "Mettre à jour le mot de passe",
+    "terms": "Termes et conditions",
+    "privacyPolicy": "Politique de confidentialité",
+    "clockIn": "Pointage entrée",
+    "clockIconAlt": "Icône horloge",
+    "employeeTraining": "Formation des employés",
+    "account": "Compte",
+    "empLabel": "ID EMP: {{id}}",
+    "passwordChangeSuccess": "Mot de passe modifié avec succès !",
+    "passwordChangeFailed": "Échec de la modification du mot de passe"
+  },
+  "workSummary": {
+    "title": "Résumé du travail",
+    "backAlt": "Retour",
+    "weeklySummary": "Résumé hebdomadaire",
+    "ordersSuffix": "Commandes",
+    "totalCustomer": "Total des clients",
+    "totalCustomerToday": "Total des clients aujourd'hui",
+    "totalOrderServed": "Total des commandes servies",
+    "totalTipsEarned": "Pourboires totaux gagnés",
+    "periods": {
+      "total": "• Total",
+      "morning": "• Matin",
+      "noon": "• Midi",
+      "evening": "• Soir",
+      "night": "• Nuit"
+    },
+    "timeHoursSuffix": "hrs"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "personalInfo": {
+      "title": "Informations personnelles",
+      "desc": "Vous pouvez vérifier toutes vos informations personnelles ici."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "desc": "Choisissez les préférences de notification en conséquence."
+    },
+    "loginSecurity": {
+      "title": "Connexion et sécurité",
+      "desc": "Changez le mot de passe et l'adresse e-mail."
+    },
+    "workSummary": {
+      "title": "Résumé du travail",
+      "desc": "Le travail effectué et l'argent gagné peuvent être consultés ici."
+    },
+    "clock": {
+      "title": "Pointage entrée / sortie",
+      "desc": "Basculer pour pointer l'entrée ou la sortie des quarts.",
+      "on": "ON",
+      "off": "OFF"
+    },
+    "support": {
+      "title": "Tickets de support",
+      "desc": "Créer ou consulter des tickets de support."
+    }
+  },
+  "support": {
+    "contact": {
+      "title": "Contactez le support",
+      "helpTitle": "Besoin d'aide ?",
+      "helpBody": "Vous rencontrez des problèmes, fonctionnalité personnalisée, nouveau développement d'application, nouveau projet, contactez-nous et nous répondrons sous 24h.",
+      "emailLabel": "Mail :"
+    },
+    "tickets": {
+      "title": "Ticket de support",
+      "create": "Créer un ticket",
+      "viewRaised": "Voir les tickets",
+      "titlePrefix": "Ticket de support >",
+      "tabs": {
+        "all": "Tous les tickets",
+        "ongoing": "En cours",
+        "resolved": "Résolu"
+      },
+      "periods": {
+        "week": "Cette semaine",
+        "day": "Aujourd'hui",
+        "month": "Ce mois-ci"
+      },
+      "searchPlaceholder": "Rechercher un ticket",
+      "loading": "Chargement...",
+      "labels": {
+        "email": "Email",
+        "businessName": "Nom de l'entreprise",
+        "ticketType": "Type de ticket"
+      },
+      "type": {
+        "loading": "Chargement des types de tickets...",
+        "select": "Sélectionnez un type de ticket"
+      },
+      "replyTitle": "Répondre au ticket",
+      "images": {
+        "uploaded": "Images téléchargées",
+        "upload": "Téléverser l'image"
+      },
+      "submit": "Soumettre",
+      "submitting": "Envoi...",
+      "loadFailed": "Échec du chargement des tickets",
+      "noTicketsFound": "Aucun ticket trouvé.",
+      "postedAt": "Publiée à",
+      "openTicket": "Ouvrir le ticket",
+      "ticketCard": {
+        "ticketId": "Ticket# {{id}}",
+        "title": "Ticket de support #{{id}}"
+      },
+      "notFound": "Ticket introuvable.",
+      "summary": {
+        "requestor": "Demandeur",
+        "subject": "Sujet",
+        "createdOn": "Créé le",
+        "ticketId": "ID du ticket",
+        "ticketStatus": "Statut du ticket"
+      },
+      "addResponse": "Ajouter une réponse",
+      "success": {
+        "title": "Réponse au ticket ajoutée avec succès !",
+        "subtitle": "Votre réponse a été ajoutée au ticket de support.",
+        "button": "Voir tous les tickets"
+      },
+      "createFailed": "Échec de la création du ticket"
+    },
+    "faqs": {
+      "title": "FAQ"
+    }
+  },
+  "clock": {
+    "title": "Pointage entrée / sortie",
+    "recentActivities": "Activités récentes",
+    "loading": "Chargement...",
+    "loadFailed": "Échec du chargement des enregistrements",
+    "noRecords": "Aucun enregistrement de pointage",
+    "timeAgo": {
+      "days": "Il y a {{count}} jour",
+      "hours": "Il y a {{count}} heure",
+      "minutes": "Il y a {{count}} minute",
+      "justNow": "À l'instant"
+    },
+    "button": {
+      "clockOut": "Pointage sortie",
+      "clockIn": "Pointage entrée"
+    },
+    "activity": {
+      "withOut": "Pointé à {{in}} et dépointé à {{out}}",
+      "stillActive": "Pointé à {{in}} (Toujours actif)"
+    },
+    "leavesLeft": "Congés restants"
+  },
+  "tables": {
+    "title": "Table (Plan d'étage)",
+    "editTables": "Modifier les tables",
+    "loading": "Chargement des tables...",
+    "statusTabs": {
+      "all": "Toutes les tables"
+    },
+    "empty": {
+      "all": "Aucune table disponible"
+    },
+    "emptySubtitle": {
+      "all": "Il n'y a aucune table dans le système"
+    },
+    "edit": "Modifier"
+  },
+  "success": {
+    "paymentReceivedTitle": "Paiement reçu avec succès !",
+    "paymentReceivedSubtitle": "Votre paiement a été traité et la commande a été mise à jour.",
+    "backButton": "Retour à l'historique des commandes"
+  }
+}
