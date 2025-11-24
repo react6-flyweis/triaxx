@@ -8,6 +8,7 @@ import {
 } from "@/redux/api/supportTicketsApi";
 import AddResponseForm from "./AddResponseModal";
 import { SuccessModal } from "@/components/common/SuccessModal";
+import { useTranslation } from "react-i18next";
 
 const SupportTicketDetail: React.FC = () => {
   const { id: ticketId } = useParams();
@@ -17,6 +18,7 @@ const SupportTicketDetail: React.FC = () => {
     skip: !id,
   });
   const ticketData = data?.data;
+  const { t } = useTranslation();
   // Always declare replies hook (hooks must be called unconditionally)
   const { data: repliesData, isLoading: repliesLoading } =
     useGetSupportTicketRepliesQuery(id, { skip: !id });
@@ -24,7 +26,11 @@ const SupportTicketDetail: React.FC = () => {
   const [showSuccess, setShowSuccess] = useState(false);
 
   if (isLoading) {
-    return <div className="p-8 text-center text-lg">Loading ticket...</div>;
+    return (
+      <div className="p-8 text-center text-lg">
+        {t("support.tickets.loading")}
+      </div>
+    );
   }
   if (error) {
     let errMsg = "Failed to load ticket";
@@ -40,7 +46,11 @@ const SupportTicketDetail: React.FC = () => {
     return <div className="p-8 text-center text-lg text-red-600">{errMsg}</div>;
   }
   if (!ticketData) {
-    return <div className="p-8 text-center text-lg">Ticket not found.</div>;
+    return (
+      <div className="p-8 text-center text-lg">
+        {t("support.tickets.notFound")}
+      </div>
+    );
   }
 
   // Conversation item type
@@ -124,15 +134,19 @@ const SupportTicketDetail: React.FC = () => {
           {/* Header */}
           <div className="flex items-center gap-2 mb-8">
             <span className="text-[#00000099] font-bold text-[32px]">
-              Support Ticket &gt;
+              {t("support.tickets.titlePrefix")}
             </span>
-            <span className="text-black font-bold text-[32px]">All Ticket</span>
+            <span className="text-black font-bold text-[32px]">
+              {t("support.tickets.tabs.all")}
+            </span>
           </div>
           {/* Ticket Summary */}
           <div className="rounded-2xl bg-[#F8EAEE] p-8 flex flex-col md:flex-row md:justify-between mb-8">
             <div className="flex-1 flex flex-col gap-3">
               <div className="flex justify-between">
-                <span className="font-bold">Requestor</span>
+                <span className="font-bold">
+                  {t("support.tickets.summary.requestor")}
+                </span>
                 <span className="font-bold">
                   {ticketData.Customer?.Name ||
                     ticketData.CreateBy?.Name ||
@@ -140,29 +154,37 @@ const SupportTicketDetail: React.FC = () => {
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="font-bold">Subject</span>
+                <span className="font-bold">
+                  {t("support.tickets.summary.subject")}
+                </span>
                 <span className="font-bold">{subjectText}</span>
               </div>
               <div className="flex justify-between">
-                <span className="font-bold">Created on</span>
+                <span className="font-bold">
+                  {t("support.tickets.summary.createdOn")}
+                </span>
                 <span className="font-bold">
                   {new Date(ticketData.CreateAt).toLocaleString()}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="font-bold">Ticket ID</span>
+                <span className="font-bold">
+                  {t("support.tickets.summary.ticketId")}
+                </span>
                 <span className="font-bold">
                   {ticketData.support_ticket_id}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="font-bold">Ticket Status</span>
+                <span className="font-bold">
+                  {t("support.tickets.summary.ticketStatus")}
+                </span>
                 <span className="font-bold text-[#F8A534]">
                   {ticketData.Ticket_status === "Pending" ||
                   ticketData.Ticket_status === "Process"
-                    ? "Ongoing"
+                    ? t("support.tickets.tabs.ongoing")
                     : ticketData.Ticket_status === "Resolved"
-                    ? "Resolved"
+                    ? t("support.tickets.tabs.resolved")
                     : ticketData.Ticket_status}
                 </span>
               </div>
@@ -257,16 +279,16 @@ const SupportTicketDetail: React.FC = () => {
               className="px-12 py-2 rounded-lg font-semibold text-white text-lg bg-linear-to-r from-[#D32F2F] to-[#6A1B9A] shadow"
               onClick={handleAddResponse}
             >
-              Add Response
+              {t("support.tickets.addResponse")}
             </button>
           </div>
         </>
       )}
       <SuccessModal
         open={showSuccess}
-        title="Ticket Response Added Successful !"
-        subtitle="Your response has been added to the support ticket."
-        buttonText="View All Tickets"
+        title={t("support.tickets.success.title")}
+        subtitle={t("support.tickets.success.subtitle")}
+        buttonText={t("support.tickets.success.button")}
         onButtonClick={handleSuccessButton}
       />
     </div>

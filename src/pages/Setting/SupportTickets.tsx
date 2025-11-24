@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useGetAllSupportTicketsQuery } from "@/redux/api/supportTicketsApi";
 import ongoingIcon from "@/assets/setting/sms-tracking-gray.svg";
 import ongoingIconLight from "@/assets/setting/sms-tracking.svg";
@@ -8,16 +9,21 @@ import allIcon from "@/assets/setting/all-sms-gray.svg";
 import { useNavigate } from "react-router-dom";
 
 const tabConfig = [
-  { key: "all", label: "All Tickets", color: "text-[#007AFF]", icon: allIcon },
+  {
+    key: "all",
+    labelKey: "support.tickets.tabs.all",
+    color: "text-[#007AFF]",
+    icon: allIcon,
+  },
   {
     key: "ongoing",
-    label: "On-Going",
+    labelKey: "support.tickets.tabs.ongoing",
     color: "text-[#F8A534]",
     icon: ongoingIcon,
   },
   {
     key: "resolved",
-    label: "Resolved",
+    labelKey: "support.tickets.tabs.resolved",
     color: "text-[#34C759]",
     icon: resolvedIcon,
   },
@@ -37,6 +43,7 @@ const statusBtnColor = {
 
 const SupportTickets: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [filter, setFilter] = useState<"all" | "ongoing" | "resolved">("all");
   const [period, setPeriod] = useState<"week" | "day" | "month">("week");
   const [search, setSearch] = useState("");
@@ -60,10 +67,13 @@ const SupportTickets: React.FC = () => {
       {/* Header */}
       <div className="flex items-center gap-2 mb-8">
         <span className="text-[#00000099] font-bold text-[32px]">
-          Support Ticket &gt;
+          {t("support.tickets.titlePrefix")}
         </span>
         <span className="text-black font-bold text-[32px]">
-          {tabConfig.find((t) => t.key === filter)?.label || "All Ticket"}
+          {t(
+            tabConfig.find((cfg) => cfg.key === filter)?.labelKey ||
+              "support.tickets.tabs.all"
+          )}
         </span>
       </div>
       {/* Search and Filter */}
@@ -71,7 +81,7 @@ const SupportTickets: React.FC = () => {
         <div className="flex-1">
           <input
             type="text"
-            placeholder="Search for ticket"
+            placeholder={t("supportTickets.searchPlaceholder")}
             className="w-full max-w-xs border rounded-md px-4 py-2 bg-[linear-gradient(180deg,rgba(106,27,154,0.1)_0%,rgba(211,47,47,0.1)_100%)] text-black/80 focus:outline-none"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -85,9 +95,9 @@ const SupportTickets: React.FC = () => {
               setPeriod(e.target.value as "week" | "day" | "month")
             }
           >
-            <option value="week">This Week</option>
-            <option value="day">Today</option>
-            <option value="month">This Month</option>
+            <option value="week">{t("support.tickets.periods.week")}</option>
+            <option value="day">{t("support.tickets.periods.day")}</option>
+            <option value="month">{t("support.tickets.periods.month")}</option>
           </select>
         </div>
       </div>
@@ -101,8 +111,8 @@ const SupportTickets: React.FC = () => {
             }`}
             onClick={() => setFilter(tab.key as "all" | "ongoing" | "resolved")}
           >
-            <img src={tab.icon} alt={tab.label} className="w-5 h-5" />
-            {tab.label}
+            <img src={tab.icon} alt={t(tab.labelKey)} className="w-5 h-5" />
+            {t(tab.labelKey)}
           </button>
         ))}
       </div>
@@ -137,11 +147,11 @@ const SupportTickets: React.FC = () => {
           <div className="text-center text-red-600 py-10">
             {typeof error === "object" && "message" in error
               ? (error as { message: string }).message
-              : "Failed to load tickets"}
+              : t("support.tickets.loadFailed")}
           </div>
         ) : !data || data.data.length === 0 ? (
           <div className="text-center py-10 text-[#BDBDBD]">
-            No tickets found.
+            {t("support.tickets.noTicketsFound")}
           </div>
         ) : (
           data.data.map((ticket) => {
@@ -173,11 +183,13 @@ const SupportTickets: React.FC = () => {
                     </span>
                   </div>
                   <div className="text-black text-sm font-medium">
-                    Posted at {formattedDate}
+                    {t("support.tickets.postedAt")} {formattedDate}
                   </div>
                 </div>
                 <div className="font-bold text-lg mb-1">
-                  Support Ticket #{ticket.support_ticket_id}
+                  {t("support.tickets.ticketCard.title", {
+                    id: ticket.support_ticket_id,
+                  })}
                 </div>
                 <div className="text-black/80 text-base mb-2 line-clamp-2">
                   {ticket.question}
@@ -198,7 +210,7 @@ const SupportTickets: React.FC = () => {
                       navigate(`/settings/tickets/${ticket.support_ticket_id}`)
                     }
                   >
-                    Open Ticket
+                    {t("support.tickets.openTicket")}
                   </span>
                 </div>
                 <div className="absolute top-6 right-6 flex items-center gap-2">
@@ -213,7 +225,9 @@ const SupportTickets: React.FC = () => {
                       alt="status"
                       className="w-5 h-5"
                     />
-                    {uiStatus === "resolved" ? "Resolved" : "On-Going"}
+                    {uiStatus === "resolved"
+                      ? t("support.tickets.tabs.resolved")
+                      : t("support.tickets.tabs.ongoing")}
                   </button>
                 </div>
               </div>
