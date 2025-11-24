@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useSupportTicketStore } from "@/store/zustandStores";
 import { useNavigate } from "react-router-dom";
 import uploadImage from "@/assets/setting/upload.svg";
@@ -23,6 +24,7 @@ const CreateSupportTicket: React.FC = () => {
   } = useSupportTicketStore();
   const navigate = useNavigate();
   const user = useSelector((s: RootState) => s.auth.user);
+  const { t } = useTranslation();
   const userLoading = false; // Redux doesn't have a dedicated loading flag for auth here
   const customerId = useSelector((s: RootState) => s.auth.user?.user_id) as
     | number
@@ -99,7 +101,11 @@ const CreateSupportTicket: React.FC = () => {
   };
 
   if (userLoading || !user || !ticketNumber) {
-    return <div className="p-8 text-center text-lg">Loading...</div>;
+    return (
+      <div className="p-8 text-center text-lg">
+        {t("support.tickets.loading")}
+      </div>
+    );
   }
 
   return (
@@ -110,10 +116,10 @@ const CreateSupportTicket: React.FC = () => {
           className="text-[#00000099] font-bold text-[32px] cursor-pointer"
           onClick={() => navigate(-1)}
         >
-          Support Ticket
+          {t("support.tickets.title")}
         </span>
         <span className="text-black font-bold text-[32px]">
-          &gt; Create Support Ticket
+          &gt; {t("support.tickets.create")}
         </span>
       </div>
       {/* Card */}
@@ -125,10 +131,10 @@ const CreateSupportTicket: React.FC = () => {
         {/* Ticket# and posted time */}
         <div className="flex justify-between mb-6">
           <div className="text-black font-medium text-base">
-            Ticket# {ticketNumber}
+            {t("support.tickets.ticketCard.ticketId", { id: ticketNumber })}
           </div>
           <div className="text-black text-sm font-medium">
-            Posted at{" "}
+            {t("support.tickets.postedAt")}{" "}
             {new Date().toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",
@@ -138,7 +144,9 @@ const CreateSupportTicket: React.FC = () => {
         {/* Email & Business Name */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div>
-            <label className="block text-black font-medium mb-1">Email</label>
+            <label className="block text-black font-medium mb-1">
+              {t("support.tickets.labels.email")}
+            </label>
             <input
               type="email"
               className="w-full border rounded-md px-4 py-2 bg-[#F9F9F9] text-black/80 focus:outline-none"
@@ -149,7 +157,7 @@ const CreateSupportTicket: React.FC = () => {
           </div>
           <div>
             <label className="block text-black font-medium mb-1">
-              Business Name
+              {t("support.tickets.labels.businessName")}
             </label>
             <input
               type="text"
@@ -163,7 +171,7 @@ const CreateSupportTicket: React.FC = () => {
         {/* Ticket Type Selector */}
         <div className="mb-6">
           <label className="block text-black font-medium mb-1">
-            Ticket Type
+            {t("support.tickets.labels.ticketType")}
           </label>
           <select
             className="w-full border rounded-md px-4 py-2 bg-[#F9F9F9] text-black/80 focus:outline-none"
@@ -174,8 +182,8 @@ const CreateSupportTicket: React.FC = () => {
           >
             <option value="" disabled>
               {typesLoading
-                ? "Loading ticket types..."
-                : "Select a ticket type"}
+                ? t("support.tickets.type.loading")
+                : t("support.tickets.type.select")}
             </option>
             {ticketTypesData?.data?.map((type) => (
               <option
@@ -188,19 +196,19 @@ const CreateSupportTicket: React.FC = () => {
           </select>
         </div>
         {/* Reply Ticket - Subject and Body */}
-        <h2 className="text-[#2E2A40] ">Reply Ticket</h2>
+        <h2 className="text-[#2E2A40] ">{t("support.tickets.replyTitle")}</h2>
         <div className="mb-6 border rounded">
           <input
             type="text"
             className="w-full rounded-md px-4 pt-2 m-0  text-black placeholder-black focus:outline-none"
-            placeholder="Enter Subject..."
+            placeholder={t("supportTickets.createSubjectPlaceholder")}
             value={subject ?? ""}
             onChange={(e) => setField("subject", e.target.value)}
             required
           />
           <textarea
             className="w-full  rounded-md px-4 py-2 min-h-[100px]   text-[#00000080] focus:outline-none resize-none"
-            placeholder="Explain here..."
+            placeholder={t("supportTickets.createMessagePlaceholder")}
             value={message ?? ""}
             onChange={(e) => setField("message", e.target.value)}
             required
@@ -209,7 +217,7 @@ const CreateSupportTicket: React.FC = () => {
         {/* Image Upload */}
         <div className="mb-8">
           <label className="block text-black font-medium mb-1">
-            Images Uploaded
+            {t("support.tickets.images.uploaded")}
           </label>
           <div className="flex items-center gap-4">
             <button
@@ -217,8 +225,8 @@ const CreateSupportTicket: React.FC = () => {
               className="px-4 py-2 rounded-md bg-linear-to-t from-[#D32F2F] to-[#6A1B9A] text-white font-semibold flex items-center gap-2"
               onClick={() => fileInputRef.current?.click()}
             >
-              Upload Img
-              <img src={uploadImage} alt="upload" />
+              {t("support.tickets.images.upload")}
+              <img src={uploadImage} alt={t("support.tickets.images.upload")} />
             </button>
             <input
               ref={fileInputRef}
@@ -242,7 +250,9 @@ const CreateSupportTicket: React.FC = () => {
             className="px-16 py-2 rounded-lg font-semibold text-white text-lg bg-linear-to-t from-[#D32F2F] to-[#6A1B9A] shadow disabled:opacity-60"
             disabled={createLoading}
           >
-            {createLoading ? "Submitting..." : "Submit"}
+            {createLoading
+              ? t("support.tickets.submitting")
+              : t("support.tickets.submit")}
           </button>
         </div>
         {createError && (
@@ -250,9 +260,9 @@ const CreateSupportTicket: React.FC = () => {
             {typeof createError === "object" && "data" in createError
               ? String(
                   (createError as { data?: { message?: string } }).data
-                    ?.message || "Failed to create ticket"
+                    ?.message || t("support.tickets.createFailed")
                 )
-              : "Failed to create ticket"}
+              : t("support.tickets.createFailed")}
           </div>
         )}
       </form>
