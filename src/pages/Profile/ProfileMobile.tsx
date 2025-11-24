@@ -23,6 +23,7 @@ import employeeIcon from "@/assets/profile/personal_data_icon.svg";
 import lockIcon from "@/assets/profile/finger-scan.svg";
 import eyeIcon from "@/assets/eye_icon.svg";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useWalkthroughStore } from "@/store/walkthroughStore";
 
 interface User {
@@ -58,6 +59,7 @@ const PersonalMobile = ({
   user?: User;
 }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   return (
     <div className="w-full min-h-screen bg-[#F9F6FB] pb-8">
       <div
@@ -69,15 +71,15 @@ const PersonalMobile = ({
         <div className="flex items-center justify-between px-4 pt-6">
           <div className="flex gap-4">
             <button className="text-white text-2xl" onClick={onBack}>
-              <img src={backIcon} alt="back" />
+              <img src={backIcon} alt={t("profile.back")} />
             </button>
             <span className="text-white text-2xl font-bold text-left">
-              Profile Info
+              {t("profile.infoTitle")}
             </span>
           </div>
           <img
             src={notificationIcon}
-            alt="notif"
+            alt={t("profile.notificationsAlt")}
             className="w-8 h-8"
             onClick={() => navigate("/notifications")}
           />
@@ -85,21 +87,23 @@ const PersonalMobile = ({
       </div>
 
       <div className="px-4 mt-8">
-        <div className="font-semibold text-base mt-2">My Personal Data</div>
+        <div className="font-semibold text-base mt-2">
+          {t("profile.personalDataTitle")}
+        </div>
         <div className="text-xs text-[#00000099] mb-4">
-          Details about my personal data
+          {t("profile.personalDataSubtitle")}
         </div>
         <div className="flex flex-col items-center mb-2">
           <div className="relative">
             <img
               src={user?.user_image}
-              alt="avatar"
+              alt={t("profile.avatarAlt")}
               className="w-20 h-20 rounded-xl border-2 border-white object-cover bg-white"
             />
             <span className="absolute -top-2 -right-2 bg-[#F8E6EF] rounded-full p-1 border border-white">
               <img
                 src={refreshIcon}
-                alt="edit"
+                alt={t("profile.editAlt")}
                 className="w-5 h-5 bg-purple-500 p-0.5 rounded-full"
               />
             </span>
@@ -108,11 +112,15 @@ const PersonalMobile = ({
         </div>
         <div className="flex flex-col gap-3">
           <label className="text-xs font-semibold text-gray-600">
-            First Name
+            {t("profile.labels.name")}
           </label>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2">
-              <img src={userIconLight} alt="user" className="w-5 h-5" />
+              <img
+                src={userIconLight}
+                alt={t("profile.userIconAlt")}
+                className="w-5 h-5"
+              />
             </span>
             <input
               className="rounded-lg border border-[#E0E0E0] pl-10 pr-2 py-2 bg-white w-full"
@@ -120,10 +128,16 @@ const PersonalMobile = ({
               readOnly
             />
           </div>
-          <label className="text-xs font-semibold text-gray-600">Email</label>
+          <label className="text-xs font-semibold text-gray-600">
+            {t("profile.labels.email")}
+          </label>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2">
-              <img src={emailIcon} alt="email" className="w-5 h-5" />
+              <img
+                src={emailIcon}
+                alt={t("profile.emailIconAlt")}
+                className="w-5 h-5"
+              />
             </span>
             <input
               className="rounded-lg border border-[#E0E0E0] pl-10 pr-2 py-2 bg-white w-full"
@@ -132,11 +146,15 @@ const PersonalMobile = ({
             />
           </div>
           <label className="text-xs font-semibold text-gray-600">
-            Phone Number
+            {t("profile.labels.phone")}
           </label>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2">
-              <img src={callIcon} alt="phone" className="w-5 h-5" />
+              <img
+                src={callIcon}
+                alt={t("profile.phoneIconAlt")}
+                className="w-5 h-5"
+              />
             </span>
             <input
               className="rounded-lg border border-[#E0E0E0] pl-10 pr-2 py-2 bg-white w-full"
@@ -144,10 +162,16 @@ const PersonalMobile = ({
               readOnly
             />
           </div>
-          <label className="text-xs font-semibold text-gray-600">Emp id</label>
+          <label className="text-xs font-semibold text-gray-600">
+            {t("profile.labels.employeeId")}
+          </label>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2">
-              <img src={employeeIcon} alt="empid" className="w-5 h-5" />
+              <img
+                src={employeeIcon}
+                alt={t("profile.empIdIconAlt")}
+                className="w-5 h-5"
+              />
             </span>
             <input
               className="rounded-lg border border-[#E0E0E0] pl-10 pr-2 py-2 bg-white w-full"
@@ -155,10 +179,16 @@ const PersonalMobile = ({
               readOnly
             />
           </div>
-          <label className="text-xs font-semibold text-gray-600">Role</label>
+          <label className="text-xs font-semibold text-gray-600">
+            {t("profile.labels.role")}
+          </label>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2">
-              <img src={rolesIcon} alt="role" className="w-5 h-5" />
+              <img
+                src={rolesIcon}
+                alt={t("profile.roleIconAlt")}
+                className="w-5 h-5"
+              />
             </span>
             <input
               className="rounded-lg border border-[#E0E0E0] pl-10 pr-2 py-2 bg-white w-full"
@@ -167,11 +197,15 @@ const PersonalMobile = ({
             />
           </div>
         </div>
-        <div className="font-semibold text-base mt-6">Work Details</div>
-        <div className="text-xs text-[#00000099] mb-4">Details about Work</div>
+        <div className="font-semibold text-base mt-6">
+          {t("profile.workDetails")}
+        </div>
+        <div className="text-xs text-[#00000099] mb-4">
+          {t("profile.workDetailsSubtitle")}
+        </div>
         <div className="flex flex-col gap-3">
           <label className="text-xs font-semibold text-[#00000099]">
-            Onboarding Date
+            {t("profile.labels.onboardingDate")}
           </label>
           <input
             className="rounded-lg border border-[#E0E0E0] px-4 py-2 bg-white"
@@ -179,11 +213,11 @@ const PersonalMobile = ({
             readOnly
           />
           <label className="text-xs font-semibold text-[#00000099]">
-            Experience
+            {t("profile.labels.yearsWithUs")}
           </label>
           <input
             className="rounded-lg border border-[#E0E0E0] px-4 py-2 bg-white"
-            value={`${user?.yearsWithus} years`}
+            value={`${user?.yearsWithus} ${t("profile.yearsSuffix")}`}
             readOnly
           />
         </div>
@@ -198,56 +232,62 @@ const OtpSentModal = ({
 }: {
   email: string;
   onVerify: () => void;
-}) => (
-  <div className="fixed inset-0 z-50 flex items-end justify-center bg-black bg-opacity-30">
-    <div className="bg-white rounded-t-2xl shadow-xl p-6 w-full max-w-md animate-bottom-sheet-in flex flex-col items-center mb-0">
-      <div className="font-bold text-lg mb-1 text-center">
-        OTP Sent to Registered Email
+}) => {
+  const { t } = useTranslation();
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black bg-opacity-30">
+      <div className="bg-white rounded-t-2xl shadow-xl p-6 w-full max-w-md animate-bottom-sheet-in flex flex-col items-center mb-0">
+        <div className="font-bold text-lg mb-1 text-center">
+          {t("auth.otpSent.title")}
+        </div>
+        <div className="text-xs text-[#00000099] mb-2 text-center">
+          {t("auth.otpSent.body")}
+        </div>
+        <div className="font-semibold text-base mb-4 text-center">{email}</div>
+        <button
+          className="w-full py-2 rounded-xl text-white font-semibold text-base bg-gradient-to-r from-[#6A1B9A] to-[#D32F2F]"
+          onClick={onVerify}
+        >
+          {t("auth.verify.submit")}
+        </button>
       </div>
-      <div className="text-xs text-[#00000099] mb-2 text-center">
-        An Authentication code has sent to your email 🚀
-      </div>
-      <div className="font-semibold text-base mb-4 text-center">{email}</div>
-      <button
-        className="w-full py-2 rounded-xl text-white font-semibold text-base bg-gradient-to-r from-[#6A1B9A] to-[#D32F2F]"
-        onClick={onVerify}
-      >
-        Verify OTP
-      </button>
     </div>
-  </div>
-);
+  );
+};
 
 const OtpInputModal = ({
   onContinue,
 }: {
   onContinue: (otp: string) => void;
 }) => {
+  const { t } = useTranslation();
   const [otp, setOtp] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black bg-opacity-30">
       <div className="bg-white rounded-t-2xl shadow-xl p-6 w-full max-w-md animate-bottom-sheet-in flex flex-col items-center mb-0">
-        <div className="font-bold text-lg mb-1 text-center">Verify OTP</div>
+        <div className="font-bold text-lg mb-1 text-center">
+          {t("auth.verify.submit")}
+        </div>
         <div className="text-xs text-[#00000099] mb-4 text-center">
-          Please Enter the Authentication received to your registered email
+          {t("auth.verify.instructions")}
         </div>
         <label className="w-full text-left text-sm font-semibold mb-1">
-          Enter OTP
+          {t("auth.verify.label")}
         </label>
         <input
           ref={inputRef}
           className="rounded-lg border border-[#E0E0E0] px-4 py-2 w-full mb-4 text-center"
           value={otp}
           onChange={(e) => setOtp(e.target.value)}
-          placeholder="Enter OTP"
+          placeholder={t("auth.verify.placeholder")}
         />
         <button
           className="w-full py-2 rounded-xl text-white font-semibold text-base bg-gradient-to-r from-[#6A1B9A] to-[#D32F2F]"
           onClick={() => onContinue(otp)}
           disabled={!otp}
         >
-          Continue
+          {t("actions.continue")}
         </button>
       </div>
     </div>
@@ -261,6 +301,7 @@ const ChangePasswordMobile = ({
   onBack: () => void;
   user?: User;
 }) => {
+  const { t } = useTranslation();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -314,7 +355,7 @@ const ChangePasswordMobile = ({
               <img src={backIcon} alt="back" />
             </button>
             <span className="text-white text-2xl font-bold text-left">
-              Change Password
+              {t("profile.changePasswordTitle")}
             </span>
           </div>
           <img
@@ -326,20 +367,22 @@ const ChangePasswordMobile = ({
         </div>
       </div>
       <div className="px-4 mt-6">
-        <div className="font-semibold text-lg mb-1 mt-2">Change Password</div>
+        <div className="font-semibold text-lg mb-1 mt-2">
+          {t("profile.changePasswordTitle")}
+        </div>
         <div className="text-xs text-[#00000099] mb-4">
-          Fill Informations To Change your Password
+          {t("profile.changePasswordInfo")}
         </div>
         <div className="mb-4">
           <div className="flex justify-between items-center mb-1">
             <label className="text-sm font-semibold text-[#222]">
-              Current Password
+              {t("profile.enterCurrentPassword")}
             </label>
             <button
               className="text-xs font-semibold text-[#D32F2F]"
               onClick={() => setShowOtpSent(true)}
             >
-              Forget Password
+              {t("profile.forgetPassword")}
             </button>
           </div>
           <div className="relative">
@@ -349,7 +392,7 @@ const ChangePasswordMobile = ({
             <input
               type={showCurrent ? "text" : "password"}
               className="rounded-lg border border-[#E0E0E0] pl-10 pr-10 py-2 bg-white w-full"
-              placeholder="My Password"
+              placeholder={t("profile.passwordPlaceholder")}
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
             />
@@ -363,7 +406,7 @@ const ChangePasswordMobile = ({
         </div>
         <div className="mb-4">
           <label className="text-sm font-semibold text-[#222] mb-1">
-            New Password
+            {t("profile.enterNewPassword")}
           </label>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2">
@@ -372,7 +415,7 @@ const ChangePasswordMobile = ({
             <input
               type={showNew ? "text" : "password"}
               className="rounded-lg border border-[#E0E0E0] pl-10 pr-10 py-2 bg-white w-full"
-              placeholder="My Password"
+              placeholder={t("profile.passwordPlaceholder")}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
             />
@@ -386,7 +429,7 @@ const ChangePasswordMobile = ({
         </div>
         <div className="mb-8">
           <label className="text-sm font-semibold text-[#222] mb-1">
-            Confirm New Password
+            {t("profile.reenterNewPassword")}
           </label>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2">
@@ -395,7 +438,7 @@ const ChangePasswordMobile = ({
             <input
               type={showConfirm ? "text" : "password"}
               className="rounded-lg border border-[#E0E0E0] pl-10 pr-10 py-2 bg-white w-full"
-              placeholder="My Password"
+              placeholder={t("profile.passwordPlaceholder")}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
@@ -412,7 +455,9 @@ const ChangePasswordMobile = ({
           disabled={!canSave || isChangingPassword}
           onClick={handleUpdatePassword}
         >
-          {isChangingPassword ? "Updating..." : "Update Password"}
+          {isChangingPassword
+            ? t("profile.updating")
+            : t("profile.updatePassword")}
         </button>
       </div>
       {showOtpSent && (
@@ -443,6 +488,7 @@ export const ProfileMobile: React.FC<ProfileMobileProps> = ({
 }) => {
   const { isActive, activeTraining, steps, currentStep, complete } =
     useWalkthroughStore();
+  const { t } = useTranslation();
   const [selectedTab, setSelectedTab] = useState<
     | null
     | "work"
@@ -540,19 +586,25 @@ export const ProfileMobile: React.FC<ProfileMobileProps> = ({
         }}
       >
         <div className="flex items-center justify-between px-6 pt-6">
-          <button className="text-white text-2xl">
-            <img src={backIcon} alt="back" onClick={() => navigate(-1)} />
+          <button className="text-white text-2xl" onClick={() => navigate(-1)}>
+            <img src={backIcon} alt={t("itemDetails.back")} />
           </button>
           <div className="flex items-center gap-2">
-            <img src={accountIcon} alt="Profile" className="w-6 h-6" />
-            <span className="text-white text-2xl font-bold">Profile</span>
+            <img
+              src={accountIcon}
+              alt={t("profile.avatarAlt")}
+              className="w-6 h-6"
+            />
+            <span className="text-white text-2xl font-bold">
+              {t("profile.title")}
+            </span>
           </div>
           <div className="w-6" />
         </div>
         <div className="absolute left-1/2 top-30 transform -translate-x-1/2 -translate-y-1/2">
           <img
             src={user?.user_image}
-            alt="avatar"
+            alt={t("profile.avatarAlt")}
             className="w-20 h-20 rounded-xl border-2 border-white object-cover bg-white"
           />
         </div>
@@ -571,8 +623,12 @@ export const ProfileMobile: React.FC<ProfileMobileProps> = ({
             background: "linear-gradient(360deg, #D32F2F 0%, #6A1B9A 100%)",
           }}
         >
-          Clock in
-          <img src={clockIcon} alt="Clock In" className="w-5 h-5" />
+          {t("profile.clockIn")}
+          <img
+            src={clockIcon}
+            alt={t("profile.clockIconAlt")}
+            className="w-5 h-5"
+          />
         </button>
       </div>
       <div className="flex justify-center mt-6 px-2">
@@ -591,7 +647,7 @@ export const ProfileMobile: React.FC<ProfileMobileProps> = ({
             }
             onClick={() => setSelectedTab("OrderHistory")}
           >
-            Order History
+            {t("sidebar.nav.orderHistory")}
           </button>
           <button
             className={`flex-1 py-1 rounded-lg text-lg font-bold transition-all duration-200 ${
@@ -607,13 +663,15 @@ export const ProfileMobile: React.FC<ProfileMobileProps> = ({
             }
             onClick={() => setSelectedTab("Personal")}
           >
-            Personal
+            {t("profile.personal") || "Personal"}
           </button>
         </div>
       </div>
       <div className="mt-6 px-4">
         <div className="flex justify-between">
-          <div className="font-semibold text-base text-[#000] mb-2">Info</div>
+          <div className="font-semibold text-base text-[#000] mb-2">
+            {t("profile.infoTitle")}
+          </div>
           <img
             src={rightArrow}
             alt="rightArrow"
@@ -628,7 +686,7 @@ export const ProfileMobile: React.FC<ProfileMobileProps> = ({
           <div className="flex items-center gap-6 text-[#6A1B9A]">
             <img src={userIcon} alt="empid" className="w-5 h-5" />
             <span className="text-sm text-[#00000099]">
-              EMP id: {user?.Employee_id}
+              {t("profile.empLabel", { id: user?.Employee_id })}
             </span>
           </div>
           <div className="flex items-center gap-6 text-[#6A1B9A]">
@@ -640,106 +698,132 @@ export const ProfileMobile: React.FC<ProfileMobileProps> = ({
             onClick={() => setShowPersonalMobile(true)}
           >
             <div className="flex items-center gap-6 text-[#6A1B9A]">
-              <img src={rolesIcon} alt="roles" className="w-5 h-5" />
+              <img
+                src={rolesIcon}
+                alt={t("profile.roleIconAlt")}
+                className="w-5 h-5"
+              />
               <span className="text-sm text-[#00000099]">
-                {user?.Responsibility_id.Responsibility_name}
+                {user?.Responsibility_id?.Responsibility_name}
               </span>
             </div>
             <img src={rightArrow} alt="rightArrow" />
           </div>
-        </div>
-      </div>
-      <div className="mt-6 px-4">
-        <div className="font-semibold text-base text-[#1E1E1E] mb-2">
-          Training
-        </div>
-        <div className="rounded-xl bg-[#F8E6EF] p-4 flex items-center justify-between gap-6">
-          <div className="flex items-center gap-6 text-[#6A1B9A]">
-            <img
-              src={employeeTrainingIcon}
-              alt="training"
-              className="w-5 h-5"
-            />
-            <span className="text-sm text-[#00000099]">Employee Training</span>
-          </div>
-          <img src={rightArrow} onClick={() => {}} alt="rightArrow" />
-        </div>
-      </div>
-      <div className="mt-6 px-4">
-        <div className="font-semibold text-base mb-2">Account</div>
-        <div className="flex flex-col rounded-lg bg-[#F8E6EF]">
-          <div
-            className="rounded-xl p-4 flex items-center justify-between gap-6"
-            onClick={() => setShowPersonalMobile(true)}
-          >
-            <div className="flex items-center gap-6 text-[#6A1B9A]">
-              <img
-                src={personalDataIcon}
-                alt="work summary"
-                className="w-5 h-5"
-              />
-              <span className="text-sm text-[#00000099]">Personal Data</span>
+          <div className="mt-6 px-4">
+            <div className="font-semibold text-base text-[#1E1E1E] mb-2">
+              {t("training.title")}
             </div>
-            <img src={rightArrow} alt="rightArrow" />
-          </div>
-          <div
-            className="rounded-xl p-4 flex items-center justify-between gap-6"
-            onClick={() => setShowWorkSummary(true)}
-          >
-            <div className="flex items-center gap-6 text-[#6A1B9A]">
-              <img
-                src={workSummaryIcon}
-                alt="work summary"
-                className="w-5 h-5"
-              />
-              <span className="text-sm text-[#00000099]">Work Summary</span>
+            <div className="rounded-xl bg-[#F8E6EF] p-4 flex items-center justify-between gap-6">
+              <div className="flex items-center gap-6 text-[#6A1B9A]">
+                <img
+                  src={employeeTrainingIcon}
+                  alt="training"
+                  className="w-5 h-5"
+                />
+                <span className="text-sm text-[#00000099]">
+                  {t("profile.employeeTraining")}
+                </span>
+              </div>
+              <img src={rightArrow} onClick={() => {}} alt="rightArrow" />
             </div>
-            <img src={rightArrow} alt="rightArrow" />
           </div>
-        </div>
-      </div>
-      <div className="mt-6 px-4">
-        <div className="font-semibold text-base text-[#1E1E1E] mb-2">
-          Settings
-        </div>
-        <div className="rounded-xl bg-[#F8E6EF] p-4 flex flex-col gap-6">
-          <div
-            className="flex items-center gap-6"
-            onClick={() => setShowChangePassword(true)}
-          >
-            <img
-              src={changePasswordIcon}
-              alt="change password"
-              className="w-5 h-5"
-            />
-            <span className="text-sm text-[#00000099]">Change Password</span>
+          <div className="mt-6 px-4">
+            <div className="font-semibold text-base mb-2">
+              {t("profile.account")}
+            </div>
+            <div className="flex flex-col rounded-lg bg-[#F8E6EF]">
+              <div
+                className="rounded-xl p-4 flex items-center justify-between gap-6"
+                onClick={() => setShowPersonalMobile(true)}
+              >
+                <div className="flex items-center gap-6 text-[#6A1B9A]">
+                  <img
+                    src={personalDataIcon}
+                    alt="work summary"
+                    className="w-5 h-5"
+                  />
+                  <span className="text-sm text-[#00000099]">
+                    {t("profile.personalDataTitle")}
+                  </span>
+                </div>
+                <img src={rightArrow} alt="rightArrow" />
+              </div>
+              <div
+                className="rounded-xl p-4 flex items-center justify-between gap-6"
+                onClick={() => setShowWorkSummary(true)}
+              >
+                <div className="flex items-center gap-6 text-[#6A1B9A]">
+                  <img
+                    src={workSummaryIcon}
+                    alt="work summary"
+                    className="w-5 h-5"
+                  />
+                  <span className="text-sm text-[#00000099]">
+                    {t("workSummary.title")}
+                  </span>
+                </div>
+                <img src={rightArrow} alt="rightArrow" />
+              </div>
+            </div>
           </div>
-          <div
-            className="flex items-center gap-6"
-            onClick={() => navigate("/notifications")}
-          >
-            <img
-              src={notificationIconFilled}
-              alt="notifications"
-              className="w-5 h-5"
-            />
-            <span className="text-sm text-[#00000099]">Notifications</span>
-          </div>
-          <div className="flex items-center gap-6">
-            <span className="w-5 h-5 rounded-full bg-gradient-to-br from-[#6A1B9A] to-[#D32F2F] flex items-center justify-center">
-              <span className="text-white text-xs font-bold">T</span>
-            </span>
-            <span className="text-sm text-[#00000099]">Terms & Conditions</span>
-          </div>
-          <div className="flex items-center gap-6">
-            <span className="w-5 h-5 rounded-full bg-gradient-to-br from-[#6A1B9A] to-[#D32F2F] flex items-center justify-center">
-              <span className="text-white text-xs font-bold">P</span>
-            </span>
-            <span className="text-sm text-[#00000099]">Privacy Policy</span>
-          </div>
-          <div className="flex items-center gap-6">
-            <img src={logoutIcon} alt="sign out" className="w-5 h-5" />
-            <span className="text-sm text-[#00000099]">Sign out</span>
+          <div className="mt-6 px-4">
+            <div className="font-semibold text-base text-[#1E1E1E] mb-2">
+              {t("settings.title")}
+            </div>
+            <div className="rounded-xl bg-[#F8E6EF] p-4 flex flex-col gap-6">
+              <div
+                className="flex items-center gap-6"
+                onClick={() => setShowChangePassword(true)}
+              >
+                <img
+                  src={changePasswordIcon}
+                  alt="change password"
+                  className="w-5 h-5"
+                />
+                <span className="text-sm text-[#00000099]">
+                  {t("profile.changePasswordTitle")}
+                </span>
+              </div>
+              <div
+                className="flex items-center gap-6"
+                onClick={() => navigate("/notifications")}
+              >
+                <img
+                  src={notificationIconFilled}
+                  alt="notifications"
+                  className="w-5 h-5"
+                />
+                <span className="text-sm text-[#00000099]">
+                  {t("notifications.title")}
+                </span>
+              </div>
+              <div className="flex items-center gap-6" onClick={() => {}}>
+                <span className="w-5 h-5 rounded-full bg-gradient-to-br from-[#6A1B9A] to-[#D32F2F] flex items-center justify-center">
+                  <span className="text-white text-xs font-bold">T</span>
+                </span>
+                <span className="text-sm text-[#00000099]">
+                  {t("profile.terms")}
+                </span>
+              </div>
+              <div className="flex items-center gap-6" onClick={() => {}}>
+                <span className="w-5 h-5 rounded-full bg-gradient-to-br from-[#6A1B9A] to-[#D32F2F] flex items-center justify-center">
+                  <span className="text-white text-xs font-bold">P</span>
+                </span>
+                <span className="text-sm text-[#00000099]">
+                  {t("profile.privacyPolicy")}
+                </span>
+              </div>
+              <div className="flex items-center gap-6" onClick={() => {}}>
+                <img
+                  src={logoutIcon}
+                  alt={t("profile.tabs.signOut")}
+                  className="w-5 h-5"
+                />
+                <span className="text-sm text-[#00000099]">
+                  {t("profile.tabs.signOut")}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

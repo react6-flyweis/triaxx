@@ -5,6 +5,7 @@ import LogoutModal from "@/components/common/LogoutModal";
 import SignOutSuccessModal from "@/components/common/SignOutSuccessModal";
 import eyeIcon from "@/assets/eye_icon.svg";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import chefImg from "@/assets/chef.svg";
 import { useWalkthroughStore } from "@/store/walkthroughStore";
 import { useChangePasswordMutation } from "@/redux/api/userApi";
@@ -49,6 +50,7 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
   const location = useLocation();
   const { isActive, activeTraining, steps, currentStep, complete } =
     useWalkthroughStore();
+  const { t } = useTranslation();
 
   const [selectedTab, setSelectedTab] = useState<
     null | "work" | "personal" | "security" | "sign-out"
@@ -72,7 +74,7 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
 
   const handleLogout = () => {
     signOut();
-    toast.success("Logged out successfully!", {
+    toast.success(t("sidebar.toast.loggedOut"), {
       duration: 4000,
       position: "top-right",
     });
@@ -170,7 +172,10 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
         newPassword,
       }).unwrap();
 
-      alert(result.message || "Password changed successfully!");
+      toast.success(result.message || t("profile.passwordChangeSuccess"), {
+        position: "top-center",
+        duration: 3000,
+      });
 
       // Clear form
       setCurrentPassword("");
@@ -178,7 +183,13 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
       setReNewPassword("");
     } catch (error: unknown) {
       const err = error as { data?: { message?: string }; message?: string };
-      alert(err.data?.message || err.message || "Failed to change password");
+      toast.error(
+        err.data?.message || err.message || t("profile.passwordChangeFailed"),
+        {
+          position: "top-center",
+          duration: 3000,
+        }
+      );
     }
   };
 
@@ -186,17 +197,21 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
     <div className={`pt-10 px-10 profile-highlight relative`}>
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold text-black">
-          My Profile
+          {t("profile.title")}
           {selectedTab === "personal" && (
-            <span className="text-lg font-semibold ml-2">&gt; Personal</span>
+            <span className="text-lg font-semibold ml-2">
+              &gt; {t("profile.tabs.personal")}
+            </span>
           )}
           {selectedTab === "work" && (
             <span className="text-lg font-semibold ml-2">
-              &gt; Work Summary
+              &gt; {t("profile.tabs.work")}
             </span>
           )}
           {selectedTab === "security" && (
-            <span className="text-lg font-semibold ml-2">&gt; Security</span>
+            <span className="text-lg font-semibold ml-2">
+              &gt; {t("profile.tabs.security")}
+            </span>
           )}
         </h1>
         <div className="flex gap-3">
@@ -208,7 +223,7 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
             }}
             onClick={() => setSelectedTab("work")}
           >
-            Work Summary
+            {t("profile.tabs.work")}
           </button>
           <button
             className="px-4 py-2 rounded-lg font-medium text-white profile-personal-tab"
@@ -218,7 +233,7 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
             }}
             onClick={() => setSelectedTab("personal")}
           >
-            Personal
+            {t("profile.tabs.personal")}
           </button>
           <button
             className={`px-4 py-2 rounded-lg font-medium text-white profile-security-tab ${
@@ -230,7 +245,7 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
             }}
             onClick={() => setSelectedTab("security")}
           >
-            Security
+            {t("profile.tabs.security")}
           </button>
           <button
             className="px-4 py-2 rounded-lg font-medium text-white profile-sign-out-tab"
@@ -240,30 +255,38 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
             }}
             onClick={handleSignOutClick}
           >
-            Sign out
+            {t("profile.tabs.signOut")}
           </button>
         </div>
       </div>
       {selectedTab === null && (
         <>
-          <div className="font-semibold text-lg mb-4">Employee Details</div>
+          <div className="font-semibold text-lg mb-4">
+            {t("profile.employeeDetails")}
+          </div>
           <div className="flex gap-8 items-start">
             <div className="flex flex-col items-center">
               <div className="relative w-32 h-32">
                 <img
                   src={user?.user_image || chefImg}
-                  alt="Profile"
+                  alt={t("profile.avatarAlt")}
                   className="w-38 h-44 rounded-xl object-cover"
                 />
                 <button className="absolute top-0 -right-1 bg-white rounded-full shadow">
-                  <img src={editIcon} alt="Edit" className="h-7 w-7" />
+                  <img
+                    src={editIcon}
+                    alt={t("profile.editAlt")}
+                    className="h-7 w-7"
+                  />
                 </button>
               </div>
             </div>
             <div className="flex-1">
               <div className="grid grid-cols-2 gap-6 w-full">
                 <div>
-                  <div className="font-bold text-gray-700 mb-1">Role</div>
+                  <div className="font-bold text-gray-700 mb-1">
+                    {t("profile.labels.role")}
+                  </div>
                   <div
                     className="rounded-lg px-4 py-2"
                     style={{ background: fieldGradient }}
@@ -273,7 +296,7 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
                 </div>
                 <div>
                   <div className="font-bold text-gray-700 mb-1">
-                    Responsibility
+                    {t("profile.labels.responsibility")}
                   </div>
                   <div
                     className="rounded-lg px-4 py-2"
@@ -283,7 +306,9 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
                   </div>
                 </div>
                 <div>
-                  <div className="font-bold text-gray-700 mb-1">Name</div>
+                  <div className="font-bold text-gray-700 mb-1">
+                    {t("profile.labels.name")}
+                  </div>
                   <div
                     className="rounded-lg px-4 py-2"
                     style={{ background: fieldGradient }}
@@ -293,7 +318,7 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
                 </div>
                 <div>
                   <div className="font-bold text-gray-700 mb-1">
-                    Employee id
+                    {t("profile.labels.employeeId")}
                   </div>
                   <div
                     className="rounded-lg px-4 py-2"
@@ -303,7 +328,9 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
                   </div>
                 </div>
                 <div>
-                  <div className="font-bold text-gray-700 mb-1">Email</div>
+                  <div className="font-bold text-gray-700 mb-1">
+                    {t("profile.labels.email")}
+                  </div>
                   <div
                     className="rounded-lg px-4 py-2"
                     style={{ background: fieldGradient }}
@@ -312,7 +339,9 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
                   </div>
                 </div>
                 <div>
-                  <div className="font-bold text-gray-700 mb-1">Phone</div>
+                  <div className="font-bold text-gray-700 mb-1">
+                    {t("profile.labels.phone")}
+                  </div>
                   <div
                     className="rounded-lg px-4 py-2"
                     style={{ background: fieldGradient }}
@@ -333,11 +362,13 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
       {selectedTab === "personal" && (
         <>
           <div className="font-semibold text-lg mb-4 text-[#888]">
-            Employee Details
+            {t("profile.employeeDetails")}
           </div>
           <div className="grid grid-cols-3 gap-6 w-full mb-8">
             <div>
-              <div className="font-bold text-gray-700 mb-1">Employee id</div>
+              <div className="font-bold text-gray-700 mb-1">
+                {t("profile.labels.employeeId")}
+              </div>
               <div
                 className="rounded-lg px-4 py-2"
                 style={{ background: fieldGradient }}
@@ -346,7 +377,9 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
               </div>
             </div>
             <div>
-              <div className="font-bold text-gray-700 mb-1">Role</div>
+              <div className="font-bold text-gray-700 mb-1">
+                {t("profile.labels.role")}
+              </div>
               <div
                 className="rounded-lg px-4 py-2"
                 style={{ background: fieldGradient }}
@@ -355,7 +388,9 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
               </div>
             </div>
             <div>
-              <div className="font-bold text-gray-700 mb-1">Responsibility</div>
+              <div className="font-bold text-gray-700 mb-1">
+                {t("profile.labels.responsibility")}
+              </div>
               <div
                 className="rounded-lg px-4 py-2"
                 style={{ background: fieldGradient }}
@@ -364,7 +399,9 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
               </div>
             </div>
             <div>
-              <div className="font-bold text-gray-700 mb-1">Name</div>
+              <div className="font-bold text-gray-700 mb-1">
+                {t("profile.labels.name")}
+              </div>
               <div
                 className="rounded-lg px-4 py-2"
                 style={{ background: fieldGradient }}
@@ -373,7 +410,9 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
               </div>
             </div>
             <div>
-              <div className="font-bold text-gray-700 mb-1">Email</div>
+              <div className="font-bold text-gray-700 mb-1">
+                {t("profile.labels.email")}
+              </div>
               <div
                 className="rounded-lg px-4 py-2"
                 style={{ background: fieldGradient }}
@@ -382,7 +421,9 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
               </div>
             </div>
             <div>
-              <div className="font-bold text-gray-700 mb-1">Phone</div>
+              <div className="font-bold text-gray-700 mb-1">
+                {t("profile.labels.phone")}
+              </div>
               <div
                 className="rounded-lg px-4 py-2"
                 style={{ background: fieldGradient }}
@@ -392,12 +433,12 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
             </div>
           </div>
           <div className="font-semibold text-lg mb-4 text-[#888]">
-            Work Details
+            {t("profile.workDetails")}
           </div>
           <div className="grid grid-cols-3 gap-6 w-full">
             <div>
               <div className="font-bold text-gray-700 mb-1">
-                Onboarding Date
+                {t("profile.labels.onboardingDate")}
               </div>
               <div
                 className="rounded-lg px-4 py-2"
@@ -407,12 +448,14 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
               </div>
             </div>
             <div>
-              <div className="font-bold text-gray-700 mb-1">Years with us</div>
+              <div className="font-bold text-gray-700 mb-1">
+                {t("profile.labels.yearsWithUs")}
+              </div>
               <div
                 className="rounded-lg px-4 py-2"
                 style={{ background: fieldGradient }}
               >
-                {user?.yearsWithus} Years
+                {user?.yearsWithus} {t("profile.yearsSuffix", "Years")}
               </div>
             </div>
           </div>
@@ -420,7 +463,9 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
       )}
       {selectedTab === "security" && (
         <div className="mt-8 profile-security-tab">
-          <div className="font-semibold text-xl mb-6">Privacy and Password</div>
+          <div className="font-semibold text-xl mb-6">
+            {t("profile.privacyPasswordTitle")}
+          </div>
           <div className="grid grid-cols-2 gap-8 mb-10">
             <div>
               <div className="font-bold text-gray-700 mb-1">Email</div>
@@ -429,11 +474,13 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
               </div>
             </div>
           </div>
-          <div className="font-semibold text-xl mb-4 mt-8">Change Password</div>
+          <div className="font-semibold text-xl mb-4 mt-8">
+            {t("profile.changePasswordTitle")}
+          </div>
           <div className="grid grid-cols-2 gap-8 items-end">
             <div className="mb-4">
               <div className="font-bold text-gray-700 mb-1">
-                Enter Current Password
+                {t("profile.enterCurrentPassword")}
               </div>
               <div className="relative">
                 <input
@@ -446,7 +493,11 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
                   className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
                   onClick={() => setShowCurrentPassword((v) => !v)}
                 >
-                  <img src={eyeIcon} alt="Show" className="w-5 h-5" />
+                  <img
+                    src={eyeIcon}
+                    alt={t("profile.showAlt")}
+                    className="w-5 h-5"
+                  />
                 </span>
               </div>
             </div>
@@ -456,12 +507,12 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
                 style={{ minWidth: "170px" }}
                 onClick={() => navigate("/forgot-password")}
               >
-                Forget Password
+                {t("profile.forgetPassword")}
               </button>
             </div>
             <div className="mb-4">
               <div className="font-bold text-gray-700 mb-1">
-                Enter New Password
+                {t("profile.enterNewPassword")}
               </div>
               <div className="relative">
                 <input
@@ -474,13 +525,17 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
                   className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
                   onClick={() => setShowNewPassword((v) => !v)}
                 >
-                  <img src={eyeIcon} alt="Show" className="w-5 h-5" />
+                  <img
+                    src={eyeIcon}
+                    alt={t("profile.showAlt")}
+                    className="w-5 h-5"
+                  />
                 </span>
               </div>
             </div>
             <div className="mb-4">
               <div className="font-bold text-gray-700 mb-1">
-                Re-enter New Password
+                {t("profile.reenterNewPassword")}
               </div>
               <div className="relative">
                 <input
@@ -493,14 +548,18 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
                   className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
                   onClick={() => setShowReNewPassword((v) => !v)}
                 >
-                  <img src={eyeIcon} alt="Show" className="w-5 h-5" />
+                  <img
+                    src={eyeIcon}
+                    alt={t("profile.showAlt")}
+                    className="w-5 h-5"
+                  />
                 </span>
               </div>
             </div>
           </div>
           {!passwordsMatch && (newPassword || reNewPassword) && (
             <div className="text-sm text-red-600 mt-2">
-              Passwords do not match
+              {t("profile.passwordsDoNotMatch")}
             </div>
           )}
           <button
@@ -508,7 +567,9 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
             disabled={!canSave || isChangingPassword}
             onClick={handleSavePassword}
           >
-            {isChangingPassword ? "Saving..." : "Save Password"}
+            {isChangingPassword
+              ? t("profile.saving")
+              : t("profile.savePassword")}
           </button>
         </div>
       )}
@@ -517,7 +578,7 @@ const ProfileDesktop: React.FC<ProfileDesktopProps> = ({
         steps[currentStep]?.selector === ".profile-training-tooltip" && (
           <img
             src={chefImg}
-            alt="Chef Illustration"
+            alt={t("profile.chefIllustrationAlt")}
             className="profile-training-tooltip"
             style={{
               position: "absolute",
