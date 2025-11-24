@@ -1,4 +1,5 @@
 import React from "react";
+import { Trans } from "react-i18next";
 import LanguageSelector from "@/components/common/LanguageSelector";
 
 interface LeftPanelProps {
@@ -10,15 +11,18 @@ interface LeftPanelProps {
 const LeftPanel: React.FC<LeftPanelProps> = ({
   heading = (
     <h1 className="text-[#002B6B] font-bold text-4xl">
-      POS that works as hard as you. <br />
-      and Faster than you.
+      <Trans i18nKey="leftPanel.heading">
+        POS that works as hard as you. <br /> and Faster than you.
+      </Trans>
     </h1>
   ),
   subheading = (
     <p className="mt-6 text-lg text-[#414D60] max-w-md">
-      Grow without limit with{" "}
-      <span className="text-primary-gradient">Triaxx</span> and Make timely and
-      accurate decision with real-time reports
+      <Trans i18nKey="leftPanel.subheading">
+        Grow without limit with{" "}
+        <span className="text-primary-gradient">Triaxx</span> and Make timely
+        and accurate decision with real-time reports
+      </Trans>
     </p>
   ),
   children,
