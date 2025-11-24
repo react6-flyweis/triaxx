@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import LeftPanel from "@/components/common/LeftPanel";
 import { sendOtp } from "@/api/authApi";
@@ -12,6 +13,7 @@ const ForgotPasswordPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleResetRequest = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -62,7 +64,7 @@ const ForgotPasswordPage: React.FC = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter Email here"
+                placeholder={t("auth.forgot.placeholderEmail")}
                 className="w-full px-4 py-3 bg-[linear-gradient(180deg,rgba(106,27,154,0.1)_0%,rgba(211,47,47,0.1)_100%)] border-transparent rounded-lg focus:ring-1 focus:ring-purple-600 text-sm placeholder-gray-400"
                 required
               />
@@ -75,7 +77,7 @@ const ForgotPasswordPage: React.FC = () => {
               disabled={isLoading}
               className="w-full bg-primary text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:opacity-90 disabled:opacity-70 mt-4"
             >
-              {isLoading ? "Sending..." : "Submit"}
+              {isLoading ? t("actions.sending") : t("auth.login.submit")}
             </button>
           </form>
 

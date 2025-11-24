@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 import LeftPanel from "@/components/common/LeftPanel";
 
@@ -22,6 +23,7 @@ const ResetPasswordPage: React.FC = () => {
   const location = useLocation();
   const email = location.state?.email;
   const otp = location.state?.otp;
+  const { t } = useTranslation();
 
   const handleResetPassword = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -113,7 +115,7 @@ const ResetPasswordPage: React.FC = () => {
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter New Password"
+                    placeholder={t("auth.reset.placeholderNewPassword")}
                     className="w-full mt-1 px-4 py-3 bg-[linear-gradient(180deg,rgba(106,27,154,0.1)_0%,rgba(211,47,47,0.1)_100%)] border-transparent rounded-lg focus:ring-1 focus:ring-purple-600 text-sm"
                     required
                   />
@@ -141,7 +143,7 @@ const ResetPasswordPage: React.FC = () => {
                     type={showConfirmPassword ? "text" : "password"}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirm New Password"
+                    placeholder={t("auth.reset.placeholderConfirmPassword")}
                     className="w-full mt-1 px-4 py-3 bg-[linear-gradient(180deg,rgba(106,27,154,0.1)_0%,rgba(211,47,47,0.1)_100%)] border-transparent rounded-lg focus:ring-1 focus:ring-purple-600 text-sm"
                     required
                   />
@@ -171,7 +173,7 @@ const ResetPasswordPage: React.FC = () => {
                   disabled={isLoading}
                   className="w-full bg-primary text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:opacity-90 disabled:opacity-70"
                 >
-                  {isLoading ? "Saving..." : "Save Password"}
+                  {isLoading ? t("auth.reset.saving") : t("auth.reset.save")}
                 </button>
               </form>
               <Link

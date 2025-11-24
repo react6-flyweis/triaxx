@@ -4,6 +4,7 @@ import { useLoginMutation } from "@/redux/api/apiSlice";
 import toast, { Toaster } from "react-hot-toast";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import LeftPanel from "@/components/common/LeftPanel";
+import { useTranslation } from "react-i18next";
 
 import TriaxxLogoImg from "@/assets/tiaxx_logo.svg";
 import EyeIconImg from "@/assets/eye_icon.svg";
@@ -24,6 +25,7 @@ const LoginPage: React.FC = () => {
   const [login] = useLoginMutation();
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 1023px)");
+  const { t } = useTranslation();
 
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -31,13 +33,13 @@ const LoginPage: React.FC = () => {
     try {
       await login({ email: employeeId, password }).unwrap();
 
-      toast.success("Login successful!", {
+      toast.success(t("auth.login.success"), {
         duration: 4000,
         position: "top-right",
       });
       navigate("/");
     } catch (err: any) {
-      toast.error(err?.data?.message || "Login failed. Please try again.", {
+      toast.error(err?.data?.message || t("auth.login.failed"), {
         duration: 4000,
         position: "top-right",
       });
@@ -76,13 +78,17 @@ const LoginPage: React.FC = () => {
         <LeftPanel />
         <div className="w-full lg:w-2/5 lg:p-10 xl:px-20 flex flex-col justify-start overflow-y-auto h-full min-h-0 py-6">
           <div className="flex justify-between items-center mb-6 h-full">
-            <h2 className="text-xl lg:text-2xl font-bold">Sign in</h2>
+            <h2 className="text-xl lg:text-2xl font-bold">
+              {t("auth.login.title")}
+            </h2>
             <img src={TriaxxLogoImg} alt="TRIAXX Logo" className="h-6 lg:h-8" />
           </div>
           <div className="text-center mb-2">
-            <h3 className="text-2xl lg:text-[32px] font-bold">Welcome Back!</h3>
+            <h3 className="text-2xl lg:text-[32px] font-bold">
+              {t("auth.login.welcome")}
+            </h3>
             <p className="text-sm text-[#000000CC] mt-1 font-normal">
-              Login to access your Triaxx Account
+              {t("auth.login.subtitle")}
             </p>
           </div>
           <div className="flex justify-center space-x-2 sm:space-x-6 my-6 lg:my-8 border-b border-gray-200">
@@ -108,14 +114,14 @@ const LoginPage: React.FC = () => {
                   htmlFor="employeeId"
                   className="block text-sm font-medium mb-1"
                 >
-                  Employee id
+                  {t("auth.login.employeeId")}
                 </label>
                 <input
                   id="employeeId"
                   type="text"
                   value={employeeId}
                   onChange={(e) => setEmployeeId(e.target.value)}
-                  placeholder="Enter id"
+                  placeholder={t("auth.login.placeholderId")}
                   className="w-full px-4 py-3 bg-[linear-gradient(180deg,rgba(106,27,154,0.1)_0%,rgba(211,47,47,0.1)_100%)] border-transparent rounded-lg focus:ring-1 focus:ring-purple-600 focus:border-purple-600 focus:bg-white text-sm placeholder-gray-400"
                   required
                 />
@@ -126,13 +132,13 @@ const LoginPage: React.FC = () => {
                     htmlFor="password"
                     className="block text-sm font-medium"
                   >
-                    Password
+                    {t("auth.login.password")}
                   </label>
                   <Link
                     to="/forgot-password"
                     className="text-xs text-[#00000099] hover:cursor-pointer"
                   >
-                    Forget Password?
+                    {t("auth.login.forgotPassword")}
                   </Link>
                 </div>
                 <div className="relative">
@@ -141,7 +147,7 @@ const LoginPage: React.FC = () => {
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter Password"
+                    placeholder={t("auth.login.placeholderPassword")}
                     className="w-full px-4 py-3 bg-[linear-gradient(180deg,rgba(106,27,154,0.1)_0%,rgba(211,47,47,0.1)_100%)] border-transparent rounded-lg focus:ring-1 focus:ring-purple-600 focus:border-purple-600 focus:bg-white text-sm placeholder-gray-400"
                     required
                   />
@@ -170,7 +176,7 @@ const LoginPage: React.FC = () => {
                   htmlFor="rememberMe"
                   className="ml-2 block text-sm text-gray-700"
                 >
-                  Remember me
+                  {t("auth.login.rememberMe")}
                 </label>
               </div>
               <button
@@ -178,7 +184,9 @@ const LoginPage: React.FC = () => {
                 disabled={isLoading}
                 className="w-full bg-primary text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-70"
               >
-                {isLoading ? "Submitting..." : "Submit"}
+                {isLoading
+                  ? t("auth.login.submitting")
+                  : t("auth.login.submit")}
               </button>
             </form>
           )}
