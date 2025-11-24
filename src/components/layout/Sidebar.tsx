@@ -1,11 +1,9 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useWalkthroughStore } from "@/store/walkthroughStore";
-import { useDispatch } from "react-redux";
-import type { AppDispatch } from "@/redux/store";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/redux/store";
-import { logout } from "@/redux/slice/authSlice";
+import { signOut } from "@/services/authHelpers";
 import toast from "react-hot-toast";
 
 import TriaxxLogo from "@/assets/tiaxx_logo.svg";
@@ -61,7 +59,6 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
   const user = useSelector((state: RootState) => state.auth.user);
 
   // Safe getters to avoid casting to `any` and keep strict typing
@@ -94,7 +91,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
   const isActive = (path: string) => location.pathname.startsWith(path);
 
   const handleLogout = () => {
-    dispatch(logout());
+    signOut();
     toast.success("Logged out successfully!", {
       duration: 4000,
       position: "top-right",
