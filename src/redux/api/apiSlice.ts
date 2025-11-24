@@ -75,6 +75,24 @@ interface FAQApiResponse {
   data: FAQItem[];
 }
 
+// Languages
+interface LanguageItem {
+  _id: string;
+  Language_name: string;
+  Status: boolean;
+  CreateBy?: { user_id: number; Name: string; email: string } | null;
+  CreateAt?: string | null;
+  UpdatedAt?: string | null;
+  Language_id?: number;
+  UpdatedBy?: { user_id: number; Name: string; email: string } | null;
+}
+
+interface LanguagesApiResponse {
+  success: boolean;
+  count?: number;
+  data: LanguageItem[];
+}
+
 export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
@@ -127,6 +145,10 @@ export const apiSlice = createApi({
       query: () => "/api/restaurant/item_addons/getall",
       // server returns { success: boolean, count: number, data: ItemAddon[] }
     }),
+    // Get all languages
+    getLanguages: builder.query<LanguagesApiResponse, void>({
+      query: () => "/api/admin/language/getall",
+    }),
   }),
 });
 
@@ -136,4 +158,5 @@ export const {
   useGetNotificationsQuery,
   useGetFaqsQuery,
   useGetItemAddonsQuery,
+  useGetLanguagesQuery,
 } = apiSlice;
